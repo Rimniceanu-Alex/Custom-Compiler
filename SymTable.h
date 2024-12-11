@@ -1,11 +1,16 @@
 #include <iostream>
 #include <map>
+#include <vector>
 #include <string>
 
 using namespace std;
 
 class ParamList {
-    //todo
+    std::vector<int> integers;
+    std::vector<float> floaters;
+    std::vector<bool> boolers;
+    std::vector<char*> charsers;
+
 };
 
 class IdInfo {
@@ -28,6 +33,7 @@ class SymTable {
     bool existsId(const char* s);
     void addVar(const char* type, const char* name );
     void printVars();
+    string getValue(string s);
     ~SymTable();
 };
 

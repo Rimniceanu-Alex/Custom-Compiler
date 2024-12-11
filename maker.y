@@ -26,7 +26,7 @@ int errorCount = 0;
                     }
      }
      %}
-%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND
+%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL
 %token<string> ID TYPE Class_ID Class_Type
 %start progr
 %left '+' '-' 
@@ -46,8 +46,17 @@ fundamental_type : decl
 	      |  fundamental_type decl   
 	      ;
 
-decl       : TYPE ID  '(' list_param ')' ';'{ check_existance(Stack_Table.top() , $1 , $2);
-                          }
+decl       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2);
+                        class SymTable* fucntion_scope;
+                        fucntion_scope=new SymTable($2);
+                        Stack_Table.push(fucntion_scope);
+                        current=fucntion_scope;
+                        Vector_Tabele.push_back(current);
+                        } 
+             '(' list_param ')' ';'{
+                                    Stack_Table.pop();
+                                    current=Stack_Table.top();
+                                   }
            | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2);
                           }
            ;
@@ -67,6 +76,15 @@ classes : class
         | classes class
         ;
 
+
+list_param : param 
+            | list_param ','  param 
+            ;
+
+            
+param : TYPE ID {check_existance(Stack_Table.top() , $1 , $2);}
+      ; 
+      
 class :  Class_Type Class_ID ':' CBEGIN {
                                         check_existance(current , $1 , $2);
                                         class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
@@ -75,20 +93,11 @@ class :  Class_Type Class_ID ':' CBEGIN {
                                         current=class_scope;
                                         Vector_Tabele.push_back(current);
                                         }
-                              declarations CEND ':' {
+                              declarations CEND ';' {
                                                             Stack_Table.pop();
                                                        current=Stack_Table.top();
                                                     }
       ;
-
-list_param : param
-            | list_param ','  param 
-            ;
-
-            
-param : TYPE ID 
-      ; 
-      
 
 main : BGIN list END  
      ;
@@ -105,11 +114,16 @@ e : e '+' e
   |'(' e ')' 
   | NR 
   | ID
+  | REAL
   ;
 
 statement: ID ASSIGN e	     	 
          | ID '(' call_list ')'
-         | ID ASSIGN TRUTH_VALUE
+         | ID ASSIGN TRUTH_VALUE {if (current->getValue($1)!="bool"){
+                                        errorCount++; 
+                                   yyerror("Variable is not bool");
+                                             }
+                                 }
          ;
         
 call_list : e

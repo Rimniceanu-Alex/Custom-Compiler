@@ -16,7 +16,9 @@ void SymTable::printVars() {
         cout <<"Vizibilitate: " << this->name << " name: " << v.first << " type:" << v.second.type << endl; 
      }
 }
-
+string SymTable::getValue(string a ){
+    return this->ids[a].idType;
+}
 SymTable::~SymTable() {
     ids.clear();
 }

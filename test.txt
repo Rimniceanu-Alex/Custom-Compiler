@@ -1,13 +1,22 @@
 int nr2;
 int nr1;
+int nr3;
+int f(int ab ,int ac);
 bool maybe;
 int arr [10][20][200];
 string arrat[20][30];
 class Mee:{
     int x;
+    int foo(int aoo , float boo);
     int array[100];
-    }:
+    };
+class Hum:{
+    int x;
+    int foo(int aoo , int boo);
+    int array[100];
+    };    
 aloo_buna_dimineata
 nr2 <- 10;
+nr1 <- 10.20;
 maybe <- TRUE;
 aloo_buna_seara
