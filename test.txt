@@ -1,0 +1,13 @@
+int nr2;
+int nr1;
+bool maybe;
+int arr [10][20][200];
+string arrat[20][30];
+class Mee:{
+    int x;
+    int array[100];
+    }:
+aloo_buna_dimineata
+nr2 <- 10;
+maybe <- TRUE;
+aloo_buna_seara
