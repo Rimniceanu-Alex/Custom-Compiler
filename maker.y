@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <stack>
-#include "SymTable.h"
+#include "ASTNode.h"
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
@@ -17,16 +17,16 @@ int errorCount = 0;
      char* string;
 }
 %{
-     void check_existance(SymTable*currento, char* a , char* b){
+     void check_existance(SymTable*currento, const char* a , const char* b , const char* c){
           if(!currento->existsId(b)) {
-                    currento->addVar(a,b);
+                    currento->addVar(a,b, c);
                } else {
                     errorCount++; 
                     yyerror("Variable already defined");
                     }
      }
      %}
-%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL
+%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CTRL CONNECT CMP
 %token<string> ID TYPE Class_ID Class_Type
 %start progr
 %left '+' '-' 
@@ -36,6 +36,31 @@ progr :  declarations classes main {if (errorCount == 0) cout<< "The program is 
       |  declarations main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
       ;
 
+main : BGIN  {SymTable* currentmain;     
+     currentmain = new SymTable("main");
+     Stack_Table.push(currentmain);
+     Vector_Tabele.push_back(currentmain);} list END  {Stack_Table.pop();
+                                    current=Stack_Table.top();}
+     ;
+//Listul e ffolosie in MAIN si in Control functions
+list :  statement ';' 
+     | list statement ';'
+     ;
+
+statement: ID ASSIGN e	     	 
+         | ID '(' call_list ')' //Ce-i asta???................................DAca descoperim ce e pot baga Decl-u
+         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool"){
+                                        errorCount++; 
+                                        yyerror("Variable is not bool");
+                                    }
+                                 }
+          | CTRL  condition_chain  CBEGIN list CEND
+         ;
+condition_chain: '(' condition ')'
+               | '(' condition_chain CONNECT condition ')'
+               ;
+condition: e CMP e
+         ;
 declarations: fundamental_type arrays
             | fundamental_type
             | arrays
@@ -43,10 +68,10 @@ declarations: fundamental_type arrays
             ;
 
 fundamental_type : decl           
-	      |  fundamental_type decl   
-	      ;
+	            |  fundamental_type decl   
+	            ;
 
-decl       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2);
+decl       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2 , "func");
                         class SymTable* fucntion_scope;
                         fucntion_scope=new SymTable($2);
                         Stack_Table.push(fucntion_scope);
@@ -57,15 +82,14 @@ decl       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2);
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-           | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2);
-                          }
+           | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2 , "var");}
            ;
 
 arrays : arr
        | arrays arr
        ;
 
-arr : TYPE ID arr_list ';' {check_existance(Stack_Table.top() , $1 , $2);
+arr : TYPE ID arr_list ';' {check_existance(Stack_Table.top() , $1 , $2 , "pointer");
                            }
        ;
 
@@ -76,17 +100,8 @@ classes : class
         | classes class
         ;
 
-
-list_param : param 
-            | list_param ','  param 
-            ;
-
-            
-param : TYPE ID {check_existance(Stack_Table.top() , $1 , $2);}
-      ; 
-      
 class :  Class_Type Class_ID ':' CBEGIN {
-                                        check_existance(current , $1 , $2);
+                                        check_existance(current , $1 , $2 , "class");
                                         class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
                                         class_scope=new SymTable($2);
                                         Stack_Table.push(class_scope);
@@ -99,32 +114,28 @@ class :  Class_Type Class_ID ':' CBEGIN {
                                                     }
       ;
 
-main : BGIN list END  
-     ;
+list_param : param 
+            | list_param ','  param 
+            ;
+
+            
+param : TYPE ID {check_existance(Stack_Table.top() , $1 , $2 ,"var");}
+      ; 
+      
+
      
 
-list :  statement ';' 
-     | list statement ';'
-     ;
 
-e : e '+' e   
-  | e '*' e   
-  | e '-' e   
-  | e '/' e
-  |'(' e ')' 
-  | NR 
-  | ID
-  | REAL
+e : e '+' e   {}
+  | e '*' e   {}
+  | e '-' e   {}
+  | e '/' e   {}
+  |'(' e ')'  {}
+  | NR        {}
+  | REAL      {}
+  | ID        {}
   ;
 
-statement: ID ASSIGN e	     	 
-         | ID '(' call_list ')'
-         | ID ASSIGN TRUTH_VALUE {if (current->getValue($1)!="bool"){
-                                        errorCount++; 
-                                   yyerror("Variable is not bool");
-                                             }
-                                 }
-         ;
         
 call_list : e
            | call_list ',' e

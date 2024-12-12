@@ -9,6 +9,9 @@
 "aloo_buna_dimineata" {return BGIN;}
 "aloo_buna_seara" {return END;}
 "TRUE"|"FALSE" {yylval.string=strdup(yytext); return TRUTH_VALUE;}
+"if"|"while"|"for"|"else" {yylval.string=strdup(yytext); return CTRL;}
+"&&"|"||" {yylval.string=strdup(yytext); return CONNECT;}
+"=="|"!="|">"|"<"|"<="|">=" {yylval.string=strdup(yytext); return CMP;}
 "\{" {return CBEGIN;}
 "\}" {return CEND;}
 [A-Z][a-z]* {yylval.string = strdup(yytext); return Class_ID;}

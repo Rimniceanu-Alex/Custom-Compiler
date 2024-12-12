@@ -11,12 +11,17 @@ class Mee:{
     int array[100];
     };
 class Hum:{
-    int x;
+    int nr1;
     int foo(int aoo , int boo);
+    int f(int a00 , int boo);
     int array[100];
     };    
 aloo_buna_dimineata
 nr2 <- 10;
 nr1 <- 10.20;
 maybe <- TRUE;
+f(2+3 , 3 +4);
+if (nr1>nr2){
+    nr3<-20;
+};
 aloo_buna_seara
