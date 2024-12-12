@@ -62,13 +62,13 @@ extern int yydebug;
     CBEGIN = 263,                  /* CBEGIN  */
     CEND = 264,                    /* CEND  */
     REAL = 265,                    /* REAL  */
-    CTRL = 266,                    /* CTRL  */
-    CONNECT = 267,                 /* CONNECT  */
-    CMP = 268,                     /* CMP  */
-    ID = 269,                      /* ID  */
-    TYPE = 270,                    /* TYPE  */
-    Class_ID = 271,                /* Class_ID  */
-    Class_Type = 272               /* Class_Type  */
+    CONNECT = 266,                 /* CONNECT  */
+    CMP = 267,                     /* CMP  */
+    ID = 268,                      /* ID  */
+    TYPE = 269,                    /* TYPE  */
+    Class_ID = 270,                /* Class_ID  */
+    Class_Type = 271,              /* Class_Type  */
+    CTRL = 272                     /* CTRL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

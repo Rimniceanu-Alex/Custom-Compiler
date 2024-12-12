@@ -26,8 +26,8 @@ int errorCount = 0;
                     }
      }
      %}
-%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CTRL CONNECT CMP
-%token<string> ID TYPE Class_ID Class_Type
+%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT CMP
+%token<string> ID TYPE Class_ID Class_Type CTRL
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -42,25 +42,6 @@ main : BGIN  {SymTable* currentmain;
      Vector_Tabele.push_back(currentmain);} list END  {Stack_Table.pop();
                                     current=Stack_Table.top();}
      ;
-//Listul e ffolosie in MAIN si in Control functions
-list :  statement ';' 
-     | list statement ';'
-     ;
-
-statement: ID ASSIGN e	     	 
-         | ID '(' call_list ')' //Ce-i asta???................................DAca descoperim ce e pot baga Decl-u
-         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool"){
-                                        errorCount++; 
-                                        yyerror("Variable is not bool");
-                                    }
-                                 }
-          | CTRL  condition_chain  CBEGIN list CEND
-         ;
-condition_chain: '(' condition ')'
-               | '(' condition_chain CONNECT condition ')'
-               ;
-condition: e CMP e
-         ;
 declarations: fundamental_type arrays
             | fundamental_type
             | arrays
@@ -82,7 +63,7 @@ decl       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2 , "func");
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-           | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2 , "var");}
+          | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2 , "var");}
            ;
 
 arrays : arr
@@ -96,10 +77,71 @@ arr : TYPE ID arr_list ';' {check_existance(Stack_Table.top() , $1 , $2 , "point
 arr_list : '[' NR ']' arr_list
          | '[' NR ']'
          ;
+//Listul e ffolosie in MAIN si in Control functions
+list :  statement ';' 
+     | list statement ';'
+     ;
+
+statement: ID ASSIGN e	//Trebueei sa bagam un check sa veddem daca-i declarata variabila     	 
+         | ID '(' call_list ')' //Apel de functie
+         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool"){
+                                        errorCount++; 
+                                        yyerror("Variable is not bool");
+                                    }
+                                 }
+          | CTRL  condition_chain  CBEGIN {
+     SymTable* currentCTRL;     
+     currentCTRL = new SymTable($1);
+     Stack_Table.push(currentCTRL);
+     Vector_Tabele.push_back(currentCTRL);
+
+          } list CEND{
+               Stack_Table.pop();
+               current=Stack_Table.top();
+          }
+          | declarations_interior //trebuiau puse ;; daca nu clonam declarations
+         ;
+         
+declarations_interior: fundamental_type_interior arrays_interior
+            | fundamental_type_interior
+            | arrays_interior
+            ;
+
+fundamental_type_interior : decl_interior         
+	                     |  fundamental_type_interior decl_interior   
+	                     ;
+
+decl_interior       : TYPE ID  { check_existance(Stack_Table.top() , $1 , $2 , "func");
+                        class SymTable* fucntion_scope;
+                        fucntion_scope=new SymTable($2);
+                        Stack_Table.push(fucntion_scope);
+                        current=fucntion_scope;
+                        Vector_Tabele.push_back(current);
+                        } 
+             '(' list_param ')' {
+                                    Stack_Table.pop();
+                                    current=Stack_Table.top();
+                                   }
+                    | TYPE ID {check_existance(Stack_Table.top() , $1 , $2 , "var");}
+                    ;
+
+arrays_interior : arr_interior
+       | arrays_interior arr_interior
+       ;
+
+arr_interior : TYPE ID arr_list {check_existance(Stack_Table.top() , $1 , $2 , "pointer");
+                           }
+       ;
+
+condition_chain: '(' condition ')'
+               | '(' condition_chain CONNECT condition ')'
+               ;
+condition: e CMP e
+         ;
 classes : class
         | classes class
         ;
-
+                                        
 class :  Class_Type Class_ID ':' CBEGIN {
                                         check_existance(current , $1 , $2 , "class");
                                         class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
@@ -139,8 +181,15 @@ e : e '+' e   {}
         
 call_list : e
            | call_list ',' e
-           | statement
+           | statement_for_call_list
            ;
+statement_for_call_list: ID ASSIGN e	     	 
+         | ID '(' call_list ')' //Apel de functie
+         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool"){
+                                        errorCount++; 
+                                        yyerror("Variable is not bool");
+                                    }
+                                 }
 %%
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;

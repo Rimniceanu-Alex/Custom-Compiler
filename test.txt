@@ -18,10 +18,17 @@ class Hum:{
     };    
 aloo_buna_dimineata
 nr2 <- 10;
+float pasta;
 nr1 <- 10.20;
+nr3 <- 20;
+nr3 <- 50;
 maybe <- TRUE;
 f(2+3 , 3 +4);
 if (nr1>nr2){
+    int tu;
+    nr3<-20;
+};
+while (nr1>nr2){
     nr3<-20;
 };
 aloo_buna_seara
