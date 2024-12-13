@@ -13,7 +13,7 @@ bool SymTable::existsId(const char* var) {
 
 void SymTable::printVars() {
     for (const pair<string, IdInfo>& v : ids) {
-        cout <<"Vizibilitate: [" << this->name << "] name: [" << v.first << "] data_type: [" << v.second.type << "] Class/Func/Var: [" << v.second.idType <<"]" << endl; 
+        cout <<"Vizibilitate: [" << this->name << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType <<"]" << endl; 
      }
 }
 string SymTable::getValueType(string a ){

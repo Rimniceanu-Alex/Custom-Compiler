@@ -24,6 +24,7 @@ nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;
 f(2+3 , 3 +4);
+f( a , v , x(b, c , x(d)));
 if (nr1>nr2){
     int tu;
     nr3<-20;

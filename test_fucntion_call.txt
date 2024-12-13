@@ -1,0 +1,7 @@
+aloo_buna_dimineata
+int a;
+if(x+3>x-5){
+    int a;
+    int b;
+};
+aloo_buna_seara 
