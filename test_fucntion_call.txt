@@ -1,7 +1,10 @@
 aloo_buna_dimineata
 int a;
 if(x+3>x-5){
-    int a;
+    int c;
     int b;
 };
+int c;
+c <- 29;
+d <- 40;
 aloo_buna_seara 

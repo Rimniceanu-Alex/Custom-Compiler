@@ -179,6 +179,18 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
      void check_existance(SymTable*currento, const char* a , const char* b , const char* c){
           if(!currento->existsId(b)) {
+               std::stack<SymTable*> Copy_table;
+               Copy_table=Stack_Table;
+               while(!Copy_table.empty()){
+                    SymTable* iterator;
+                    iterator=Copy_table.top();
+                    Copy_table.pop();
+                    if(iterator->existsId(b)){
+                         errorCount++; 
+                         yyerror("Variable already defined");
+                         break;
+                    }
+               }
                     currento->addVar(a,b, c);
                } else {
                     errorCount++; 
@@ -187,7 +199,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
      }
      
 
-#line 191 "maker.tab.c"
+#line 203 "maker.tab.c"
 
 
 #ifdef short
@@ -571,13 +583,13 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    38,    38,    39,    43,    42,    53,    54,    55,    56,
-      59,    60,    64,    63,    76,    79,    80,    83,    86,    87,
-      91,    92,    95,    96,    97,   104,   103,   115,   118,   119,
-     120,   123,   124,   128,   127,   140,   143,   144,   147,   151,
-     152,   155,   158,   159,   162,   162,   176,   177,   181,   188,
-     189,   190,   191,   192,   193,   194,   195,   199,   200,   201,
-     202,   204,   205,   206
+       0,    50,    50,    51,    55,    54,    65,    66,    67,    68,
+      71,    72,    76,    75,    88,    91,    92,    95,    98,    99,
+     103,   104,   107,   108,   109,   116,   115,   127,   130,   131,
+     132,   135,   136,   140,   139,   152,   155,   156,   159,   163,
+     164,   167,   170,   171,   174,   174,   188,   189,   193,   200,
+     201,   202,   203,   204,   205,   206,   207,   211,   212,   213,
+     214,   216,   217,   218
 };
 #endif
 
@@ -1222,135 +1234,135 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* progr: declarations classes main  */
-#line 38 "maker.y"
+#line 50 "maker.y"
                                    {if (errorCount == 0) cout<< "The program is correct!" << endl;}
-#line 1228 "maker.tab.c"
+#line 1240 "maker.tab.c"
     break;
 
   case 3: /* progr: declarations main  */
-#line 39 "maker.y"
+#line 51 "maker.y"
                            {if (errorCount == 0) cout<< "The program is correct!" << endl;}
-#line 1234 "maker.tab.c"
+#line 1246 "maker.tab.c"
     break;
 
   case 4: /* $@1: %empty  */
-#line 43 "maker.y"
+#line 55 "maker.y"
           {SymTable* currentmain;     
            currentmain = new SymTable("main");
            Stack_Table.push(currentmain);
            Vector_Tabele.push_back(currentmain);
           }
-#line 1244 "maker.tab.c"
+#line 1256 "maker.tab.c"
     break;
 
   case 5: /* main: BGIN $@1 list END  */
-#line 49 "maker.y"
+#line 61 "maker.y"
                     {Stack_Table.pop();
                      current=Stack_Table.top();
                     }
-#line 1252 "maker.tab.c"
-    break;
-
-  case 12: /* $@2: %empty  */
-#line 64 "maker.y"
-                { check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) , "func");
-                  class SymTable* fucntion_scope;
-                  fucntion_scope=new SymTable((yyvsp[0].string));
-                  Stack_Table.push(fucntion_scope);
-                  current=fucntion_scope;
-                  Vector_Tabele.push_back(current);
-                }
 #line 1264 "maker.tab.c"
     break;
 
+  case 12: /* $@2: %empty  */
+#line 76 "maker.y"
+                { check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) , "func");
+                  class SymTable* function_scope;
+                  function_scope=new SymTable((yyvsp[0].string));
+                  Stack_Table.push(function_scope);
+                  current=function_scope;
+                  Vector_Tabele.push_back(current);
+                }
+#line 1276 "maker.tab.c"
+    break;
+
   case 13: /* decl: TYPE ID $@2 '(' list_param ')' ';'  */
-#line 72 "maker.y"
+#line 84 "maker.y"
                                    {
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-#line 1273 "maker.tab.c"
-    break;
-
-  case 14: /* decl: TYPE ID ';'  */
-#line 76 "maker.y"
-                  {check_existance(Stack_Table.top() , (yyvsp[-2].string) , (yyvsp[-1].string) , "var");}
-#line 1279 "maker.tab.c"
-    break;
-
-  case 17: /* arr: TYPE ID arr_list ';'  */
-#line 83 "maker.y"
-                           {check_existance(Stack_Table.top() , (yyvsp[-3].string) , (yyvsp[-2].string) , "pointer");}
 #line 1285 "maker.tab.c"
     break;
 
+  case 14: /* decl: TYPE ID ';'  */
+#line 88 "maker.y"
+                  {check_existance(Stack_Table.top() , (yyvsp[-2].string) , (yyvsp[-1].string) , "var");}
+#line 1291 "maker.tab.c"
+    break;
+
+  case 17: /* arr: TYPE ID arr_list ';'  */
+#line 95 "maker.y"
+                           {check_existance(Stack_Table.top() , (yyvsp[-3].string) , (yyvsp[-2].string) , "pointer");}
+#line 1297 "maker.tab.c"
+    break;
+
   case 24: /* statement: ID ASSIGN TRUTH_VALUE  */
-#line 97 "maker.y"
+#line 109 "maker.y"
                                  {if (current->getValueType((yyvsp[-2].string))!="bool")
                                     {
                                         errorCount++; 
                                         yyerror("Variable is not bool");
                                     }
                                  }
-#line 1296 "maker.tab.c"
+#line 1308 "maker.tab.c"
     break;
 
   case 25: /* $@3: %empty  */
-#line 104 "maker.y"
+#line 116 "maker.y"
                                  {
                                    SymTable* currentCTRL;     
                                    currentCTRL = new SymTable((yyvsp[-2].string));
                                    Stack_Table.push(currentCTRL);
                                    Vector_Tabele.push_back(currentCTRL);
                                  }
-#line 1307 "maker.tab.c"
+#line 1319 "maker.tab.c"
     break;
 
   case 26: /* statement: CTRL condition_chain CBEGIN $@3 list CEND  */
-#line 111 "maker.y"
+#line 123 "maker.y"
                                         {
                                              Stack_Table.pop();
                                              current=Stack_Table.top();
                                         }
-#line 1316 "maker.tab.c"
-    break;
-
-  case 33: /* $@4: %empty  */
-#line 128 "maker.y"
-                        { check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) , "func");
-                        class SymTable* fucntion_scope;
-                        fucntion_scope=new SymTable((yyvsp[0].string));
-                        Stack_Table.push(fucntion_scope);
-                        current=fucntion_scope;
-                        Vector_Tabele.push_back(current);
-                        }
 #line 1328 "maker.tab.c"
     break;
 
+  case 33: /* $@4: %empty  */
+#line 140 "maker.y"
+                        { check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) , "func");
+                        class SymTable* function_scope;
+                        function_scope=new SymTable((yyvsp[0].string));
+                        Stack_Table.push(function_scope);
+                        current=function_scope;
+                        Vector_Tabele.push_back(current);
+                        }
+#line 1340 "maker.tab.c"
+    break;
+
   case 34: /* decl_interior: TYPE ID $@4 '(' list_param ')'  */
-#line 136 "maker.y"
+#line 148 "maker.y"
                                    {
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-#line 1337 "maker.tab.c"
+#line 1349 "maker.tab.c"
     break;
 
   case 35: /* decl_interior: TYPE ID  */
-#line 140 "maker.y"
+#line 152 "maker.y"
                               {check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) , "var");}
-#line 1343 "maker.tab.c"
+#line 1355 "maker.tab.c"
     break;
 
   case 38: /* arr_interior: TYPE ID arr_list  */
-#line 147 "maker.y"
+#line 159 "maker.y"
                                 {check_existance(Stack_Table.top() , (yyvsp[-2].string) , (yyvsp[-1].string) , "pointer");
                            }
-#line 1350 "maker.tab.c"
+#line 1362 "maker.tab.c"
     break;
 
   case 44: /* $@5: %empty  */
-#line 162 "maker.y"
+#line 174 "maker.y"
                                         {
                                         check_existance(current , (yyvsp[-3].string) , (yyvsp[-2].string) , "class");
                                         class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
@@ -1359,84 +1371,84 @@ yyreduce:
                                         current=class_scope;
                                         Vector_Tabele.push_back(current);
                                         }
-#line 1363 "maker.tab.c"
+#line 1375 "maker.tab.c"
     break;
 
   case 45: /* class: Class_Type Class_ID ':' CBEGIN $@5 declarations CEND ';'  */
-#line 170 "maker.y"
+#line 182 "maker.y"
                                                     {
                                                             Stack_Table.pop();
                                                        current=Stack_Table.top();
                                                     }
-#line 1372 "maker.tab.c"
-    break;
-
-  case 48: /* param: TYPE ID  */
-#line 181 "maker.y"
-                {check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) ,"var");}
-#line 1378 "maker.tab.c"
-    break;
-
-  case 49: /* e: e '+' e  */
-#line 188 "maker.y"
-              {}
 #line 1384 "maker.tab.c"
     break;
 
-  case 50: /* e: e '*' e  */
-#line 189 "maker.y"
-              {}
+  case 48: /* param: TYPE ID  */
+#line 193 "maker.y"
+                {check_existance(Stack_Table.top() , (yyvsp[-1].string) , (yyvsp[0].string) ,"var");}
 #line 1390 "maker.tab.c"
     break;
 
-  case 51: /* e: e '-' e  */
-#line 190 "maker.y"
+  case 49: /* e: e '+' e  */
+#line 200 "maker.y"
               {}
 #line 1396 "maker.tab.c"
     break;
 
-  case 52: /* e: e '/' e  */
-#line 191 "maker.y"
+  case 50: /* e: e '*' e  */
+#line 201 "maker.y"
               {}
 #line 1402 "maker.tab.c"
     break;
 
-  case 53: /* e: '(' e ')'  */
-#line 192 "maker.y"
+  case 51: /* e: e '-' e  */
+#line 202 "maker.y"
               {}
 #line 1408 "maker.tab.c"
     break;
 
-  case 54: /* e: NR  */
-#line 193 "maker.y"
+  case 52: /* e: e '/' e  */
+#line 203 "maker.y"
               {}
 #line 1414 "maker.tab.c"
     break;
 
-  case 55: /* e: REAL  */
-#line 194 "maker.y"
+  case 53: /* e: '(' e ')'  */
+#line 204 "maker.y"
               {}
 #line 1420 "maker.tab.c"
     break;
 
-  case 56: /* e: ID  */
-#line 195 "maker.y"
+  case 54: /* e: NR  */
+#line 205 "maker.y"
               {}
 #line 1426 "maker.tab.c"
     break;
 
-  case 63: /* statement_for_call_list: ID ASSIGN TRUTH_VALUE  */
+  case 55: /* e: REAL  */
 #line 206 "maker.y"
+              {}
+#line 1432 "maker.tab.c"
+    break;
+
+  case 56: /* e: ID  */
+#line 207 "maker.y"
+              {}
+#line 1438 "maker.tab.c"
+    break;
+
+  case 63: /* statement_for_call_list: ID ASSIGN TRUTH_VALUE  */
+#line 218 "maker.y"
                                  {if (current->getValueType((yyvsp[-2].string))!="bool"){
                                         errorCount++; 
                                         yyerror("Variable is not bool");
                                     }
                                  }
-#line 1436 "maker.tab.c"
+#line 1448 "maker.tab.c"
     break;
 
 
-#line 1440 "maker.tab.c"
+#line 1452 "maker.tab.c"
 
       default: break;
     }
@@ -1629,7 +1641,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 211 "maker.y"
+#line 223 "maker.y"
 
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;

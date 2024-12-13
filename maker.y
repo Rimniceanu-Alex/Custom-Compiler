@@ -21,12 +21,27 @@ int errorCount = 0;
 %{
      void check_existance(SymTable*currento, const char* a , const char* b , const char* c){
           if(!currento->existsId(b)) {
+               std::stack<SymTable*> Copy_table; //Verificam daca a fost declarata anterior intr-un Domeniu de vizibilitate local sau nu
+               Copy_table=Stack_Table;
+               while(!Copy_table.empty()){
+                    SymTable* iterator;
+                    iterator=Copy_table.top();
+                    Copy_table.pop();
+                    if(iterator->existsId(b)){
+                         errorCount++; 
+                         yyerror("Variable already defined");
+                         break;
+                    }
+               }
                     currento->addVar(a,b, c);
                } else {
                     errorCount++; 
                     yyerror("Variable already defined");
                     }
      }
+
+
+     //Functie care verifica daca acea variabila (ID) a fost declarat deja si da eroare daca NU;
      %}
 
 %token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT CMP
@@ -62,10 +77,10 @@ fundamental_type : decl
 
 decl : TYPE ID  
                 { check_existance(Stack_Table.top() , $1 , $2 , "func");
-                  class SymTable* fucntion_scope;
-                  fucntion_scope=new SymTable($2);
-                  Stack_Table.push(fucntion_scope);
-                  current=fucntion_scope;
+                  class SymTable* function_scope;
+                  function_scope=new SymTable($2);
+                  Stack_Table.push(function_scope);
+                  current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
                '(' list_param ')' ';'
@@ -91,8 +106,8 @@ arr_list : '[' NR ']' arr_list
 list :  statement ';' 
      | list statement ';'
      ;
-
-statement: ID ASSIGN e	//Trebueei sa bagam un check sa veddem daca-i declarata variabila     	 
+//Trebuie sa fac si PENTRU membrii de clase ,PLUUS sa fac si pentur apeluri de functie din clase; FUCK
+statement: ID ASSIGN e  	 
          | ID '(' call_list ')' //Apel de functie
          | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool")
                                     {
@@ -126,10 +141,10 @@ fundamental_type_interior : decl_interior
 
 decl_interior       : TYPE ID  
                         { check_existance(Stack_Table.top() , $1 , $2 , "func");
-                        class SymTable* fucntion_scope;
-                        fucntion_scope=new SymTable($2);
-                        Stack_Table.push(fucntion_scope);
-                        current=fucntion_scope;
+                        class SymTable* function_scope;
+                        function_scope=new SymTable($2);
+                        Stack_Table.push(function_scope);
+                        current=function_scope;
                         Vector_Tabele.push_back(current);
                         } 
                               '(' list_param ')' 

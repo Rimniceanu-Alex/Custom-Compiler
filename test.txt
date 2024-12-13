@@ -11,13 +11,14 @@ class Mee:{
     int array[100];
     };
 class Hum:{
-    int nr1;
+    int nr6;
     int foo(int aoo , int boo);
-    int f(int a00 , int boo);
+    int g(int a00 , int boo);
     int array[100];
     };    
 aloo_buna_dimineata
 nr2 <- 10;
+int nr6;
 float pasta;
 nr1 <- 10.20;
 nr3 <- 20;
