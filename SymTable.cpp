@@ -20,8 +20,16 @@ string SymTable::getValueType(string a ){
     return this->ids[a].type;
 }
 
+string SymTable::getValue_IDType(string a ){
+    return this->ids[a].idType;
+}
+
 Value SymTable::get_value(string a ){
     return this->ids[a].value;
+}
+
+std::string SymTable::get_dom_name(){
+    return this->name;
 }
 
 void SymTable::set_value(std::string &name, Value *new_value){

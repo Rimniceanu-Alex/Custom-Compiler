@@ -1,0 +1,6 @@
+1)Cand declaram o calsa , ar trebui sa putem declara variabile cu acealsi nume ca o variabila globala declarata anterior??
+    int x(int c , int d , int p);
+    class Mee:{
+        int x;
+        };
+2)CUM implementam AST-u? e+e (neterminali) am nevoie de terminali pentru AST

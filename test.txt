@@ -2,11 +2,12 @@ int nr2;
 int nr1;
 int nr3;
 int f(int ab ,int ac);
+int x(int c , int d , int p);
 bool maybe;
 int arr [10][20][200];
 string arrat[20][30];
 class Mee:{
-    int x;
+    int z;
     int foo(int aoo , float boo);
     int array[100];
     };
@@ -25,12 +26,18 @@ nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;
 f(2+3 , 3 +4);
-f( a , v , x(b, c , x(d)));
-if (nr1>nr2){
-    int tu;
-    nr3<-20;
+f( nr1 , nr3 , x(nr1, nr2 , x(nr3 , nr1 , nr2)));
+nr3 <-39;
+nr3 <-20;
+nr3 <-200;
+nr2 <-20;
+if(20<3){
+    int nr9;
+    while(30<20){
+        int nr8;
+        nr8 <-2999;
+    };
 };
-while (nr1>nr2){
-    nr3<-20;
-};
+float nr8 ;
+nr2 <- 20;
 aloo_buna_seara

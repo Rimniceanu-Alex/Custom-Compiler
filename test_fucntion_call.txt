@@ -1,10 +1,24 @@
 aloo_buna_dimineata
 int a;
-if(x+3>x-5){
+int d;
+if(a+3>d-5){
     int c;
     int b;
+    c <- 20;
 };
 int c;
 c <- 29;
 d <- 40;
+
+if (a>d){
+    int tu;
+    a<-20;
+};
+
+while (a>d){
+    a<-20;
+};
+
+int aop;
+aop <- 10;
 aloo_buna_seara 

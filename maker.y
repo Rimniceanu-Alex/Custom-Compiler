@@ -9,6 +9,7 @@ extern int yylineno;
 extern int yylex();
 void yyerror(const char * s);
 class SymTable* current;
+class SymTable* domeniul_caruia_ii_apartine_varabila;
 std::vector<SymTable*> Vector_Tabele;
 std::stack<SymTable*> Stack_Table;
 int errorCount = 0;
@@ -19,7 +20,7 @@ int errorCount = 0;
 }
 
 %{
-     void check_existance(SymTable*currento, const char* a , const char* b , const char* c){
+     void check_existance_for_declaration(SymTable*currento, const char* a , const char* b , const char* c){ //used for 
           if(!currento->existsId(b)) {
                std::stack<SymTable*> Copy_table; //Verificam daca a fost declarata anterior intr-un Domeniu de vizibilitate local sau nu
                Copy_table=Stack_Table;
@@ -40,7 +41,34 @@ int errorCount = 0;
                     }
      }
 
-
+     SymTable* check_existance_for_use(SymTable*currento , const char* b){ //used for 
+          if(!currento->existsId(b)) {//Nu exista in domeniul actual =>cautam daca exista mai sus
+               int found=0;
+               // cout<<"Nu exista in "<<currento->get_dom_name()<<endl;
+               std::stack<SymTable*> Copy_table;
+               Copy_table=Stack_Table;
+               while(!Copy_table.empty()){
+                    SymTable* iterator;
+                    iterator=Copy_table.top();
+                    Copy_table.pop();
+                    if(iterator->existsId(b)){
+                         found=1;
+                         // cout<<"Exista in "<<iterator->get_dom_name()<<endl;
+                         return iterator;
+                         break;
+                    }
+               }
+               if(found==0){
+               errorCount++; 
+               yyerror("Variable noot defined in scope");
+               return nullptr;
+               }
+          } 
+          else{
+               return currento;
+          }
+          return nullptr;
+     }
      //Functie care verifica daca acea variabila (ID) a fost declarat deja si da eroare daca NU;
      %}
 
@@ -58,7 +86,8 @@ main : BGIN
           {SymTable* currentmain;     
            currentmain = new SymTable("main");
            Stack_Table.push(currentmain);
-           Vector_Tabele.push_back(currentmain);
+           current=currentmain;  
+           Vector_Tabele.push_back(current);
           }
            list END
                     {Stack_Table.pop();
@@ -76,7 +105,7 @@ fundamental_type : decl
 	            ;
 
 decl : TYPE ID  
-                { check_existance(Stack_Table.top() , $1 , $2 , "func");
+                { check_existance_for_declaration(current , $1 , $2 , "func");
                   class SymTable* function_scope;
                   function_scope=new SymTable($2);
                   Stack_Table.push(function_scope);
@@ -88,14 +117,14 @@ decl : TYPE ID
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-     | TYPE ID ';'{check_existance(Stack_Table.top() , $1 , $2 , "var");}
+     | TYPE ID ';'{check_existance_for_declaration(current , $1 , $2 , "var");}
      ;
 
 arrays : arr
        | arrays arr
        ;
 
-arr : TYPE ID arr_list ';' {check_existance(Stack_Table.top() , $1 , $2 , "pointer");}
+arr : TYPE ID arr_list ';' {check_existance_for_declaration(current , $1 , $2 , "pointer");}
     ;
 
 arr_list : '[' NR ']' arr_list
@@ -107,20 +136,27 @@ list :  statement ';'
      | list statement ';'
      ;
 //Trebuie sa fac si PENTRU membrii de clase ,PLUUS sa fac si pentur apeluri de functie din clase; FUCK
-statement: ID ASSIGN e  	 
-         | ID '(' call_list ')' //Apel de functie
-         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool")
+statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );} e {cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)<<"   "<<$1<<"   "<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;}  	 
+         | ID {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+               if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                    {errorCount++; 
+                     yyerror("ID exists but is NOT a function");
+                    }
+              } 
+                '(' call_list ')' //Apel de functie
+         | ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);} TRUTH_VALUE {if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
                                     {
                                         errorCount++; 
                                         yyerror("Variable is not bool");
-                                    }
+                                    }   
                                  }
          | CTRL  condition_chain  CBEGIN 
                                  {
                                    SymTable* currentCTRL;     
                                    currentCTRL = new SymTable($1);
                                    Stack_Table.push(currentCTRL);
-                                   Vector_Tabele.push_back(currentCTRL);
+                                   current=currentCTRL;
+                                   Vector_Tabele.push_back(current);
                                  } 
                                         list CEND
                                         {
@@ -140,7 +176,7 @@ fundamental_type_interior : decl_interior
 	                     ;
 
 decl_interior       : TYPE ID  
-                        { check_existance(Stack_Table.top() , $1 , $2 , "func");
+                        { check_existance_for_declaration(current , $1 , $2 , "func");
                         class SymTable* function_scope;
                         function_scope=new SymTable($2);
                         Stack_Table.push(function_scope);
@@ -152,14 +188,14 @@ decl_interior       : TYPE ID
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
                                    }
-                    | TYPE ID {check_existance(Stack_Table.top() , $1 , $2 , "var");}
+                    | TYPE ID {check_existance_for_declaration(current , $1 , $2 , "var");}
                     ;
 
 arrays_interior : arr_interior
                 | arrays_interior arr_interior
                 ;
 
-arr_interior : TYPE ID arr_list {check_existance(Stack_Table.top() , $1 , $2 , "pointer");
+arr_interior : TYPE ID arr_list {check_existance_for_declaration(current , $1 , $2 , "pointer");
                            }
              ;
 
@@ -175,7 +211,7 @@ classes : class
         ;
                                         
 class :  Class_Type Class_ID ':' CBEGIN {
-                                        check_existance(current , $1 , $2 , "class");
+                                        check_existance_for_declaration(current , $1 , $2 , "class");
                                         class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
                                         class_scope=new SymTable($2);
                                         Stack_Table.push(class_scope);
@@ -193,7 +229,7 @@ list_param : param
            ;
 
             
-param : TYPE ID {check_existance(Stack_Table.top() , $1 , $2 ,"var");}
+param : TYPE ID {check_existance_for_declaration(current , $1 , $2 ,"var");}
       ; 
       
 
@@ -207,22 +243,15 @@ e : e '+' e   {}
   |'(' e ')'  {}
   | NR        {}
   | REAL      {}
-  | ID        {}
+  | ID        {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);}
   ;
 
         
 call_list : e
            | call_list ',' e
-           | statement_for_call_list
-           | call_list ',' statement_for_call_list
+           | ID '(' call_list ')' //Apel de functie
+           | call_list ',' ID '(' call_list ')' //Apel de functie
            ;
-statement_for_call_list: ID ASSIGN e	     	 
-         | ID '(' call_list ')' //Apel de functie
-         | ID ASSIGN TRUTH_VALUE {if (current->getValueType($1)!="bool"){
-                                        errorCount++; 
-                                        yyerror("Variable is not bool");
-                                    }
-                                 }
 %%
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;

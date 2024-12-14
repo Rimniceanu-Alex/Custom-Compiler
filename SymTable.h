@@ -44,7 +44,9 @@ class SymTable {
     void addVar(const char* type, const char* name, const char* id_type );
     void printVars();
     string getValueType(string s);
+    string getValue_IDType(string s);
     Value get_value(string s);
+    string get_dom_name();
     void set_value(string& name , Value* new_value);
     ~SymTable();
 };
