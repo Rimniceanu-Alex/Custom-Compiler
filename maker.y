@@ -1,5 +1,6 @@
 %{
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include <stack>
 #include "ASTNode.h"
@@ -29,15 +30,27 @@ int errorCount = 0;
                     iterator=Copy_table.top();
                     Copy_table.pop();
                     if(iterator->existsId(b)){
-                         errorCount++; 
-                         yyerror("Variable already defined");
+                         errorCount++;
+                         char*buff=new char[256];
+                         strcpy(buff ,"Variable ");
+                         strcat(buff , b);
+                         strcat(buff ," already defined"); 
+                         yyerror(buff);
+                         delete [] buff;
+                         buff=nullptr;
                          break;
                     }
                }
                     currento->addVar(a,b, c);
                } else {
                     errorCount++; 
-                    yyerror("Variable already defined");
+                    char*buff=new char[256];
+                    strcpy(buff ,"Variable ");
+                    strcat(buff , b);
+                    strcat(buff ," already defined"); 
+                    yyerror(buff);
+                    delete [] buff;
+                    buff=nullptr;
                     }
      }
 
@@ -60,7 +73,13 @@ int errorCount = 0;
                }
                if(found==0){
                errorCount++; 
-               yyerror("Variable noot defined in scope");
+               char*buff=new char[256];
+               strcpy(buff ,"Variable ");
+               strcat(buff , b);
+               strcat(buff ," already defined"); 
+               yyerror(buff);
+               delete [] buff;
+               buff=nullptr;
                return nullptr;
                }
           } 
@@ -136,33 +155,79 @@ list :  statement ';'
      | list statement ';'
      ;
 //Trebuie sa fac si PENTRU membrii de clase ,PLUUS sa fac si pentur apeluri de functie din clase; FUCK
-statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );} e {cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)<<"   "<<$1<<"   "<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;}  	 
-         | ID {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
-               if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
-                    {errorCount++; 
-                     yyerror("ID exists but is NOT a function");
+statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+                      if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                         {
+                              if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
+                              {
+                                   {errorCount++; 
+                                    char*buff=new char[256];
+                                    strcpy(buff ,"Cannot assing arithmetic expression to ");
+                                    strcat(buff , $1);
+                                    strcat(buff ," which is a bool"); 
+                                    yyerror(buff);
+                                    delete [] buff;
+                                    buff=nullptr;
+                                   }
+                              }
+                         }
+                     } 
+                         e {
+                              if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                   {
+                                        cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
+                                        <<"   "<<$1<<"   "
+                                        <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                                   }
+                           }  	 
+         | ID {
+               domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                    {
+                    if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                         {errorCount++; 
+                         char*buff=new char[256];
+                         strcpy(buff ,"ID ");
+                         strcat(buff , $1);
+                         strcat(buff ," exists but is NOT a funciton"); 
+                         yyerror(buff);
+                         delete [] buff;
+                         buff=nullptr;
+                         }
                     }
               } 
                 '(' call_list ')' //Apel de functie
-         | ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);} TRUTH_VALUE {if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
-                                    {
-                                        errorCount++; 
-                                        yyerror("Variable is not bool");
-                                    }   
-                                 }
-         | CTRL  condition_chain  CBEGIN 
-                                 {
-                                   SymTable* currentCTRL;     
-                                   currentCTRL = new SymTable($1);
-                                   Stack_Table.push(currentCTRL);
-                                   current=currentCTRL;
-                                   Vector_Tabele.push_back(current);
-                                 } 
-                                        list CEND
-                                        {
-                                             Stack_Table.pop();
-                                             current=Stack_Table.top();
+         | ID ASSIGN {
+                         domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);
+                     } 
+                         TRUTH_VALUE {
+                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                                             if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                                                  {
+                                                       errorCount++; 
+                                                       char*buff=new char[256];
+                                                       strcpy(buff ,"Variable ");
+                                                       strcat(buff , $1);
+                                                       strcat(buff ," is not a bool"); 
+                                                       yyerror(buff);
+                                                       delete [] buff;
+                                                       buff=nullptr;
+                                                  }   
                                         }
+                                     }
+         | CTRL  condition_chain  CBEGIN 
+                                        {
+                                             SymTable* currentCTRL;     
+                                             currentCTRL = new SymTable($1);
+                                             Stack_Table.push(currentCTRL);
+                                             current=currentCTRL;
+                                             Vector_Tabele.push_back(current);
+                                        } 
+                                             list CEND
+                                                       {
+                                                            Stack_Table.pop();
+                                                            current=Stack_Table.top();
+                                                       }
          | declarations_interior //trebuiau puse ;; daca nu clonam declarations
          ;
          
@@ -212,7 +277,7 @@ classes : class
                                         
 class :  Class_Type Class_ID ':' CBEGIN {
                                         check_existance_for_declaration(current , $1 , $2 , "class");
-                                        class SymTable* class_scope;//TTrebuie sa vad cum propag pointeru tabelului in DECL
+                                        class SymTable* class_scope;
                                         class_scope=new SymTable($2);
                                         Stack_Table.push(class_scope);
                                         current=class_scope;
@@ -232,8 +297,74 @@ list_param : param
 param : TYPE ID {check_existance_for_declaration(current , $1 , $2 ,"var");}
       ; 
       
+call_list : e
+           | call_list ',' e
+           | statement_for_call_list
+           | call_list ',' statement_for_call_list
+           ;
 
-     
+statement_for_call_list: ID ASSIGN      {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                             {
+                                                  if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
+                                                  {
+                                                       {errorCount++; 
+                                                       char*buff=new char[256];
+                                                       strcpy(buff ,"Cannot assing arithmetic expression to ");
+                                                       strcat(buff , $1);
+                                                       strcat(buff ," which is a bool"); 
+                                                       yyerror(buff);
+                                                       delete [] buff;
+                                                       buff=nullptr;
+                                                       }
+                                                  }
+                                             }
+                                        } 
+                                             e {
+                                                  if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                                       {
+                                                            cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
+                                                            <<"   "<<$1<<"   "
+                                                            <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                                                       }
+                                             }  	 
+                         | ID {
+                                   domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+                                   if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                   {
+                                        if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                                             {errorCount++; 
+                                             char*buff=new char[256];
+                                             strcpy(buff ,"ID ");
+                                             strcat(buff , $1);
+                                             strcat(buff ," exists but is NOT a funciton"); 
+                                             yyerror(buff);
+                                             delete [] buff;
+                                             buff=nullptr;
+                                             }
+                                   }
+                              } 
+                                   '(' call_list ')' //Apel de functie
+                         | ID ASSIGN {
+                                             domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);
+                                        } 
+                                             TRUTH_VALUE {
+                                                            if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                                            {
+                                                                 if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                                                                      {
+                                                                           errorCount++; 
+                                                                           char*buff=new char[256];
+                                                                           strcpy(buff ,"Variable ");
+                                                                           strcat(buff , $1);
+                                                                           strcat(buff ," is not a bool"); 
+                                                                           yyerror(buff);
+                                                                           delete [] buff;
+                                                                           buff=nullptr;
+                                                                      }   
+                                                            }
+                                                       }
+                         ;
 
 
 e : e '+' e   {}
@@ -247,11 +378,6 @@ e : e '+' e   {}
   ;
 
         
-call_list : e
-           | call_list ',' e
-           | ID '(' call_list ')' //Apel de functie
-           | call_list ',' ID '(' call_list ')' //Apel de functie
-           ;
 %%
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;
@@ -263,7 +389,6 @@ int main(int argc, char** argv){
      Stack_Table.push(current);
      Vector_Tabele.push_back(current);
      yyparse();
-     Stack_Table.push(current);
      cout << "Variables:" <<endl;
      for (auto i : Vector_Tabele){
           i->printVars();
