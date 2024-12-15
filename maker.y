@@ -116,8 +116,8 @@ int errorCount = 0;
      }
      %}
 
-%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT CMP
-%token<string> ID TYPE Class_ID Class_Type CTRL
+%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT PRINT TYPE_FUNCTION
+%token<string> ID TYPE Class_ID Class_Type CTRL CMP
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -254,6 +254,8 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
                                                             current=Stack_Table.top();
                                                        }
          | declarations_interior //trebuiau puse ;; daca nu clonam declarations
+         | PRINT '(' e ')' //Nu stiu cum s-o fac sa afisze
+         | TYPE_FUNCTION  '(' e ')'
          ;
          
 declarations_interior: fundamental_type_interior

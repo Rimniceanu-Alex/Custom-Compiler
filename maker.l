@@ -14,6 +14,8 @@
 "=="|"!="|">"|"<"|"<="|">=" {yylval.string=strdup(yytext); return CMP;}
 "\{" {return CBEGIN;}
 "\}" {return CEND;}
+"Print" {yylval.string=strdup(yytext); return PRINT; }
+"TypeOf" {yylval.string=strdup(yytext); return TYPE_FUNCTION; }
 [A-Z][a-z]* {yylval.string = strdup(yytext); return Class_ID;}
 [a-z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 "<-" {return ASSIGN;}

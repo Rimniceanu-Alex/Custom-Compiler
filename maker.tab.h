@@ -63,12 +63,14 @@ extern int yydebug;
     CEND = 264,                    /* CEND  */
     REAL = 265,                    /* REAL  */
     CONNECT = 266,                 /* CONNECT  */
-    CMP = 267,                     /* CMP  */
-    ID = 268,                      /* ID  */
-    TYPE = 269,                    /* TYPE  */
-    Class_ID = 270,                /* Class_ID  */
-    Class_Type = 271,              /* Class_Type  */
-    CTRL = 272                     /* CTRL  */
+    PRINT = 267,                   /* PRINT  */
+    TYPE_FUNCTION = 268,           /* TYPE_FUNCTION  */
+    ID = 269,                      /* ID  */
+    TYPE = 270,                    /* TYPE  */
+    Class_ID = 271,                /* Class_ID  */
+    Class_Type = 272,              /* Class_Type  */
+    CTRL = 273,                    /* CTRL  */
+    CMP = 274                      /* CMP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -81,7 +83,7 @@ union YYSTYPE
 
      char* string;
 
-#line 85 "maker.tab.h"
+#line 87 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
