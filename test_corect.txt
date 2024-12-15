@@ -4,7 +4,6 @@ int nr3;
 int f(int ab ,int ac);
 int x(int c , int d , int p);
 bool maybe;
-int barba;
 int arr [10][20][200];
 string arrat[20][30];
 class Mee:{
@@ -27,14 +26,12 @@ nr1 <- 10.20;
 nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;
-maybe <- 20;
-nr3 <- TRUE;
-nr1(2+3);
 f(2+3 , 3 +4);
-f( nr1<-203 , nr10(100 , x+3) , x(nr1, nr2 , x(nr3 , nr1 , nr2)));
-x(maybe <- 20 , nr2(100 , 2) , nr2<-FALSE);
+f( nr1<-203 , f(100 , x+3) , x(nr1, nr2 , x(nr3 , nr1 , nr2)));
+x(nr3 <- 20 , f(100 , 2));
 nr3 <-39;
 nr3 <-20;
+int arr1 [10][20][200];
 nr3 <-200;
 nr2 <-20;
 if(20<3){
@@ -42,7 +39,9 @@ if(20<3){
     while(30<20){
         int nr8;
         nr8 <-2999;
+        Hum newboy;
     };
+    Hum newboy;
 };
 float nr8 ;
 nr2 <- 20;

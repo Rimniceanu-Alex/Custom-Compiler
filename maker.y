@@ -76,7 +76,7 @@ int errorCount = 0;
                char*buff=new char[256];
                strcpy(buff ,"Variable ");
                strcat(buff , b);
-               strcat(buff ," already defined"); 
+               strcat(buff ," doesnt exist"); 
                yyerror(buff);
                delete [] buff;
                buff=nullptr;
@@ -89,6 +89,31 @@ int errorCount = 0;
           return nullptr;
      }
      //Functie care verifica daca acea variabila (ID) a fost declarat deja si da eroare daca NU;
+
+     void check_existance_for_class_instance(SymTable* currento, const char* a ,const char* b)
+     {
+          SymTable* global_domain;
+          global_domain=Vector_Tabele[0];
+          //std::cout<<"VERIFICARE GLOBAL DOMAIN IN CHECK_EXIStANCE USER"<<endl;
+          if(global_domain->existsId(a)){
+               //std::cout<<"Exista clasa "<<a<<endl;
+               // SymTable* not_used;
+               // std::cout<<currento->get_dom_name();
+               // not_used=check_existance_for_use(currento, b);
+               check_existance_for_declaration(currento , a, b , "class_instance");
+               //currento->addVar(a ,b, "class_instance");
+               return;
+          }
+          else{
+               errorCount++;
+               char*buff=new char[256];
+               strcpy(buff ,"Nu exista clasa ");
+               strcat(buff , a);
+               yyerror(buff);
+               delete [] buff;
+               buff=nullptr;
+          }
+     }
      %}
 
 %token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT CMP
@@ -97,7 +122,7 @@ int errorCount = 0;
 %left '+' '-' 
 %left '*' '/'
 %%
-progr :  declarations classes main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
+progr :  declarations classes class_initialize_initial main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
       |  declarations main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
       ;
 
@@ -175,9 +200,9 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
                          e {
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                                    {
-                                        cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
-                                        <<"   "<<$1<<"   "
-                                        <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                                        // cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
+                                        // <<"   "<<$1<<"   "
+                                        // <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
                                    }
                            }  	 
          | ID {
@@ -231,10 +256,10 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
          | declarations_interior //trebuiau puse ;; daca nu clonam declarations
          ;
          
-declarations_interior: fundamental_type_interior arrays_interior
-                     | fundamental_type_interior
+declarations_interior: fundamental_type_interior
                      | arrays_interior
-                     ;
+                     | class_initialize_interior
+                     ;          
 
 fundamental_type_interior : decl_interior         
 	                     |  fundamental_type_interior decl_interior   
@@ -289,6 +314,30 @@ class :  Class_Type Class_ID ':' CBEGIN {
                                                     }
       ;
 
+class_initialize_initial: class_initialize
+                        | /*epsilon*/
+                        ;
+
+
+class_initialize: class_instance
+                | class_initialize class_instance
+                ;
+
+class_initialize_interior: class_instance_interior
+                | class_initialize_interior class_instance_interior
+                ;
+
+class_instance : Class_ID ID {
+                                        check_existance_for_class_instance(current , $1 , $2);
+
+                                     }';'
+               ;
+class_instance_interior : Class_ID ID {
+                                        check_existance_for_class_instance(current , $1 , $2);
+
+                                     }
+               ;
+
 list_param : param 
            | list_param ','  param 
            ;
@@ -321,12 +370,12 @@ statement_for_call_list: ID ASSIGN      {domeniul_caruia_ii_apartine_varabila=ch
                                              }
                                         } 
                                              e {
-                                                  if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                                                       {
-                                                            cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
-                                                            <<"   "<<$1<<"   "
-                                                            <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                                                       }
+                                                  // if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                                  //      {
+                                                  //           cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
+                                                  //           <<"   "<<$1<<"   "
+                                                  //           <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                                                  //      }
                                              }  	 
                          | ID {
                                    domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
