@@ -28,7 +28,7 @@ class IdInfo {
     string type; //int float char bool
     string name; //Numele variabilei
     Value value; //Valoare pe care o va avea Variabila
-    ParamList params; //for functions
+    std::vector<char*> params; //for functions
     IdInfo() {}
     IdInfo(const char* type, const char* name, const char* idType) : type(type),name(name),idType(idType) {}
 };
@@ -47,6 +47,7 @@ class SymTable {
     string getValue_IDType(string s);
     Value get_value(string s);
     string get_dom_name();
+    std::vector<char*> get_params(string s);//TO DO continua sa faci parametrii
     void set_value(string& name , Value* new_value);
     ~SymTable();
 };

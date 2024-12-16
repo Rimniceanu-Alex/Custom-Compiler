@@ -117,7 +117,7 @@ int errorCount = 0;
      %}
 
 %token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT PRINT TYPE_FUNCTION
-%token<string> ID TYPE Class_ID Class_Type CTRL CMP
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -168,7 +168,7 @@ arrays : arr
        | arrays arr
        ;
 
-arr : TYPE ID arr_list ';' {check_existance_for_declaration(current , $1 , $2 , "pointer");}
+arr : TYPE ID arr_list ';' {check_existance_for_declaration(current , $1 , $2 , "array");}
     ;
 
 arr_list : '[' NR ']' arr_list
@@ -179,6 +179,8 @@ arr_list : '[' NR ']' arr_list
 list :  statement ';' 
      | list statement ';'
      ;
+list_for_else : list 
+              | /*epsilon*/
 //Trebuie sa fac si PENTRU membrii de clase ,PLUUS sa fac si pentur apeluri de functie din clase; FUCK
 statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
                       if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -209,16 +211,17 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
                domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                     {
-                    if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
-                         {errorCount++; 
-                         char*buff=new char[256];
-                         strcpy(buff ,"ID ");
-                         strcat(buff , $1);
-                         strcat(buff ," exists but is NOT a funciton"); 
-                         yyerror(buff);
-                         delete [] buff;
-                         buff=nullptr;
-                         }
+                      if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                           {
+                             errorCount++; 
+                             char*buff=new char[256];
+                             strcpy(buff ,"ID ");
+                             strcat(buff , $1);
+                             strcat(buff ," exists but is NOT a funciton"); 
+                             yyerror(buff);
+                             delete [] buff;
+                             buff=nullptr;
+                           }
                     }
               } 
                 '(' call_list ')' //Apel de functie
@@ -240,24 +243,100 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
                                                   }   
                                         }
                                      }
-         | CTRL  condition_chain  CBEGIN 
-                                        {
-                                             SymTable* currentCTRL;     
-                                             currentCTRL = new SymTable($1);
-                                             Stack_Table.push(currentCTRL);
-                                             current=currentCTRL;
-                                             Vector_Tabele.push_back(current);
-                                        } 
+         | WHILE '(' condition_chain ')' CBEGIN 
+                                   {
+                                     SymTable* currentCTRL;     
+                                     currentCTRL = new SymTable($1);
+                                     Stack_Table.push(currentCTRL);
+                                     current=currentCTRL;
+                                     Vector_Tabele.push_back(current);
+                                   } 
                                              list CEND
                                                        {
                                                             Stack_Table.pop();
                                                             current=Stack_Table.top();
                                                        }
+         | IF '(' condition_chain ')' CBEGIN 
+                                        {
+                                          SymTable* currentCTRL;     
+                                          currentCTRL = new SymTable($1);
+                                          Stack_Table.push(currentCTRL);
+                                          current=currentCTRL;
+                                          Vector_Tabele.push_back(current);
+                                        } 
+                                             list CEND
+                                                       {
+                                                         Stack_Table.pop();
+                                                         current=Stack_Table.top();
+                                                       }
+                                             ELSE CBEGIN
+                                        {
+                                          SymTable* currentCTRL;     
+                                          currentCTRL = new SymTable($1);
+                                          Stack_Table.push(currentCTRL);
+                                          current=currentCTRL;
+                                          Vector_Tabele.push_back(current);
+                                        }
+                                                        list_for_else CEND
+                                        {
+                                          Stack_Table.pop();
+                                          current=Stack_Table.top();
+                                        }
+         | FOR '(' ID ASSIGN 
+               {
+                 domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $3 );
+                 if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                    {
+                      if (domeniul_caruia_ii_apartine_varabila->getValueType($3)=="bool")
+                         {
+                           errorCount++; 
+                           char*buff=new char[256];
+                           strcpy(buff ,"Cannot assing arithmetic expression to ");
+                           strcat(buff , $3);
+                           strcat(buff ," which is a bool"); 
+                           yyerror(buff);
+                           delete [] buff;
+                           buff=nullptr;     
+                         }
+                    }
+               } 
+                                   e ';' e CMP e ';' ID 
+               {
+                 if(strcmp($3 , $12)!=0)
+                    {
+                      errorCount++;
+                      char*buff=new char[256];
+                      strcpy(buff ,"The variable you're trying to inc/dec ");
+                      strcat(buff , $12);
+                      strcat(buff ," is different from the one you assigned "); 
+                      strcat(buff , $3);
+                      yyerror(buff);
+                      delete [] buff;
+                      buff=nullptr;
+                    }
+               }
+                                                            inc_dec ';' ')' CBEGIN 
+               {
+                 SymTable* currentCTRL;     
+                 currentCTRL = new SymTable($1);
+                 Stack_Table.push(currentCTRL);
+                 current=currentCTRL;
+                 Vector_Tabele.push_back(current);
+               } 
+                                                                                    list CEND
+               {
+                 Stack_Table.pop();
+                 current=Stack_Table.top();
+               }
          | declarations_interior //trebuiau puse ;; daca nu clonam declarations
          | PRINT '(' e ')' //Nu stiu cum s-o fac sa afisze
          | TYPE_FUNCTION  '(' e ')'
          ;
-         
+
+inc_dec: INC
+       | DEC
+       ;
+
 declarations_interior: fundamental_type_interior
                      | arrays_interior
                      | class_initialize_interior
@@ -268,18 +347,19 @@ fundamental_type_interior : decl_interior
 	                     ;
 
 decl_interior       : TYPE ID  
-                        { check_existance_for_declaration(current , $1 , $2 , "func");
-                        class SymTable* function_scope;
-                        function_scope=new SymTable($2);
-                        Stack_Table.push(function_scope);
-                        current=function_scope;
-                        Vector_Tabele.push_back(current);
+                        { 
+                           check_existance_for_declaration(current , $1 , $2 , "func");
+                           class SymTable* function_scope;
+                           function_scope=new SymTable($2);
+                           Stack_Table.push(function_scope);
+                           current=function_scope;
+                           Vector_Tabele.push_back(current);
                         } 
                               '(' list_param ')' 
-                                   {
-                                    Stack_Table.pop();
-                                    current=Stack_Table.top();
-                                   }
+                        {
+                           Stack_Table.pop();
+                           current=Stack_Table.top();
+                        }
                     | TYPE ID {check_existance_for_declaration(current , $1 , $2 , "var");}
                     ;
 
@@ -287,33 +367,35 @@ arrays_interior : arr_interior
                 | arrays_interior arr_interior
                 ;
 
-arr_interior : TYPE ID arr_list {check_existance_for_declaration(current , $1 , $2 , "pointer");
-                           }
+arr_interior : TYPE ID arr_list {check_existance_for_declaration(current , $1 , $2 , "array");}
              ;
 
-condition_chain: '(' condition ')'
-               | '(' condition_chain CONNECT condition ')'
+condition_chain:  condition 
+               |  condition_chain CONNECT condition 
+               |  e CMP e
                ;
 
-condition: e CMP e
+condition: '(' e CMP e ')'
          ;
 
 classes : class
         | classes class
         ;
                                         
-class :  Class_Type Class_ID ':' CBEGIN {
-                                        check_existance_for_declaration(current , $1 , $2 , "class");
-                                        class SymTable* class_scope;
-                                        class_scope=new SymTable($2);
-                                        Stack_Table.push(class_scope);
-                                        current=class_scope;
-                                        Vector_Tabele.push_back(current);
-                                        }
-                              declarations CEND ';' {
-                                                            Stack_Table.pop();
-                                                       current=Stack_Table.top();
-                                                    }
+class :  Class_Type Class_ID ':' CBEGIN 
+          {
+            check_existance_for_declaration(current , $1 , $2 , "class");
+            class SymTable* class_scope;
+            class_scope=new SymTable($2);
+            Stack_Table.push(class_scope);
+            current=class_scope;
+            Vector_Tabele.push_back(current);
+          }
+                                        declarations CEND ';' 
+          {
+            Stack_Table.pop();
+            current=Stack_Table.top();
+          }
       ;
 
 class_initialize_initial: class_initialize
@@ -329,16 +411,10 @@ class_initialize_interior: class_instance_interior
                 | class_initialize_interior class_instance_interior
                 ;
 
-class_instance : Class_ID ID {
-                                        check_existance_for_class_instance(current , $1 , $2);
-
-                                     }';'
+class_instance : Class_ID ID {check_existance_for_class_instance(current , $1 , $2);} ';'
                ;
-class_instance_interior : Class_ID ID {
-                                        check_existance_for_class_instance(current , $1 , $2);
-
-                                     }
-               ;
+class_instance_interior : Class_ID ID {check_existance_for_class_instance(current , $1 , $2);}
+                        ;
 
 list_param : param 
            | list_param ','  param 
@@ -349,72 +425,67 @@ param : TYPE ID {check_existance_for_declaration(current , $1 , $2 ,"var");}
       ; 
       
 call_list : e
-           | call_list ',' e
-           | statement_for_call_list
-           | call_list ',' statement_for_call_list
-           ;
+          | call_list ',' e
+          | statement_for_call_list
+          | call_list ',' statement_for_call_list
+          ;
 
-statement_for_call_list: ID ASSIGN      {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
-                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+statement_for_call_list: ID ASSIGN      
+                         {
+                              domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+                              if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                   {
+                                        if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
                                              {
-                                                  if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
-                                                  {
-                                                       {errorCount++; 
-                                                       char*buff=new char[256];
-                                                       strcpy(buff ,"Cannot assing arithmetic expression to ");
-                                                       strcat(buff , $1);
-                                                       strcat(buff ," which is a bool"); 
-                                                       yyerror(buff);
-                                                       delete [] buff;
-                                                       buff=nullptr;
-                                                       }
+                                                  {errorCount++; 
+                                                  char*buff=new char[256];
+                                                  strcpy(buff ,"Cannot assing arithmetic expression to ");
+                                                  strcat(buff , $1);
+                                                  strcat(buff ," which is a bool"); 
+                                                  yyerror(buff);
+                                                  delete [] buff;
+                                                  buff=nullptr;
                                                   }
                                              }
-                                        } 
-                                             e {
-                                                  // if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                                                  //      {
-                                                  //           cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
-                                                  //           <<"   "<<$1<<"   "
-                                                  //           <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                                                  //      }
-                                             }  	 
+                                   }
+                         } 
+                                        e 	 
                          | ID {
                                    domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
                                    if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                                   {
-                                        if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
-                                             {errorCount++; 
-                                             char*buff=new char[256];
-                                             strcpy(buff ,"ID ");
-                                             strcat(buff , $1);
-                                             strcat(buff ," exists but is NOT a funciton"); 
-                                             yyerror(buff);
-                                             delete [] buff;
-                                             buff=nullptr;
-                                             }
-                                   }
+                                        {
+                                             if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                                                  {
+                                                       errorCount++; 
+                                                       char*buff=new char[256];
+                                                       strcpy(buff ,"ID ");
+                                                       strcat(buff , $1);
+                                                       strcat(buff ," exists but is NOT a funciton"); 
+                                                       yyerror(buff);
+                                                       delete [] buff;
+                                                       buff=nullptr;
+                                                  }
+                                        }
                               } 
-                                   '(' call_list ')' //Apel de functie
-                         | ID ASSIGN {
-                                             domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);
-                                        } 
-                                             TRUTH_VALUE {
-                                                            if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                                                            {
-                                                                 if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
-                                                                      {
-                                                                           errorCount++; 
-                                                                           char*buff=new char[256];
-                                                                           strcpy(buff ,"Variable ");
-                                                                           strcat(buff , $1);
-                                                                           strcat(buff ," is not a bool"); 
-                                                                           yyerror(buff);
-                                                                           delete [] buff;
-                                                                           buff=nullptr;
-                                                                      }   
-                                                            }
+                              '(' call_list ')' //Apel de functie
+                         | ID ASSIGN 
+                                   {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1);} 
+                                        TRUTH_VALUE {
+                                                       if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                                                       {
+                                                            if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                                                                 {
+                                                                      errorCount++; 
+                                                                      char*buff=new char[256];
+                                                                      strcpy(buff ,"Variable ");
+                                                                      strcat(buff , $1);
+                                                                      strcat(buff ," is not a bool"); 
+                                                                      yyerror(buff);
+                                                                      delete [] buff;
+                                                                      buff=nullptr;
+                                                                 }   
                                                        }
+                                                  }
                          ;
 
 

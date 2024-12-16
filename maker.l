@@ -9,9 +9,14 @@
 "aloo_buna_dimineata" {return BGIN;}
 "aloo_buna_seara" {return END;}
 "TRUE"|"FALSE" {yylval.string=strdup(yytext); return TRUTH_VALUE;}
-"if"|"while"|"for"|"else" {yylval.string=strdup(yytext); return CTRL;}
+"if" {yylval.string=strdup(yytext); return IF;}
+"else" {yylval.string=strdup(yytext); return ELSE;}
+"while" {yylval.string=strdup(yytext); return WHILE;}
+"for" {yylval.string=strdup(yytext); return FOR;}
 "&&"|"||" {yylval.string=strdup(yytext); return CONNECT;}
 "=="|"!="|">"|"<"|"<="|">=" {yylval.string=strdup(yytext); return CMP;}
+"++" {yylval.string=strdup(yytext); return INC;}
+"--" {yylval.string=strdup(yytext); return DEC;}
 "\{" {return CBEGIN;}
 "\}" {return CEND;}
 "Print" {yylval.string=strdup(yytext); return PRINT; }

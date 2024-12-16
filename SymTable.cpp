@@ -32,6 +32,10 @@ std::string SymTable::get_dom_name(){
     return this->name;
 }
 
+std::vector<char*> SymTable::get_params(std::string s){
+    return this->ids[s].params;
+}
+
 void SymTable::set_value(std::string &name, Value *new_value){
     this->ids[name].value=*new_value;
 }

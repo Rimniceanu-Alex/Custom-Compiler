@@ -69,8 +69,13 @@ extern int yydebug;
     TYPE = 270,                    /* TYPE  */
     Class_ID = 271,                /* Class_ID  */
     Class_Type = 272,              /* Class_Type  */
-    CTRL = 273,                    /* CTRL  */
-    CMP = 274                      /* CMP  */
+    IF = 273,                      /* IF  */
+    ELSE = 274,                    /* ELSE  */
+    WHILE = 275,                   /* WHILE  */
+    FOR = 276,                     /* FOR  */
+    CMP = 277,                     /* CMP  */
+    INC = 278,                     /* INC  */
+    DEC = 279                      /* DEC  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -83,7 +88,7 @@ union YYSTYPE
 
      char* string;
 
-#line 87 "maker.tab.h"
+#line 92 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
