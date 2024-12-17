@@ -1,25 +1,35 @@
 int nr2;
 int nr1;
 int nr3;
-int f(int ab ,int ac);
-int x(int c , int d , int p);
+int f(int ab ,int ac){
+    ab<-2;
+};
+int x(int c , int d , int p){
+    c<-2;
+};
 bool maybe;
 int barba;
 int arr [10][20][200];
 string arrat[20][30];
 class Mee:{
     int z;
-    int foo(int aoo , float boo);
+    int foo(int aoo , float boo){
+        aoo <-2;
+    };
     int array[100];
     };
 class Hum:{
     int nr6;
-    int foo(int aoo , int boo);
-    int g(int a00 , int boo);
+    int foo(int aoo , int boo){
+        aoo <-4;
+    };
+    int g(int a00 , int boo){
+        boo <- 123;
+    };
     int array[100];
     };    
 Hum barba;
-aloo_buna_dimineata
+begin
 nr2 <- 10;
 int nr6;
 float pasta;
@@ -54,4 +64,4 @@ else{
 };
 float nr8 ;
 nr2 <- 20;
-aloo_buna_seara
+end

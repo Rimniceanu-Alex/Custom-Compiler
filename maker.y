@@ -156,7 +156,7 @@ decl : TYPE ID
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
-               '(' list_param ')' ';'
+               '(' list_param ')' CBEGIN list CEND ';' 
                                    {
                                     Stack_Table.pop();
                                     current=Stack_Table.top();
@@ -175,13 +175,13 @@ arr_list : '[' NR ']' arr_list
          | '[' NR ']'
          ;
 
-//Listul e ffolosie in MAIN si in Control functions
+//Listul e folosit in MAIN si in Control functions
 list :  statement ';' 
      | list statement ';'
      ;
 list_for_else : list 
               | /*epsilon*/
-//Trebuie sa fac si PENTRU membrii de clase ,PLUUS sa fac si pentur apeluri de functie din clase; FUCK
+              ;
 statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
                       if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                          {
@@ -199,14 +199,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=check_existance_for_u
                               }
                          }
                      } 
-                         e {
-                              if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                                   {
-                                        // cout<<domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)
-                                        // <<"   "<<$1<<"   "
-                                        // <<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                                   }
-                           }  	 
+                         e 	 
          | ID {
                domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -373,6 +366,24 @@ arr_interior : TYPE ID arr_list {check_existance_for_declaration(current , $1 , 
 condition_chain:  condition 
                |  condition_chain CONNECT condition 
                |  e CMP e
+               |  ID {
+                         domeniul_caruia_ii_apartine_varabila=check_existance_for_use(current , $1 );
+                         if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                         {
+                              if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                              {
+                                   errorCount++; 
+                                   char*buff=new char[256];
+                                   strcpy(buff ,"Cannot use ");
+                                   strcat(buff , $1);
+                                   strcat(buff ," as a condition for the control statement because it's not a bool"); 
+                                   yyerror(buff);
+                                   delete [] buff;
+                                   buff=nullptr;     
+                              }
+                         }
+                    }
+               | TRUTH_VALUE
                ;
 
 condition: '(' e CMP e ')'

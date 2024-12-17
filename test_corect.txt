@@ -1,24 +1,40 @@
 int nr2;
 int nr1;
 int nr3;
-int f(int ab ,int ac);
-int x(int c , int d , int p);
+int f(int ab ,int ac){
+    int n4;
+};
+int x(int c , int d , int p){
+    int nt;
+};
 bool maybe;
 int arr [10][20][200];
 string arrat[20][30];
 class Mee:{
     int z;
-    int foo(int aoo , float boo);
+    int foo(int aoo , float boo){
+        int awd;
+    };
     int array[100];
     };
 class Hum:{
     int nr6;
-    int foo(int aoo , int boo);
-    int g(int a00 , int boo);
+    int foo(int aoo , int boo){
+        float asdasdas;
+    };
+    int g(int a00 , int boo){
+        char asdsada;
+        if(asdsada == 56){
+            asdsada <- asdsada+1;
+        } 
+        else {
+            asdsada <- asdsada-1;
+        };
+    };
     int array[100];
     };    
 Hum barba;
-aloo_buna_dimineata
+begin
 nr2 <- 10;
 int nr6;
 float pasta;
@@ -50,6 +66,12 @@ if((20<3)&&(30>9)){
         nr2<-20+nr3;
     };
 };
+if(maybe){
+    int nr9;
+}
+else{
+    nr2<-20;
+};
 float nr8 ;
 nr2 <- 20;
-aloo_buna_seara
+end

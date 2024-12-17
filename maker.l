@@ -6,8 +6,8 @@
 %%
 "int"|"float"|"char"|"string"|"bool" {yylval.string = strdup(yytext);return TYPE;}
 "class" {yylval.string = strdup(yytext);return Class_Type;}
-"aloo_buna_dimineata" {return BGIN;}
-"aloo_buna_seara" {return END;}
+"begin" {return BGIN;}
+"end" {return END;}
 "TRUE"|"FALSE" {yylval.string=strdup(yytext); return TRUTH_VALUE;}
 "if" {yylval.string=strdup(yytext); return IF;}
 "else" {yylval.string=strdup(yytext); return ELSE;}
