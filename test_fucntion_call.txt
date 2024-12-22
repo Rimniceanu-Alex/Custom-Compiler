@@ -1,10 +1,13 @@
-aloo_buna_dimineata
 int a;
+begin
 int d;
 if(a+3>d-5){
     int c;
     int b;
     c <- 20;
+}
+else{
+
 };
 int c;
 c <- 29;
@@ -13,6 +16,9 @@ d <- 40;
 if (a>d){
     int tu;
     a<-20;
+}
+else{
+    
 };
 
 while (a>d){
@@ -21,4 +27,4 @@ while (a>d){
 
 int aop;
 aop <- 10;
-aloo_buna_seara 
+end 

@@ -1,24 +1,13 @@
-int nr2;
-int nr1;
-int nr3;
-int f(int ab ,int ac){
-    int n4;
-};
-int x(int c , int d , int p){
-    int nt;
-};
-bool maybe;
-int arr [10][20][200];
-string arrat[20][30];
 class Mee:{
     int z;
+    int array[100];
     int foo(int aoo , float boo){
         int awd;
     };
-    int array[100];
-    };
+};
 class Hum:{
     int nr6;
+    int array[100];
     int foo(int aoo , int boo){
         float asdasdas;
     };
@@ -31,8 +20,19 @@ class Hum:{
             asdsada <- asdsada-1;
         };
     };
-    int array[100];
-    };    
+};    
+int nr2;
+int nr1;
+int nr3;
+bool maybe;
+int arr [10][20][200];
+string arrat[20][30];
+int f(int ab ,int ac){
+    int n4;
+};
+int x(int c , int d , int p){
+    int nt;
+};
 Hum barba;
 begin
 nr2 <- 10;
@@ -42,7 +42,7 @@ nr1 <- 10.20;
 nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;
-f(2+3 , 3 +4);
+f(2+3 , 3 +nr1, f(nr1));
 f( nr1<-203 , f(100 , x+3) , x(nr1, nr2 , x(nr3 , nr1 , nr2)));
 x(nr3 <- 20 , f(100 , 2));
 nr3 <-39;
@@ -52,13 +52,21 @@ nr3 <-200;
 nr2 <-20;
 Print(20+3);
 TypeOf(30+2);
-if((20<3)&&(30>9)){
+if((nr2<nr3+2319)||(20<3)&&(30>9)){
     int nr9;
     while(nr2+30-30*123/29<20+123-49*123){
         int nr8;
-        nr8 <-2999;
+        int nr129;
+        nr9 <-2999;
         Hum newboy;
     };
+    while(nr2+30-30*123/29<20+123-49*123){
+        int nr8;
+        int nr129;
+        nr9 <-2999;
+        Hum newboy;
+    };
+    int nr129; 
     Hum newboy;
 } else {
     int nr9;
@@ -66,7 +74,7 @@ if((20<3)&&(30>9)){
         nr2<-20+nr3;
     };
 };
-if(maybe){
+if(nr3==12){
     int nr9;
 }
 else{

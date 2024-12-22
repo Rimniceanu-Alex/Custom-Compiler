@@ -4,3 +4,4 @@
         int x;
         };
 2)CUM implementam AST-u? e+e (neterminali) am nevoie de terminali pentru AST
+ cu neterminali(e) dar mai sus nu folosim %tokken e , folosim %type e

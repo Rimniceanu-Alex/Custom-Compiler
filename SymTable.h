@@ -37,7 +37,8 @@ class IdInfo {
 
 class SymTable {
     map<string, IdInfo> ids;//String ii NUMELE variabilei , ids=informatii
-    string name; //Domeniul de vizibilitate
+    const char* name; //Domeniul de vizibilitate
+    std::stack<SymTable*> above;//TO DO : Vezi cum muti functiile in Sym_table //Este Stackul cu toate domeniile inclusiv cel actual
     public:
     SymTable(const char* name) :  name(name){}
     bool existsId(const char* s);
@@ -46,13 +47,22 @@ class SymTable {
     string getValueType(string s);
     string getValue_IDType(string s);
     Value get_value(string s);
-    string get_dom_name();
+    const char* get_dom_name();
+    string get_dom_location();
+    void add_above(SymTable*new_domain);
+    std::stack<SymTable*> return_stack_above();
+    void assign_stack_above(std::stack<SymTable*> stack_above);
+    void remove_from_above();
+    SymTable* next_domain_scope();
+    void check_existance_for_declaration(const char* a , const char* b , const char* c , int& errorCount , int yylineno);
+    SymTable* check_existance_for_use(const char* b, int& errorCount , int yylineno);
+    void check_existance_for_class_instance(const char* a , const char* b ,int& errorCount , int yylineno );
     std::vector<char*> get_params(string s);//TO DO continua sa faci parametrii
     void set_value(string& name , Value* new_value);
     ~SymTable();
 };
 
 
-
+//TO DOO : vezi cum dai manage la Stack (nu ramane domeniul exact cum trebuie)
 
 
