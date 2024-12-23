@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <stack>
+#include <cmath>
+#include <limits>
 
 using namespace std;
 

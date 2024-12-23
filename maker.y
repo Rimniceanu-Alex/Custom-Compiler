@@ -130,13 +130,29 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                          x    {//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                    if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="int"){
-                                        class Value val($4->evaluatei());
-                                        domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                        if(numeric_limits<int>::min()==($4->evaluatei())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val($4->evaluatei());
+                                             domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                        }
                                    }
                                    else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="float"){
-                                        class Value val($4->evaluatef());
-                                        //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
-                                        domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                        if(std::isnan($4->evaluatef())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val($4->evaluatef());
+                                             //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
+                                             domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                        }
+                                   }else{
+                                        errorCount++;
+                                        yyerror("Can only assing a int or a float to an int or a float");
+                                        
                                    }
                               }//NO IDEA why it's the 4-th one , Trial and error ;P
                          }
@@ -443,3 +459,6 @@ int main(int argc, char** argv){
           delete i;
      }
 } 
+
+//TO DO : Am facut AST numa pt Assign din Statement 
+// FA SI PENTRU RESTU , mayb pt bool?

@@ -12,7 +12,8 @@ class Hum:{
         float asdasdas;
     };
     int g(int a00 , int boo){
-        char asdsada;
+        int asdsada;
+        asdsada <- 20;
         if(asdsada == 56){
             asdsada <- asdsada+1;
         } 
@@ -38,7 +39,7 @@ begin
 nr2 <- 10;
 int nr6;
 float pasta;
-nr1 <- 10.20;
+nr1 <- 10;
 nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;

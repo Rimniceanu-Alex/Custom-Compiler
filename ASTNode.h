@@ -38,6 +38,10 @@ public:
     //        modifica si restul metodelor/Yacc-u cat sa detecteze si Trateze un NAN(Not A Number)
     int evaluatei()
     {
+
+        // if((std::isnan(left->evaluatei()))||(std::isnan(right->evaluatei()))){
+        //     return numeric_limits<int>::quiet_NaN();
+        // }
         if ((left == nullptr) || (right == nullptr))
         {
             if (type == "int")
@@ -47,12 +51,12 @@ public:
             else if (type == "float")
             {
                 cout << "This Method is for INTEGERS" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<int>::min();
             }
             else
             {
                 cout << "Unkown Node Type" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<int>::min();
             }
         }
         if (left->get_type() == right->get_type())
@@ -76,19 +80,22 @@ public:
             else
             {
                 cout << "Unkown Sign" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<int>::min();
             }
         }
         else
         {
             cout << "Type Missmatch" << endl;
-            exit(EXIT_FAILURE);
+            return numeric_limits<int>::min();
         }
         return 0;
     };
 
     float evaluatef()
     {
+        // if((std::isnan(left->evaluatef()))||(std::isnan(right->evaluatef()))){
+        //     return numeric_limits<float>::quiet_NaN();
+        // }
         if ((left == nullptr) || (right == nullptr))
         {
             if (type == "float")
@@ -98,12 +105,12 @@ public:
             else if (type == "int")
             {
                 cout << "This Method is for FLOATS" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<float>::quiet_NaN();
             }
             else
             {
                 cout << "Unkown Node Type" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<float>::quiet_NaN();
             }
         }
         if (left->get_type() == right->get_type())
@@ -127,15 +134,14 @@ public:
             else
             {
                 cout << "Unkown Sign" << endl;
-                exit(EXIT_FAILURE);
+                return numeric_limits<float>::quiet_NaN();
             }
         }
         else
         {
             cout << "Type Missmatch" << endl;
-            exit(EXIT_FAILURE);
+            return numeric_limits<float>::quiet_NaN();
         }
-        return 0;
     };
     ~ASTNode()
     {

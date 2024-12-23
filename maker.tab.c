@@ -595,13 +595,13 @@ static const yytype_int16 yyrline[] =
        0,    33,    33,    34,    38,    37,    53,    54,    55,    56,
       59,    60,    63,    62,    80,    81,    83,    84,    87,    90,
       93,    94,    96,    97,   100,   103,   106,   107,   109,   110,
-     112,   112,   143,   143,   161,   161,   180,   179,   196,   206,
-     212,   195,   228,   246,   261,   227,   276,   277,   278,   281,
-     282,   285,   286,   289,   290,   291,   292,   295,   298,   299,
-     303,   302,   321,   322,   326,   327,   330,   333,   333,   335,
-     338,   339,   343,   346,   347,   348,   349,   353,   352,   372,
-     372,   391,   390,   410,   412,   413,   414,   415,   416,   417,
-     419,   421
+     112,   112,   159,   159,   177,   177,   196,   195,   212,   222,
+     228,   211,   244,   262,   277,   243,   292,   293,   294,   297,
+     298,   301,   302,   305,   306,   307,   308,   311,   314,   315,
+     319,   318,   337,   338,   342,   343,   346,   349,   349,   351,
+     354,   355,   359,   362,   363,   364,   365,   369,   368,   388,
+     388,   407,   406,   426,   428,   429,   430,   431,   432,   433,
+     435,   437
 };
 #endif
 
@@ -1409,21 +1409,37 @@ yyreduce:
                               {//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                    if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[-3].string))=="int"){
-                                        class Value val((yyvsp[0].ListOfNodes)->evaluatei());
-                                        domeniul_caruia_ii_apartine_varabila->set_value((yyvsp[-3].string) , val);
+                                        if(numeric_limits<int>::min()==((yyvsp[0].ListOfNodes)->evaluatei())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val((yyvsp[0].ListOfNodes)->evaluatei());
+                                             domeniul_caruia_ii_apartine_varabila->set_value((yyvsp[-3].string) , val);
+                                        }
                                    }
                                    else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[-3].string))=="float"){
-                                        class Value val((yyvsp[0].ListOfNodes)->evaluatef());
-                                        //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
-                                        domeniul_caruia_ii_apartine_varabila->set_value((yyvsp[-3].string) , val);
+                                        if(std::isnan((yyvsp[0].ListOfNodes)->evaluatef())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val((yyvsp[0].ListOfNodes)->evaluatef());
+                                             //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
+                                             domeniul_caruia_ii_apartine_varabila->set_value((yyvsp[-3].string) , val);
+                                        }
+                                   }else{
+                                        errorCount++;
+                                        yyerror("Can only assing a int or a float to an int or a float");
+                                        
                                    }
                               }//NO IDEA why it's the 4-th one , Trial and error ;P
                          }
-#line 1423 "maker.tab.c"
+#line 1439 "maker.tab.c"
     break;
 
   case 32: /* $@4: %empty  */
-#line 143 "maker.y"
+#line 159 "maker.y"
               {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -1441,19 +1457,19 @@ yyreduce:
                            }
                     }
               }
-#line 1445 "maker.tab.c"
+#line 1461 "maker.tab.c"
     break;
 
   case 34: /* $@5: %empty  */
-#line 161 "maker.y"
+#line 177 "maker.y"
                      {
                          domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[-1].string) , errorCount , yylineno);
                      }
-#line 1453 "maker.tab.c"
+#line 1469 "maker.tab.c"
     break;
 
   case 35: /* statement: ID ASSIGN $@5 TRUTH_VALUE  */
-#line 164 "maker.y"
+#line 180 "maker.y"
                                      {
                                         if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                              if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[-3].string))!="bool")
@@ -1469,11 +1485,11 @@ yyreduce:
                                                   }   
                                         }
                                      }
-#line 1473 "maker.tab.c"
+#line 1489 "maker.tab.c"
     break;
 
   case 36: /* $@6: %empty  */
-#line 180 "maker.y"
+#line 196 "maker.y"
                                    {
                                      SymTable* currentCTRL;     
                                      currentCTRL = new SymTable((yyvsp[-4].string));
@@ -1483,21 +1499,21 @@ yyreduce:
                                      current=currentCTRL;
                                      Vector_Tabele.push_back(current);
                                    }
-#line 1487 "maker.tab.c"
+#line 1503 "maker.tab.c"
     break;
 
   case 37: /* statement: WHILE '(' boolean_expression ')' CBEGIN $@6 list CEND  */
-#line 190 "maker.y"
+#line 206 "maker.y"
                                                        {
                                                             //current->remove_from_above();
                                                             current=current->next_domain_scope();
                                                             //current->remove_from_above();
                                                        }
-#line 1497 "maker.tab.c"
+#line 1513 "maker.tab.c"
     break;
 
   case 38: /* $@7: %empty  */
-#line 196 "maker.y"
+#line 212 "maker.y"
                                         {
                                           SymTable* currentCTRL;     
                                           currentCTRL = new SymTable((yyvsp[-4].string));
@@ -1507,21 +1523,21 @@ yyreduce:
                                           current=currentCTRL;
                                           Vector_Tabele.push_back(current);
                                         }
-#line 1511 "maker.tab.c"
+#line 1527 "maker.tab.c"
     break;
 
   case 39: /* $@8: %empty  */
-#line 206 "maker.y"
+#line 222 "maker.y"
                                                        {
                                                          //current->remove_from_above();
                                                          current=current->next_domain_scope();
                                                          //current->remove_from_above();
                                                        }
-#line 1521 "maker.tab.c"
+#line 1537 "maker.tab.c"
     break;
 
   case 40: /* $@9: %empty  */
-#line 212 "maker.y"
+#line 228 "maker.y"
                                         {
                                           SymTable* currentCTRL;     
                                           currentCTRL = new SymTable((yyvsp[-10].string));
@@ -1531,21 +1547,21 @@ yyreduce:
                                           current=currentCTRL;
                                           Vector_Tabele.push_back(current);
                                         }
-#line 1535 "maker.tab.c"
+#line 1551 "maker.tab.c"
     break;
 
   case 41: /* statement: IF '(' boolean_expression ')' CBEGIN $@7 list CEND $@8 ELSE CBEGIN $@9 list_for_else CEND  */
-#line 222 "maker.y"
+#line 238 "maker.y"
                                         {
                                           //current->remove_from_above();
                                           current=current->next_domain_scope();
                                           //current->remove_from_above();
                                         }
-#line 1545 "maker.tab.c"
+#line 1561 "maker.tab.c"
     break;
 
   case 42: /* $@10: %empty  */
-#line 228 "maker.y"
+#line 244 "maker.y"
                {
                  domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[-1].string) , errorCount , yylineno);
                  if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -1563,11 +1579,11 @@ yyreduce:
                          }
                     }
                }
-#line 1567 "maker.tab.c"
+#line 1583 "maker.tab.c"
     break;
 
   case 43: /* $@11: %empty  */
-#line 246 "maker.y"
+#line 262 "maker.y"
                {
                  if(strcmp((yyvsp[-9].string) , (yyvsp[0].string))!=0)
                     {
@@ -1582,11 +1598,11 @@ yyreduce:
                       buff=nullptr;
                     }
                }
-#line 1586 "maker.tab.c"
+#line 1602 "maker.tab.c"
     break;
 
   case 44: /* $@12: %empty  */
-#line 261 "maker.y"
+#line 277 "maker.y"
                {
                  SymTable* currentCTRL;     
                  currentCTRL = new SymTable((yyvsp[-16].string));
@@ -1596,21 +1612,21 @@ yyreduce:
                  current=currentCTRL;
                  Vector_Tabele.push_back(current);
                }
-#line 1600 "maker.tab.c"
+#line 1616 "maker.tab.c"
     break;
 
   case 45: /* statement: FOR '(' ID ASSIGN $@10 e ';' e CMP e ';' ID $@11 inc_dec ';' ')' CBEGIN $@12 list CEND  */
-#line 271 "maker.y"
+#line 287 "maker.y"
                {
                  //current->remove_from_above();
                  current=current->next_domain_scope();
                  //current->remove_from_above();
                }
-#line 1610 "maker.tab.c"
+#line 1626 "maker.tab.c"
     break;
 
   case 60: /* $@13: %empty  */
-#line 303 "maker.y"
+#line 319 "maker.y"
           {
             current->check_existance_for_declaration((yyvsp[-3].string), (yyvsp[-2].string) , "class" , errorCount , yylineno);
             SymTable* class_scope;
@@ -1621,39 +1637,39 @@ yyreduce:
             current=class_scope;
             Vector_Tabele.push_back(current);
           }
-#line 1625 "maker.tab.c"
+#line 1641 "maker.tab.c"
     break;
 
   case 61: /* class: Class_Type Class_ID ':' CBEGIN $@13 global_classes_declaration CEND ';'  */
-#line 314 "maker.y"
+#line 330 "maker.y"
           {
             //current->remove_from_above();
             current=current->next_domain_scope();
             //current->remove_from_above();
           }
-#line 1635 "maker.tab.c"
+#line 1651 "maker.tab.c"
     break;
 
   case 67: /* $@14: %empty  */
-#line 333 "maker.y"
+#line 349 "maker.y"
                              {current->check_existance_for_class_instance((yyvsp[-1].string) , (yyvsp[0].string), errorCount , yylineno);}
-#line 1641 "maker.tab.c"
+#line 1657 "maker.tab.c"
     break;
 
   case 69: /* class_instance_interior: Class_ID ID  */
-#line 335 "maker.y"
+#line 351 "maker.y"
                                       {current->check_existance_for_class_instance((yyvsp[-1].string) , (yyvsp[0].string), errorCount , yylineno);}
-#line 1647 "maker.tab.c"
+#line 1663 "maker.tab.c"
     break;
 
   case 72: /* param: TYPE ID  */
-#line 343 "maker.y"
+#line 359 "maker.y"
                 {current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "param" , errorCount , yylineno);}
-#line 1653 "maker.tab.c"
+#line 1669 "maker.tab.c"
     break;
 
   case 77: /* $@15: %empty  */
-#line 353 "maker.y"
+#line 369 "maker.y"
                          {
                               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[-1].string) , errorCount , yylineno);
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -1672,11 +1688,11 @@ yyreduce:
                                              }
                                    }
                          }
-#line 1676 "maker.tab.c"
+#line 1692 "maker.tab.c"
     break;
 
   case 79: /* $@16: %empty  */
-#line 372 "maker.y"
+#line 388 "maker.y"
                               {
                                    domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                                    if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -1694,17 +1710,17 @@ yyreduce:
                                                   }
                                         }
                               }
-#line 1698 "maker.tab.c"
+#line 1714 "maker.tab.c"
     break;
 
   case 81: /* $@17: %empty  */
-#line 391 "maker.y"
+#line 407 "maker.y"
                                    {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[-1].string) , errorCount , yylineno);}
-#line 1704 "maker.tab.c"
+#line 1720 "maker.tab.c"
     break;
 
   case 82: /* statement_for_call_list: ID ASSIGN $@17 TRUTH_VALUE  */
-#line 392 "maker.y"
+#line 408 "maker.y"
                                                     {
                                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                                                        {
@@ -1721,71 +1737,71 @@ yyreduce:
                                                                  }   
                                                        }
                                                   }
-#line 1725 "maker.tab.c"
+#line 1741 "maker.tab.c"
     break;
 
   case 83: /* x: e  */
-#line 410 "maker.y"
+#line 426 "maker.y"
       {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1731 "maker.tab.c"
+#line 1747 "maker.tab.c"
     break;
 
   case 84: /* e: e '+' e  */
-#line 412 "maker.y"
+#line 428 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("+" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1737 "maker.tab.c"
+#line 1753 "maker.tab.c"
     break;
 
   case 85: /* e: e '*' e  */
-#line 413 "maker.y"
+#line 429 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("*" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1743 "maker.tab.c"
+#line 1759 "maker.tab.c"
     break;
 
   case 86: /* e: e '-' e  */
-#line 414 "maker.y"
+#line 430 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("-" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1749 "maker.tab.c"
+#line 1765 "maker.tab.c"
     break;
 
   case 87: /* e: e '/' e  */
-#line 415 "maker.y"
+#line 431 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("/" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1755 "maker.tab.c"
+#line 1771 "maker.tab.c"
     break;
 
   case 88: /* e: '(' e ')'  */
-#line 416 "maker.y"
+#line 432 "maker.y"
               {(yyval.ListOfNodes)=(yyvsp[-1].ListOfNodes);}
-#line 1761 "maker.tab.c"
+#line 1777 "maker.tab.c"
     break;
 
   case 89: /* e: NR  */
-#line 417 "maker.y"
+#line 433 "maker.y"
               {Value val(atoi(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "int");}
-#line 1768 "maker.tab.c"
+#line 1784 "maker.tab.c"
     break;
 
   case 90: /* e: REAL  */
-#line 419 "maker.y"
+#line 435 "maker.y"
               {Value val((float)atof(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "float");}
-#line 1775 "maker.tab.c"
+#line 1791 "maker.tab.c"
     break;
 
   case 91: /* e: ID  */
-#line 421 "maker.y"
+#line 437 "maker.y"
               {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                     (yyval.ListOfNodes)=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value((yyvsp[0].string)) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[0].string)));
                }
               }
-#line 1785 "maker.tab.c"
+#line 1801 "maker.tab.c"
     break;
 
 
-#line 1789 "maker.tab.c"
+#line 1805 "maker.tab.c"
 
       default: break;
     }
@@ -1978,7 +1994,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 429 "maker.y"
+#line 445 "maker.y"
 
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;
