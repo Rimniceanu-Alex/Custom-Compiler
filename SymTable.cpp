@@ -2,6 +2,39 @@
 #include <cstring>
 using namespace std;
 
+Value::Value(int x)
+{
+    IntValue = x;
+}
+
+Value::Value(float x)
+{
+    FloatValue = x;
+}
+
+Value::Value(string x)
+{
+    StringValue = x;
+}
+Value::Value()
+{
+}
+
+int Value::get_int() const
+{
+    return IntValue;
+}
+
+float Value::get_float() const
+{
+    return FloatValue;
+}
+
+string Value::get_string() const
+{
+    return StringValue;
+}
+
 void SymTable::addVar(const char *type, const char *name, const char *id_type)
 {
     IdInfo var(type, name, id_type);
@@ -17,10 +50,19 @@ void SymTable::printVars()
 {
     for (const pair<string, IdInfo> &v : ids)
     {
-        cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]" << endl;
+        if (v.second.type == "int"&&v.second.idType=="var")
+        {
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
+        }
+        else if(v.second.type == "float"&&v.second.idType=="var"){
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
+        }
+        else{
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]"<< endl;
+        }
     }
 }
-string SymTable::getValueType(string a)
+string SymTable::get_IdInfo_Type(string a)
 {
     return this->ids[a].type;
 }
@@ -177,8 +219,9 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
             Copy_table.pop();
         }
     }
-    else{
-        temp=this;
+    else
+    {
+        temp = this;
     }
     if (temp->existsId(a))
     {
@@ -202,9 +245,9 @@ std::vector<char *> SymTable::get_params(std::string s)
     return this->ids[s].params;
 }
 
-void SymTable::set_value(std::string &name, Value *new_value)
+void SymTable::set_value(const char *name, Value new_value)
 {
-    this->ids[name].value = *new_value;
+    this->ids[name].value = new_value;
 }
 
 SymTable::~SymTable()

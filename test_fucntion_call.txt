@@ -1,30 +1,15 @@
-int a;
 begin
-int d;
-if(a+3>d-5){
-    int c;
-    int b;
-    c <- 20;
+if(2<3){
+    int a;
+    a<-20;
+    a<-a*2;
 }
 else{
 
 };
-int c;
-c <- 29;
-d <- 40;
-
-if (a>d){
-    int tu;
-    a<-20;
-}
-else{
-    
-};
-
-while (a>d){
-    a<-20;
-};
-
-int aop;
-aop <- 10;
-end 
+int a;
+a<-300;
+a<-a*3;
+float b;
+b<-20.3;
+end

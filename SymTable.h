@@ -7,12 +7,18 @@
 using namespace std;
 
 class Value{
+    int IntValue;
+    float FloatValue;
+    string StringValue;
     public:
-    Value(){};
-        Value(int x);
-        Value(float x);
-        Value(string type);
-        string tostring();
+    Value();
+    Value(int x);
+    Value(float x);
+    Value(string type);
+    string tostring()const;
+    int get_int()const;
+    float get_float()const;
+    string get_string()const;
 };
 class ParamList {
     std::vector<int> integers;
@@ -38,13 +44,13 @@ class IdInfo {
 class SymTable {
     map<string, IdInfo> ids;//String ii NUMELE variabilei , ids=informatii
     const char* name; //Domeniul de vizibilitate
-    std::stack<SymTable*> above;//TO DO : Vezi cum muti functiile in Sym_table //Este Stackul cu toate domeniile inclusiv cel actual
+    std::stack<SymTable*> above;
     public:
     SymTable(const char* name) :  name(name){}
     bool existsId(const char* s);
     void addVar(const char* type, const char* name, const char* id_type );
     void printVars();
-    string getValueType(string s);
+    string get_IdInfo_Type(string s);
     string getValue_IDType(string s);
     Value get_value(string s);
     const char* get_dom_name();
@@ -58,11 +64,7 @@ class SymTable {
     SymTable* check_existance_for_use(const char* b, int& errorCount , int yylineno);
     void check_existance_for_class_instance(const char* a , const char* b ,int& errorCount , int yylineno );
     std::vector<char*> get_params(string s);//TO DO continua sa faci parametrii
-    void set_value(string& name , Value* new_value);
+    void set_value(const char* name , Value new_value);
     ~SymTable();
 };
-
-
-//TO DOO : vezi cum dai manage la Stack (nu ramane domeniul exact cum trebuie)
-
 

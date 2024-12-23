@@ -57,25 +57,25 @@ extern int yydebug;
     BGIN = 258,                    /* BGIN  */
     END = 259,                     /* END  */
     ASSIGN = 260,                  /* ASSIGN  */
-    NR = 261,                      /* NR  */
-    TRUTH_VALUE = 262,             /* TRUTH_VALUE  */
-    CBEGIN = 263,                  /* CBEGIN  */
-    CEND = 264,                    /* CEND  */
-    REAL = 265,                    /* REAL  */
-    CONNECT = 266,                 /* CONNECT  */
-    PRINT = 267,                   /* PRINT  */
-    TYPE_FUNCTION = 268,           /* TYPE_FUNCTION  */
-    ID = 269,                      /* ID  */
-    TYPE = 270,                    /* TYPE  */
-    Class_ID = 271,                /* Class_ID  */
-    Class_Type = 272,              /* Class_Type  */
-    IF = 273,                      /* IF  */
-    ELSE = 274,                    /* ELSE  */
-    WHILE = 275,                   /* WHILE  */
-    FOR = 276,                     /* FOR  */
-    CMP = 277,                     /* CMP  */
-    INC = 278,                     /* INC  */
-    DEC = 279                      /* DEC  */
+    TRUTH_VALUE = 261,             /* TRUTH_VALUE  */
+    CBEGIN = 262,                  /* CBEGIN  */
+    CEND = 263,                    /* CEND  */
+    REAL = 264,                    /* REAL  */
+    CONNECT = 265,                 /* CONNECT  */
+    PRINT = 266,                   /* PRINT  */
+    TYPE_FUNCTION = 267,           /* TYPE_FUNCTION  */
+    ID = 268,                      /* ID  */
+    TYPE = 269,                    /* TYPE  */
+    Class_ID = 270,                /* Class_ID  */
+    Class_Type = 271,              /* Class_Type  */
+    IF = 272,                      /* IF  */
+    ELSE = 273,                    /* ELSE  */
+    WHILE = 274,                   /* WHILE  */
+    FOR = 275,                     /* FOR  */
+    CMP = 276,                     /* CMP  */
+    INC = 277,                     /* INC  */
+    DEC = 278,                     /* DEC  */
+    NR = 279                       /* NR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -87,8 +87,9 @@ union YYSTYPE
 #line 18 "maker.y"
 
      char* string;
+     class ASTNode* ListOfNodes;
 
-#line 92 "maker.tab.h"
+#line 93 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

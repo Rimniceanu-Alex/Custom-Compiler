@@ -17,13 +17,15 @@ int errorCount = 0;
 
 %union {
      char* string;
+     class ASTNode* ListOfNodes;
 }
 
 %{
      %}
 
-%token  BGIN END ASSIGN NR TRUTH_VALUE CBEGIN CEND REAL CONNECT PRINT TYPE_FUNCTION
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC
+%token  BGIN END ASSIGN TRUTH_VALUE CBEGIN CEND REAL CONNECT PRINT TYPE_FUNCTION
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR
+%type<ListOfNodes> e x
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -110,7 +112,7 @@ list_for_else : list
 statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                       if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                          {
-                              if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
+                              if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="bool")
                               {
                                    {errorCount++; 
                                     char*buff=new char[256];
@@ -123,8 +125,21 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    }
                               }
                          }
+                          
                      } 
-                         e 	 
+                         x    {//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
+                              if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                                   if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="int"){
+                                        class Value val($4->evaluatei());
+                                        domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                   }
+                                   else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="float"){
+                                        class Value val($4->evaluatef());
+                                        //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
+                                        domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
+                                   }
+                              }//NO IDEA why it's the 4-th one , Trial and error ;P
+                         }
          | ID {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -148,7 +163,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                      } 
                          TRUTH_VALUE {
                                         if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-                                             if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                                             if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)!="bool")
                                                   {
                                                        errorCount++; 
                                                        char*buff=new char[256];
@@ -214,7 +229,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                  domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($3 , errorCount , yylineno);
                  if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                     {
-                      if (domeniul_caruia_ii_apartine_varabila->getValueType($3)=="bool")
+                      if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="bool")
                          {
                            errorCount++; 
                            char*buff=new char[256];
@@ -339,7 +354,7 @@ statement_for_call_list: ID ASSIGN
                               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                                    {
-                                        if (domeniul_caruia_ii_apartine_varabila->getValueType($1)=="bool")
+                                        if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="bool")
                                              {
                                                   {errorCount++; 
                                                   char*buff=new char[256];
@@ -353,7 +368,7 @@ statement_for_call_list: ID ASSIGN
                                              }
                                    }
                          } 
-                                        e 	 
+                                        e  
                          | ID {
                                    domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                                    if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -377,7 +392,7 @@ statement_for_call_list: ID ASSIGN
                                         TRUTH_VALUE {
                                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                                                        {
-                                                            if (domeniul_caruia_ii_apartine_varabila->getValueType($1)!="bool")
+                                                            if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)!="bool")
                                                                  {
                                                                       errorCount++; 
                                                                       char*buff=new char[256];
@@ -392,15 +407,22 @@ statement_for_call_list: ID ASSIGN
                                                   }
                          ;
 
-
-e : e '+' e   {}
-  | e '*' e   {}
-  | e '-' e   {}
-  | e '/' e   {}
-  |'(' e ')'  {}
-  | NR        {}
-  | REAL      {}
-  | ID        {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);}
+x : e {$$=$1;}
+  ;
+e : e '+' e   {$$=new ASTNode("+" , $1 , $3);}
+  | e '*' e   {$$=new ASTNode("*" , $1 , $3);}
+  | e '-' e   {$$=new ASTNode("-" , $1 , $3);}
+  | e '/' e   {$$=new ASTNode("/" , $1 , $3);}
+  |'(' e ')'  {$$=$2;}
+  | NR        {Value val(atoi(yytext));
+               $$=new ASTNode(val , "int");}//MERGE
+  | REAL      {Value val((float)atof(yytext));
+               $$=new ASTNode(val , "float");}
+  | ID        {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                    $$=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value($1) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1));
+               }
+              }
   ;
 
         

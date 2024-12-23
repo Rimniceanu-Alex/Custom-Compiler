@@ -24,8 +24,8 @@
 [A-Z][a-z]* {yylval.string = strdup(yytext); return Class_ID;}
 [a-z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 "<-" {return ASSIGN;}
-[0-9]+ {return NR;}
-[0-9]+\.[0-9]+ {return REAL;}
+0|[1-9][0-9]* {return NR;}
+0\.[0-9]+|[1-9][0-9]*\.[0-9]+ {return REAL;}
 [ \t] ;
 \n {yylineno++;}
 . {return yytext[0];}
