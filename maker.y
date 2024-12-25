@@ -258,14 +258,42 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                          }
                     }
                } 
-                                   e ';' e CMP e ';' ID 
+                                   x{//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
+                              if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                                   if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="int"){
+                                        if(numeric_limits<int>::min()==($6->evaluatei())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val($6->evaluatei());
+                                             domeniul_caruia_ii_apartine_varabila->set_value($3 , val);
+                                        }
+                                   }
+                                   else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="float"){
+                                        if(std::isnan($6->evaluatef())){
+                                             errorCount++;
+                                             yyerror("Arithmetic expression is inccorect");
+                                        }
+                                        else{
+                                             class Value val($6->evaluatef());
+                                             //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
+                                             domeniul_caruia_ii_apartine_varabila->set_value($3 , val);
+                                        }
+                                   }else{
+                                        errorCount++;
+                                        yyerror("Can only assing a int or a float to an int or a float");
+                                        
+                                   }
+                              }//NO IDEA why it's the 4-th one , Trial and error ;P
+                         } ';' boolean_expression ';' ID 
                {
-                 if(strcmp($3 , $12)!=0)
+                 if(strcmp($3 , $11)!=0)
                     {
                       errorCount++;
                       char*buff=new char[256];
                       strcpy(buff ,"The variable you're trying to inc/dec ");
-                      strcat(buff , $12);
+                      strcat(buff , $11);
                       strcat(buff ," is different from the one you assigned "); 
                       strcat(buff , $3);
                       yyerror(buff);
@@ -302,14 +330,19 @@ declarations_interior: variables_interior
                      | class_initialize_interior
                      ;          
 
-boolean_expression:  condition 
-               |  boolean_expression CONNECT condition 
-               |  e CMP e
-               | TRUTH_VALUE
+boolean_expression: '('boolean_expression')' 
+               |  '('boolean_expression')' CONNECT '('boolean_expression')' 
+               |  e CMP e 
                ;
 
-condition: '(' e CMP e ')'
-         ;
+// boolean_expression:  condition 
+//                |  boolean_expression CONNECT condition 
+//                |  e CMP e
+//                | TRUTH_VALUE
+//                ;
+
+// condition: '(' e CMP e ')'
+//          ;
 
 classes : class
         | classes class
