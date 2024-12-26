@@ -3,6 +3,7 @@ class Mee:{
     int array[100];
     int foo(int aoo , float boo){
         int awd;
+        return 12;
     };
 };
 class Hum:{
@@ -10,6 +11,7 @@ class Hum:{
     int array[100];
     int foo(int aoo , int boo){
         float asdasdas;
+        return 100;
     };
     int g(int a00 , int boo){
         int asdsada;
@@ -20,6 +22,7 @@ class Hum:{
         else {
             asdsada <- asdsada-1;
         };
+        return asdsada;
     };
 };    
 int nr2;
@@ -30,9 +33,11 @@ int arr [10][20][200];
 string arrat[20][30];
 int f(int ab ,int ac){
     int n4;
+    return 1;
 };
 int x(int c , int d , int p){
     int nt;
+    return 123;
 };
 Hum barba;
 begin
@@ -43,9 +48,9 @@ nr1 <- 10;
 nr3 <- 20;
 nr3 <- 50;
 maybe <- TRUE;
-f(2+3 , 3 +nr1, f(nr1));
-f( nr1<-203 , f(100 , x+3) , x(nr1, nr2 , x(nr3 , nr1 , nr2)));
-x(nr3 <- 20 , f(100 , 2));
+f(2+3 , 3+nr1, nr1);
+f( 203 , 23);
+x(nr3, 100 , 2);
 nr3 <-39;
 nr3 <-20;
 int arr1 [10][20][200];

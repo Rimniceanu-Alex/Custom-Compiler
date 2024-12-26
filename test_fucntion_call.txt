@@ -1,10 +1,24 @@
+int foo(int a , int b){
+    int c ;
+    c<-40;
+    c<-c*2;
+    return c;
+};
+void goo(int a, int b){
+    a<-230;
+    b<-231;
+    a<-a+b;
+};
 begin
-if(((10>20)&&(30>20))&&(29<10)){
+int c;
+bool maybe;
+maybe<-TRUE;
+c<-20;
+if(((c<20)||(c<10))||(c==20)){
     int a;
 }
-else{};
-int a;
-for(a<-100;(30<20)&&((123<20)&&(238<2310)); a++;){
-    int b;
+else{
+
 };
+Print(c);
 end

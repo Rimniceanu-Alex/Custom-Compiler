@@ -22,13 +22,13 @@ class Value{
     float get_float()const;
     string get_string()const;
 };
-class ParamList {
-    std::vector<int> integers;
-    std::vector<float> floaters;
-    std::vector<bool> boolers;
-    std::vector<char*> charsers;
+// class ParamList {
+//     std::vector<int> integers;
+//     std::vector<float> floaters;
+//     std::vector<bool> boolers;
+//     std::vector<char*> charsers;
 
-};
+// };
 
 class IdInfo {
     public:
@@ -36,7 +36,7 @@ class IdInfo {
     string type; //int float char bool
     string name; //Numele variabilei
     Value value; //Valoare pe care o va avea Variabila
-    std::vector<char*> params; //for functions
+    std::vector<IdInfo> params; //for functions
     IdInfo() {}
     IdInfo(const char* type, const char* name, const char* idType) : type(type),name(name),idType(idType) {}
 };
@@ -52,6 +52,7 @@ class SymTable {
     bool existsId(const char* s);
     void addVar(const char* type, const char* name, const char* id_type );
     void printVars();
+    void printFunct();
     string get_IdInfo_Type(string s);
     string getValue_IDType(string s);
     Value get_value(string s);
@@ -65,7 +66,8 @@ class SymTable {
     void check_existance_for_declaration(const char* a , const char* b , const char* c , int& errorCount , int yylineno);
     SymTable* check_existance_for_use(const char* b, int& errorCount , int yylineno);
     void check_existance_for_class_instance(const char* a , const char* b ,int& errorCount , int yylineno );
-    std::vector<char*> get_params(string s);//TO DO continua sa faci parametrii
+    void add_params(const char* function,const char* type , const char* name , const char* id_type);
+    std::vector<IdInfo> get_params(string s);//TO DO continua sa faci parametrii
     void set_value(const char* name , Value new_value);
     ~SymTable();
 };

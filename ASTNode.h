@@ -10,7 +10,7 @@ class ASTNode
 
 public:
     ASTNode(const Value &val, const string &node_type) : value(val), type(node_type), root(""), left(nullptr), right(nullptr) {};
-    ASTNode(const string &op, ASTNode *right_child, ASTNode *left_child) : value(Value()), root(op), right(right_child), left(left_child)
+    ASTNode(const string &op, ASTNode *left_child, ASTNode *right_child) : value(Value()), root(op),left(left_child), right(right_child)
     {
         if ((left_child && right_child) && (left_child->type == right_child->type))
         {
@@ -25,7 +25,9 @@ public:
             type = "unkown";
         }
     };
-
+    const char* get_type_for_main(){
+        return type.c_str();
+    }
     string get_type()
     {
         return type;
@@ -61,7 +63,31 @@ public:
         }
         if (left->get_type() == right->get_type())
         {
-            if (root == "+")
+            if(root=="<"){
+                return left->evaluatei()<right->evaluatei();
+            }
+            else if(root==">"){
+                return left->evaluatei()>right->evaluatei();
+            }
+            else if(root=="=="){
+                return left->evaluatei()==right->evaluatei();
+            }
+            else if(root=="!="){
+                return left->evaluatei()!=right->evaluatei();
+            }
+            else if(root=="<="){
+                return ((left->evaluatei()<right->evaluatei())||(left->evaluatei()==right->evaluatei()));
+            }
+            else if(root==">="){
+                return ((left->evaluatei()>right->evaluatei())||(left->evaluatei()==right->evaluatei()));
+            }
+            else if (root=="&&"){
+                return left->evaluatei()&&right->evaluatei();
+            }
+            else if (root=="||"){
+                return left->evaluatei()||right->evaluatei();
+            }
+            else if (root == "+")
             {
                 return left->evaluatei() + right->evaluatei();
             }
@@ -149,3 +175,5 @@ public:
         delete right;
     };
 };
+
+//TO DO :: Modifica gramatica cat sa poti bag && si || in AST

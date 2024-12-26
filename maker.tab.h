@@ -61,21 +61,23 @@ extern int yydebug;
     CBEGIN = 262,                  /* CBEGIN  */
     CEND = 263,                    /* CEND  */
     REAL = 264,                    /* REAL  */
-    CONNECT = 265,                 /* CONNECT  */
-    PRINT = 266,                   /* PRINT  */
-    TYPE_FUNCTION = 267,           /* TYPE_FUNCTION  */
-    ID = 268,                      /* ID  */
-    TYPE = 269,                    /* TYPE  */
-    Class_ID = 270,                /* Class_ID  */
-    Class_Type = 271,              /* Class_Type  */
-    IF = 272,                      /* IF  */
-    ELSE = 273,                    /* ELSE  */
-    WHILE = 274,                   /* WHILE  */
-    FOR = 275,                     /* FOR  */
-    CMP = 276,                     /* CMP  */
-    INC = 277,                     /* INC  */
-    DEC = 278,                     /* DEC  */
-    NR = 279                       /* NR  */
+    PRINT = 265,                   /* PRINT  */
+    TYPE_FUNCTION = 266,           /* TYPE_FUNCTION  */
+    ID = 267,                      /* ID  */
+    TYPE = 268,                    /* TYPE  */
+    Class_ID = 269,                /* Class_ID  */
+    Class_Type = 270,              /* Class_Type  */
+    IF = 271,                      /* IF  */
+    ELSE = 272,                    /* ELSE  */
+    WHILE = 273,                   /* WHILE  */
+    FOR = 274,                     /* FOR  */
+    CMP = 275,                     /* CMP  */
+    INC = 276,                     /* INC  */
+    DEC = 277,                     /* DEC  */
+    NR = 278,                      /* NR  */
+    CONNECT = 279,                 /* CONNECT  */
+    VOID = 280,                    /* VOID  */
+    RETURN = 281                   /* RETURN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -84,12 +86,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "maker.y"
+#line 19 "maker.y"
 
      char* string;
      class ASTNode* ListOfNodes;
 
-#line 93 "maker.tab.h"
+#line 95 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

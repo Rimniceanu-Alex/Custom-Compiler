@@ -5,6 +5,8 @@
 %option noyywrap
 %%
 "int"|"float"|"char"|"string"|"bool" {yylval.string = strdup(yytext);return TYPE;}
+"void" {yylval.string = strdup(yytext);return VOID;}
+"return" {yylval.string = strdup(yytext);return RETURN;}
 "class" {yylval.string = strdup(yytext);return Class_Type;}
 "begin" {return BGIN;}
 "end" {return END;}

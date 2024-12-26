@@ -57,8 +57,24 @@ void SymTable::printVars()
         else if(v.second.type == "float"&&v.second.idType=="var"){
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
         }
+        else if (v.second.type == "int"&&v.second.idType=="func"){
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
+        }
         else{
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]"<< endl;
+        }
+    }
+}
+void SymTable::printFunct(){
+    for (const pair<string, IdInfo> &v : ids)
+    {
+        if(v.second.idType=="func"){
+            cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"]"<<endl;
+            cout<<"Params:"<<endl;
+            auto parametrii=this->get_params(v.first);
+            for(auto i:parametrii){
+                cout<<i.name<<" "<<i.type<<endl;
+            }
         }
     }
 }
@@ -240,7 +256,13 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
     }
 }
 
-std::vector<char *> SymTable::get_params(std::string s)
+void SymTable::add_params(const char* function ,const char* type , const char* name , const char* id_type)
+{
+    IdInfo var(type, name, id_type);
+    ids[function].params.push_back(var);
+}
+
+std::vector<IdInfo> SymTable::get_params(string s)
 {
     return this->ids[s].params;
 }

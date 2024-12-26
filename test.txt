@@ -3,6 +3,7 @@ class Mee:{
     int array[100];
     int foo(int aoo , float boo){
         aoo <-2;
+        return aoo;
     };
 };
 class Hum:{
@@ -10,9 +11,11 @@ class Hum:{
     int array[100];
     int foo(int aoo , int boo){
         aoo <-4;
+        return aoo;
     };
     int g(int a00 , int boo){
         boo <- 123;
+        return boo;
     };
  };    
 int nr2;
@@ -24,9 +27,11 @@ string arrat[20][30];
 int barba;
 int f(int ab ,int ac){
     ab<-2;
+    return ab;
 };
 int x(int c , int d , int p){
     c<-2;
+    return c;
 };
 Hum barba;
 begin
