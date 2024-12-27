@@ -140,8 +140,32 @@ public:
             }
         }
         if (left->get_type() == right->get_type())
-        {
-            if (root == "+")
+        {   
+            if(root=="<"){
+                return left->evaluatef()<right->evaluatef();
+            }
+            else if(root==">"){
+                return left->evaluatef()>right->evaluatef();
+            }
+            else if(root=="=="){
+                return left->evaluatef()==right->evaluatef();
+            }
+            else if(root=="!="){
+                return left->evaluatef()!=right->evaluatef();
+            }
+            else if(root=="<="){
+                return ((left->evaluatef()<right->evaluatef())||(left->evaluatef()==right->evaluatef()));
+            }
+            else if(root==">="){
+                return ((left->evaluatef()>right->evaluatef())||(left->evaluatef()==right->evaluatef()));
+            }
+            else if (root=="&&"){
+                return left->evaluatef()&&right->evaluatef();
+            }
+            else if (root=="||"){
+                return left->evaluatef()||right->evaluatef();
+            }
+            else if (root == "+")
             {
                 return left->evaluatef() + right->evaluatef();
             }

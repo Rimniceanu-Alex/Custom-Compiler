@@ -72,9 +72,18 @@ functions : TYPE ID
                 } 
                '(' list_param ')' CBEGIN list RETURN e ';' {
                                                             if(strcmp($1, $10->get_type_for_main())==0){
-                                                                 class Value val($10->evaluatei());
-                                                                 current->next_domain_scope()->set_value($2 , val );  
-                                                                 cout<<"rezultatul FUNCTIEI ESTTEEE : "<< $10->evaluatei()<<endl<<endl<<endl; 
+                                                                 if(strcmp($10->get_type_for_main() , "int")==0){
+                                                                      class Value val($10->evaluatei());
+                                                                      current->next_domain_scope()->set_value($2 , val );  
+                                                                 }
+                                                                 else if(strcmp($10->get_type_for_main() , "float")==0){
+                                                                      class Value val($10->evaluatef());
+                                                                      current->next_domain_scope()->set_value($2 , val ); 
+                                                                 }
+                                                                 else{
+                                                                      errorCount++;
+                                                                      yyerror("Unkown Type of Function");
+                                                                 }
                                                             }
                                                             else{
                                                                  errorCount++;
@@ -82,15 +91,12 @@ functions : TYPE ID
                                                             }
                                                        } CEND ';' 
                                                                            {
-                                                                           //current->remove_from_above();
                                                                            current=current->next_domain_scope();
-                                                                           //current->remove_from_above();
                                                                            }
           | VOID ID  
                 { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
                   class SymTable* function_scope;
                   function_scope=new SymTable($2);
-                  //current->add_above(function_scope);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
                   current=function_scope;
@@ -98,9 +104,7 @@ functions : TYPE ID
                 } 
                '(' list_param ')' CBEGIN list CEND ';' 
                                    {
-                                    //current->remove_from_above();
                                     current=current->next_domain_scope();
-                                    //current->remove_from_above();
                                    }
           ;
 
@@ -154,7 +158,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                          }
                           
                      } 
-                         x    {//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
+                         x    {
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                    if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="int"){
                                         if(numeric_limits<int>::min()==($4->evaluatei())){
@@ -173,7 +177,6 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                         }
                                         else{
                                              class Value val($4->evaluatef());
-                                             //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
                                              domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
                                         }
                                    }else{
@@ -221,18 +224,31 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                      }
                //To DO : Implementeaza loopuril din if , while , for 
          | WHILE '(' boolean_expression  ')' 
-               {
-                    if($3->evaluatei()==true){
-                         printf("Expression is TRUE\n");
+               {    cout<<$3->get_type_for_main()<<endl;
+                    if(strcmp($3->get_type_for_main(),"int")==0){
+                         if($3->evaluatei()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
+                    }
+                    else if(strcmp($3->get_type_for_main(),"float")==0){
+                         if((int)$3->evaluatef()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
                     }
                     else{
-                         printf("Expression is FALSE\n");
+                         errorCount++;
+                         yyerror("Weird expressions in condition");
                     }
                }CBEGIN 
                {
                     SymTable* currentCTRL;     
                     currentCTRL = new SymTable($1);
-                    //current->add_above(currentCTRL);
                     currentCTRL->assign_stack_above(current->return_stack_above());
                     currentCTRL->add_above(current);
                     current=currentCTRL;
@@ -240,23 +256,34 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                } 
                          list CEND
                                    {
-                                        //current->remove_from_above();
                                         current=current->next_domain_scope();
-                                        //current->remove_from_above();
                                    }
          | IF '(' boolean_expression ')'
-               {
-                    if($3->evaluatei()==true){
-                         printf("Expression is TRUE\n");
+               {    cout<<$3->get_type_for_main()<<endl;
+                   if(strcmp($3->get_type_for_main(),"int")==0){
+                         if($3->evaluatei()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
+                    }
+                    else if(strcmp($3->get_type_for_main(),"float")==0){
+                         if((int)$3->evaluatef()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
                     }
                     else{
-                         printf("Expression is FALSE\n");
+                         errorCount++;
+                         yyerror("Weird expressions in condition");
                     }
                } CBEGIN 
                     {
                          SymTable* currentCTRL;     
                          currentCTRL = new SymTable($1);
-                         //current->add_above(currentCTRL);
                          currentCTRL->assign_stack_above(current->return_stack_above());
                          currentCTRL->add_above(current);
                          current=currentCTRL;
@@ -264,15 +291,12 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                     } 
                          list CEND
                                    {
-                                        //current->remove_from_above();
                                         current=current->next_domain_scope();
-                                        //current->remove_from_above();
                                    }
                                    ELSE CBEGIN
                               {
                                    SymTable* currentCTRL;     
                                    currentCTRL = new SymTable($1);
-                                   //current->add_above(currentCTRL);
                                    currentCTRL->assign_stack_above(current->return_stack_above());
                                    currentCTRL->add_above(current);
                                    current=currentCTRL;
@@ -280,9 +304,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                               }
                                                   list_for_else CEND
                               {
-                                   //current->remove_from_above();
                                    current=current->next_domain_scope();
-                                   //current->remove_from_above();
                               }
          | FOR '(' ID ASSIGN 
                {
@@ -302,7 +324,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                          }
                     }
                } 
-                                   x{//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
+                                   x{
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                    if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="int"){
                                         if(numeric_limits<int>::min()==($6->evaluatei())){
@@ -321,7 +343,6 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                         }
                                         else{
                                              class Value val($6->evaluatef());
-                                             //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
                                              domeniul_caruia_ii_apartine_varabila->set_value($3 , val);
                                         }
                                    }else{
@@ -331,13 +352,27 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    }
                               }//NO IDEA why it's the 4-th one , Trial and error ;P
                          } ';' boolean_expression ';'
-                              {
-                                   if($9->evaluatei()==true){
-                                   printf("Expression is TRUE\n");
-                                   }
-                                   else{
-                                        printf("Expression is FALSE\n");
-                                   }
+                              {cout<<$9->get_type_for_main()<<endl;
+                                   if(strcmp($9->get_type_for_main(),"int")==0){
+                         if($9->evaluatei()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
+                    }
+                    else if(strcmp($9->get_type_for_main(),"float")==0){
+                         if((int)$9->evaluatef()==true){
+                              printf("Expression is TRUE\n");
+                         }
+                         else{
+                              printf("Expression is FALSE\n");
+                         }
+                    }
+                    else{
+                         errorCount++;
+                         yyerror("Weird expressions in condition");
+                    }
                               } 
                                                        ID 
                {
@@ -358,7 +393,6 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                {
                  SymTable* currentCTRL;     
                  currentCTRL = new SymTable($1);
-                 //current->add_above(currentCTRL);
                  currentCTRL->assign_stack_above(current->return_stack_above());
                  currentCTRL->add_above(current);
                  current=currentCTRL;
@@ -366,11 +400,9 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                } 
                                                                                     list CEND
                {
-                 //current->remove_from_above();
                  current=current->next_domain_scope();
-                 //current->remove_from_above();
                }
-         | declarations_interior //TREBUIE MODIFICIAT
+         | declarations_interior
          | PRINT '(' e ')'{
                               if($3->get_type()=="int"){
                                    cout<<$3->evaluatei()<<endl;
@@ -382,7 +414,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    errorCount++;
                                    yyerror("Unkown prin parameter");
                               }
-                          } //Nu stiu cum s-o fac sa afisze
+                          }
          | TYPE_FUNCTION  '(' e ')'
          ;
 
@@ -409,7 +441,6 @@ class :  Class_Type Class_ID ':' CBEGIN
             current->check_existance_for_declaration($1, $2 , "class" , errorCount , yylineno);
             SymTable* class_scope;
             class_scope=new SymTable($2);
-            //current->add_above(class_scope);
             class_scope->assign_stack_above(current->return_stack_above());
             class_scope->add_above(current);
             current=class_scope;
@@ -417,9 +448,7 @@ class :  Class_Type Class_ID ':' CBEGIN
           }
                                         global_classes_declaration CEND ';' 
           {
-            //current->remove_from_above();
             current=current->next_domain_scope();
-            //current->remove_from_above();
           }
       ;
 
@@ -573,13 +602,11 @@ void yyerror(const char * s){
 int main(int argc, char** argv){
      yyin=fopen(argv[1],"r");
      current = new SymTable("global");
-     //current->add_above(current);
      Vector_Tabele.push_back(current);
      yyparse();
      cout << "Variables:" <<endl;
      for (auto i : Vector_Tabele){
           i->printVars();
-          //delete i;
      }
      cout<<"Functions and their interior:"<<endl;
      for (auto i : Vector_Tabele){
