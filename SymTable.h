@@ -36,7 +36,7 @@ class IdInfo {
     string type; //int float char bool
     string name; //Numele variabilei
     Value value; //Valoare pe care o va avea Variabila
-    std::vector<IdInfo> params; //for functions
+    std::vector<IdInfo*> params; //for functions //este * pentru ca noi vrem ca schimbarile Parametrilor sa fie reflectate.
     IdInfo() {}
     IdInfo(const char* type, const char* name, const char* idType) : type(type),name(name),idType(idType) {}
 };
@@ -66,8 +66,9 @@ class SymTable {
     void check_existance_for_declaration(const char* a , const char* b , const char* c , int& errorCount , int yylineno);
     SymTable* check_existance_for_use(const char* b, int& errorCount , int yylineno);
     void check_existance_for_class_instance(const char* a , const char* b ,int& errorCount , int yylineno );
-    void add_params(const char* function,const char* type , const char* name , const char* id_type);
-    std::vector<IdInfo> get_params(string s);//TO DO continua sa faci parametrii
+    void add_params(const char* function , IdInfo* parametru);
+    std::vector<IdInfo*> get_params(string s);//TO DO continua sa faci parametrii
+    IdInfo* get_that_variable(string s);
     void set_value(const char* name , Value new_value);
     ~SymTable();
 };

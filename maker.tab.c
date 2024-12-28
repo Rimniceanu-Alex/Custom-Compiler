@@ -85,7 +85,7 @@ class SymTable* domeniul_caruia_ii_apartine_varabila;
 std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 char* Denumire_apelant=nullptr;
-std::vector<IdInfo> param_checker;
+std::vector<IdInfo*> param_checker;
 
 #line 91 "maker.tab.c"
 
@@ -607,8 +607,8 @@ static const yytype_int16 yyrline[] =
      267,   244,   280,   302,   311,   315,   279,   328,   345,   373,
      396,   411,   327,   423,   424,   436,   439,   440,   443,   444,
      447,   448,   449,   451,   453,   454,   458,   457,   473,   474,
-     478,   479,   482,   485,   485,   487,   490,   491,   495,   500,
-     525,   638,   640,   641,   642,   643,   644,   645,   647,   649
+     478,   479,   482,   485,   485,   487,   490,   491,   495,   501,
+     532,   660,   662,   663,   664,   665,   666,   667,   669,   671
 };
 #endif
 
@@ -1873,116 +1873,145 @@ yyreduce:
   case 78: /* param: TYPE ID  */
 #line 495 "maker.y"
                 {current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "param" , errorCount , yylineno);
-                 current->next_domain_scope()->add_params(current->get_dom_name(), (yyvsp[-1].string), (yyvsp[0].string) , "param");//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
+                 current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable((yyvsp[0].string)));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
 #line 1879 "maker.tab.c"
     break;
 
   case 79: /* call_list: x  */
-#line 509 "maker.y"
+#line 502 "maker.y"
                {
                if(param_checker.empty()){
                     errorCount++;
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                }
                else{
-               class IdInfo temp;
+               class IdInfo* temp;
                temp=*(param_checker.end()-1);
-               cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
-               class Value val((yyvsp[0].ListOfNodes)->evaluatei());
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               param_checker.pop_back();
+                    if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "int")==0){
+                         cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
+                         class Value val((yyvsp[0].ListOfNodes)->evaluatei());
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         param_checker.pop_back();
+                    }
+                    else if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "float")==0){
+                         cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatef()<<endl;
+                         class Value val((yyvsp[0].ListOfNodes)->evaluatef());
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         param_checker.pop_back();
+                    }
+                    else{
+                         errorCount++;
+                         yyerror("Unkown Parameter type");
+                    }
                }
                }
-#line 1900 "maker.tab.c"
+#line 1914 "maker.tab.c"
     break;
 
   case 80: /* call_list: call_list ',' x  */
-#line 525 "maker.y"
+#line 532 "maker.y"
                            {
                if(param_checker.empty()){
                     errorCount++;
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                }
                else{
-               class IdInfo temp;
+               class IdInfo* temp;
                temp=*(param_checker.end()-1);
-               cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
-               class Value val((yyvsp[0].ListOfNodes)->evaluatei());
-               //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               param_checker.pop_back();
+               if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "int")==0){
+                    cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
+                    class Value val((yyvsp[0].ListOfNodes)->evaluatei());
+                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    param_checker.pop_back();
+                    }
+               else if (strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "float")==0){
+                    cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatef()<<endl;
+                    class Value val((yyvsp[0].ListOfNodes)->evaluatef());
+                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    param_checker.pop_back();
+               }
+               else{
+                         errorCount++;
+                         yyerror("Unkown Parameter type");
+                    }
                }
                }
-#line 1922 "maker.tab.c"
+#line 1951 "maker.tab.c"
     break;
 
   case 81: /* x: e  */
-#line 638 "maker.y"
+#line 660 "maker.y"
       {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1928 "maker.tab.c"
+#line 1957 "maker.tab.c"
     break;
 
   case 82: /* e: e '+' e  */
-#line 640 "maker.y"
+#line 662 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("+" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1934 "maker.tab.c"
+#line 1963 "maker.tab.c"
     break;
 
   case 83: /* e: e '*' e  */
-#line 641 "maker.y"
+#line 663 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("*" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1940 "maker.tab.c"
+#line 1969 "maker.tab.c"
     break;
 
   case 84: /* e: e '-' e  */
-#line 642 "maker.y"
+#line 664 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("-" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1946 "maker.tab.c"
+#line 1975 "maker.tab.c"
     break;
 
   case 85: /* e: e '/' e  */
-#line 643 "maker.y"
+#line 665 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("/" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1952 "maker.tab.c"
+#line 1981 "maker.tab.c"
     break;
 
   case 86: /* e: '(' e ')'  */
-#line 644 "maker.y"
+#line 666 "maker.y"
               {(yyval.ListOfNodes)=(yyvsp[-1].ListOfNodes);}
-#line 1958 "maker.tab.c"
+#line 1987 "maker.tab.c"
     break;
 
   case 87: /* e: NR  */
-#line 645 "maker.y"
+#line 667 "maker.y"
               {Value val(atoi(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "int");}
-#line 1965 "maker.tab.c"
+#line 1994 "maker.tab.c"
     break;
 
   case 88: /* e: REAL  */
-#line 647 "maker.y"
+#line 669 "maker.y"
               {Value val((float)atof(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "float");}
-#line 1972 "maker.tab.c"
+#line 2001 "maker.tab.c"
     break;
 
   case 89: /* e: ID  */
-#line 649 "maker.y"
+#line 671 "maker.y"
               {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                     (yyval.ListOfNodes)=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value((yyvsp[0].string)) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[0].string)));
                }
               }
-#line 1982 "maker.tab.c"
+#line 2011 "maker.tab.c"
     break;
 
 
-#line 1986 "maker.tab.c"
+#line 2015 "maker.tab.c"
 
       default: break;
     }
@@ -2175,7 +2204,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 657 "maker.y"
+#line 679 "maker.y"
 
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;

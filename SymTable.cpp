@@ -73,7 +73,12 @@ void SymTable::printFunct(){
             cout<<"Params:"<<endl;
             auto parametrii=this->get_params(v.first);
             for(auto i:parametrii){
-                cout<<i.name<<" "<<i.type<<" "<<i.value.get_int()<<endl;
+                if((*i).type=="int"){
+                cout<<(*i).name<<" "<<(*i).type<<" "<<(*i).value.get_int()<<endl;
+                }
+                else if((*i).type=="float"){
+                cout<<(*i).name<<" "<<(*i).type<<" "<<(*i).value.get_float()<<endl;
+                }
             }
         }
     }
@@ -256,15 +261,19 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
     }
 }
 
-void SymTable::add_params(const char* function ,const char* type , const char* name , const char* id_type)
+void SymTable::add_params(const char* function , IdInfo* parametru)
 {
-    IdInfo var(type, name, id_type);
-    ids[function].params.push_back(var);
+    ids[function].params.push_back(parametru);
 }
 
-std::vector<IdInfo> SymTable::get_params(string s)
+std::vector<IdInfo*> SymTable::get_params(string s)
 {
     return this->ids[s].params;
+}
+
+IdInfo *SymTable::get_that_variable(string s)
+{
+    return &ids[s];
 }
 
 void SymTable::set_value(const char *name, Value new_value)

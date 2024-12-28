@@ -15,7 +15,7 @@ class SymTable* domeniul_caruia_ii_apartine_varabila;
 std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 char* Denumire_apelant=nullptr;
-std::vector<IdInfo> param_checker;
+std::vector<IdInfo*> param_checker;
 %}
 
 %union {
@@ -493,33 +493,40 @@ list_param : param
 
             
 param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , errorCount , yylineno);
-                 current->next_domain_scope()->add_params(current->get_dom_name(), $1, $2 , "param");//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
+                 current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
       ; 
-      //TO DO : Fa apelul apelul de functie sa verifice ORDINEA si NUMARUL parametrilor.....
+      //TO DO : TREBUIE AS VEZI ORDINEA CA-I fucky , ii Ultimul cu primul , ii oleaca messed up dar te descurci tu
+      //Verificam Parametrii de la coada la Cap pentru ca avem regula RECURSIVA la STANGA
 call_list : x 
-               // {
-               // cout<<"Acest call list este chemat de "<<Denumire_apelant<<endl<<"Care apartine domeniului "<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl<<"Si are paraemetrii: ";
-               // for(IdInfo i:param_checker)
-               // {
-               //      cout<<i.name<<" ";
-               // }
-               // cout<<endl;
-               // } 
                {
                if(param_checker.empty()){
                     errorCount++;
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                }
                else{
-               class IdInfo temp;
+               class IdInfo* temp;
                temp=*(param_checker.end()-1);
-               cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
-               class Value val($1->evaluatei());
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               param_checker.pop_back();
+                    if(strcmp($1->get_type_for_main() , "int")==0){
+                         cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
+                         class Value val($1->evaluatei());
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         param_checker.pop_back();
+                    }
+                    else if(strcmp($1->get_type_for_main() , "float")==0){
+                         cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatef()<<endl;
+                         class Value val($1->evaluatef());
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         param_checker.pop_back();
+                    }
+                    else{
+                         errorCount++;
+                         yyerror("Unkown Parameter type");
+                    }
                }
                }
           | call_list ',' x{
@@ -528,15 +535,30 @@ call_list : x
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                }
                else{
-               class IdInfo temp;
+               class IdInfo* temp;
                temp=*(param_checker.end()-1);
-               cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
-               class Value val($3->evaluatei());
-               //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
-               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
-               param_checker.pop_back();
+               if(strcmp($3->get_type_for_main() , "int")==0){
+                    cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
+                    class Value val($3->evaluatei());
+                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    param_checker.pop_back();
+                    }
+               else if (strcmp($3->get_type_for_main() , "float")==0){
+                    cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatef()<<endl;
+                    class Value val($3->evaluatef());
+                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    param_checker.pop_back();
+               }
+               else{
+                         errorCount++;
+                         yyerror("Unkown Parameter type");
+                    }
                }
                }
                //TO DO: VEzi cum acesezi astea , si maybe fa o metoda care sa verifice ce se intampla aici
