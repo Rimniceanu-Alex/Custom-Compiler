@@ -86,7 +86,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "maker.y"
+#line 21 "maker.y"
 
      char* string;
      class ASTNode* ListOfNodes;

@@ -50,11 +50,11 @@ void SymTable::printVars()
 {
     for (const pair<string, IdInfo> &v : ids)
     {
-        if (v.second.type == "int"&&v.second.idType=="var")
+        if (v.second.type == "int"&&(v.second.idType=="var"||v.second.idType=="param"))
         {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
         }
-        else if(v.second.type == "float"&&v.second.idType=="var"){
+        else if(v.second.type == "float"&&(v.second.idType=="var"||v.second.idType=="param")){
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
         }
         else if (v.second.type == "int"&&v.second.idType=="func"){
@@ -73,7 +73,7 @@ void SymTable::printFunct(){
             cout<<"Params:"<<endl;
             auto parametrii=this->get_params(v.first);
             for(auto i:parametrii){
-                cout<<i.name<<" "<<i.type<<endl;
+                cout<<i.name<<" "<<i.type<<" "<<i.value.get_int()<<endl;
             }
         }
     }

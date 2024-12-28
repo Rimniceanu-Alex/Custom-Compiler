@@ -14,6 +14,8 @@ class SymTable* current;
 class SymTable* domeniul_caruia_ii_apartine_varabila;
 std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
+char* Denumire_apelant=nullptr;
+std::vector<IdInfo> param_checker;
 %}
 
 %union {
@@ -133,7 +135,7 @@ fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2
 
 arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
     ;
-//Listul e folosit in MAIN si in Control functions
+//Listul e folosit in MAIN , Control functions , definitii de functii
 list :  statement ';' 
      | list statement ';'
      ;
@@ -201,9 +203,25 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                              delete [] buff;
                              buff=nullptr;
                            }
+                       else{
+                         Denumire_apelant=new char[256];
+                         strcpy(Denumire_apelant , $1);
+                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params($1);
+                         for (auto i : Vector_Tabele){
+                              if(strcmp(i->get_dom_name(), $1)==0){
+                              domeniul_caruia_ii_apartine_varabila=i;
+                              }
+                         }
+                       }
                     }
               } 
-                '(' call_list ')' //Apel de functie
+                '(' call_list ')'{delete[] Denumire_apelant;
+                                  Denumire_apelant=nullptr;
+                                  if(!param_checker.empty()){
+                                   errorCount++;
+                                   yyerror("Not enough parameters in function call");
+                                  }
+                                 } //Apel de functie
          | ID ASSIGN {
                          domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                      } 
@@ -479,8 +497,50 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
                 }
       ; 
       //TO DO : Fa apelul apelul de functie sa verifice ORDINEA si NUMARUL parametrilor.....
-call_list : x
-          | call_list ',' x
+call_list : x 
+               // {
+               // cout<<"Acest call list este chemat de "<<Denumire_apelant<<endl<<"Care apartine domeniului "<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl<<"Si are paraemetrii: ";
+               // for(IdInfo i:param_checker)
+               // {
+               //      cout<<i.name<<" ";
+               // }
+               // cout<<endl;
+               // } 
+               {
+               if(param_checker.empty()){
+                    errorCount++;
+                    yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
+               }
+               else{
+               class IdInfo temp;
+               temp=*(param_checker.end()-1);
+               cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
+               class Value val($1->evaluatei());
+               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
+               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
+               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
+               param_checker.pop_back();
+               }
+               }
+          | call_list ',' x{
+               if(param_checker.empty()){
+                    errorCount++;
+                    yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
+               }
+               else{
+               class IdInfo temp;
+               temp=*(param_checker.end()-1);
+               cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<temp.name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
+               class Value val($3->evaluatei());
+               //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
+               domeniul_caruia_ii_apartine_varabila->set_value(temp.name.c_str() , val);
+               cout<<temp.name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value(temp.name).get_int()<<endl;
+               param_checker.pop_back();
+               }
+               }
+               //TO DO: VEzi cum acesezi astea , si maybe fa o metoda care sa verifice ce se intampla aici
+               //Vezi cum acceseszi Domeniul functiilor ca sa le dai assign la parametrii (Domeniu_careia... ii GLOBAL)
           ;
 /////////////////////////////Le folosim pe alea de mai jos daca vrem sa facem foo(a<-2) Care NU ARE fuckin sens , si pentru foo(goo(2) , 2) asta are sens , dar vedem
 // call_list : e

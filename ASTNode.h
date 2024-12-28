@@ -36,14 +36,8 @@ public:
     {
         return value;
     };
-    //TO DO : la evaluari FA sa returneze un NAN si sa dea un mesaj de eroare , nu sa dea terminate la tot +
-    //        modifica si restul metodelor/Yacc-u cat sa detecteze si Trateze un NAN(Not A Number)
     int evaluatei()
     {
-
-        // if((std::isnan(left->evaluatei()))||(std::isnan(right->evaluatei()))){
-        //     return numeric_limits<int>::quiet_NaN();
-        // }
         if ((left == nullptr) || (right == nullptr))
         {
             if (type == "int")
@@ -119,9 +113,6 @@ public:
 
     float evaluatef()
     {
-        // if((std::isnan(left->evaluatef()))||(std::isnan(right->evaluatef()))){
-        //     return numeric_limits<float>::quiet_NaN();
-        // }
         if ((left == nullptr) || (right == nullptr))
         {
             if (type == "float")
@@ -199,5 +190,3 @@ public:
         delete right;
     };
 };
-
-//TO DO :: Modifica gramatica cat sa poti bag && si || in AST
