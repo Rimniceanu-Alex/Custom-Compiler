@@ -12,6 +12,11 @@ Value::Value(float x)
     FloatValue = x;
 }
 
+Value::Value(bool x)
+{
+    BoolValue = x;
+}
+
 Value::Value(string x)
 {
     StringValue = x;
@@ -28,6 +33,11 @@ int Value::get_int() const
 float Value::get_float() const
 {
     return FloatValue;
+}
+
+bool Value::get_bool() const
+{
+    return BoolValue;
 }
 
 string Value::get_string() const

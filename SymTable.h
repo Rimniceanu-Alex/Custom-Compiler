@@ -11,15 +11,18 @@ using namespace std;
 class Value{
     int IntValue;
     float FloatValue;
+    bool BoolValue;
     string StringValue;
     public:
     Value();
     Value(int x);
     Value(float x);
+    Value(bool x);
     Value(string type);
     string tostring()const;
     int get_int()const;
     float get_float()const;
+    bool get_bool()const;
     string get_string()const;
 };
 // class ParamList {

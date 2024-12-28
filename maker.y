@@ -26,9 +26,9 @@ std::vector<IdInfo*> param_checker;
 %{
      %}
 
-%token  BGIN END ASSIGN TRUTH_VALUE CBEGIN CEND REAL PRINT TYPE_FUNCTION
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR CONNECT VOID RETURN
-%type<ListOfNodes> e x y boolean_expression
+%token  BGIN END CBEGIN CEND REAL PRINT TYPE_FUNCTION
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE
+%type<ListOfNodes> e x y boolean_expression assign_node
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -142,53 +142,8 @@ list :  statement ';'
 list_for_else : list 
               | /*epsilon*/
               ;
-statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-                      if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                         {
-                              if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="bool")
-                              {
-                                   {errorCount++; 
-                                    char*buff=new char[256];
-                                    strcpy(buff ,"Cannot assing arithmetic expression to ");
-                                    strcat(buff , $1);
-                                    strcat(buff ," which is a bool"); 
-                                    yyerror(buff);
-                                    delete [] buff;
-                                    buff=nullptr;
-                                   }
-                              }
-                         }
-                          
-                     } 
-                         x    {
-                              if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-                                   if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="int"){
-                                        if(numeric_limits<int>::min()==($4->evaluatei())){
-                                             errorCount++;
-                                             yyerror("Arithmetic expression is inccorect");
-                                        }
-                                        else{
-                                             class Value val($4->evaluatei());
-                                             domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
-                                        }
-                                   }
-                                   else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="float"){
-                                        if(std::isnan($4->evaluatef())){
-                                             errorCount++;
-                                             yyerror("Arithmetic expression is inccorect");
-                                        }
-                                        else{
-                                             class Value val($4->evaluatef());
-                                             domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
-                                        }
-                                   }else{
-                                        errorCount++;
-                                        yyerror("Can only assing a int or a float to an int or a float");
-                                        
-                                   }
-                              }//NO IDEA why it's the 4-th one , Trial and error ;P
-                         }
-         | ID {
+statement: assign_node {$1->run();}
+         |ID {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                     {
@@ -222,24 +177,24 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    yyerror("Not enough parameters in function call");
                                   }
                                  } //Apel de functie
-         | ID ASSIGN {
-                         domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-                     } 
-                         TRUTH_VALUE {
-                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-                                             if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)!="bool")
-                                                  {
-                                                       errorCount++; 
-                                                       char*buff=new char[256];
-                                                       strcpy(buff ,"Variable ");
-                                                       strcat(buff , $1);
-                                                       strcat(buff ," is not a bool"); 
-                                                       yyerror(buff);
-                                                       delete [] buff;
-                                                       buff=nullptr;
-                                                  }   
-                                        }
-                                     }
+     //     | ID ASSIGN {
+     //                     domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
+     //                 } 
+     //                     TRUTH_VALUE {
+     //                                    if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+     //                                         if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)!="bool")
+     //                                              {
+     //                                                   errorCount++; 
+     //                                                   char*buff=new char[256];
+     //                                                   strcpy(buff ,"Variable ");
+     //                                                   strcat(buff , $1);
+     //                                                   strcat(buff ," is not a bool"); 
+     //                                                   yyerror(buff);
+     //                                                   delete [] buff;
+     //                                                   buff=nullptr;
+     //                                              }   
+     //                                    }
+     //                                 }
                //To DO : Implementeaza loopuril din if , while , for 
          | WHILE '(' boolean_expression  ')' 
                {    //cout<<$3->get_type_for_main()<<endl;
@@ -324,7 +279,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                               {
                                    current=current->next_domain_scope();
                               }
-         | FOR '(' ID ASSIGN 
+         | FOR '(' ID ASSIGN //TO DO :Inlocuieste ID ASSING cu assign_node 
                {
                  domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($3 , errorCount , yylineno);
                  if(domeniul_caruia_ii_apartine_varabila!=nullptr)
@@ -346,7 +301,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                                    if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="int"){
                                         if(numeric_limits<int>::min()==($6->evaluatei())){
-                                             errorCount++;
+                                             //errorCount++;
                                              yyerror("Arithmetic expression is inccorect");
                                         }
                                         else{
@@ -356,7 +311,7 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    }
                                    else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="float"){
                                         if(std::isnan($6->evaluatef())){
-                                             errorCount++;
+                                             //errorCount++;
                                              yyerror("Arithmetic expression is inccorect");
                                         }
                                         else{
@@ -436,6 +391,10 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
          | TYPE_FUNCTION  '(' e ')'
          ;
 
+assign_node:ID ASSIGN x {
+                         $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
+                         }
+
 inc_dec: INC
        | DEC
        ;
@@ -445,10 +404,10 @@ declarations_interior: variables_interior
                      ;          
 
 boolean_expression: '(' boolean_expression ')' {$$=$2;}
-               |  '('boolean_expression')' CONNECT '('boolean_expression')' {$$=new ASTNode($4 , $2 , $6);}
+               |  '('boolean_expression')' CONNECT '('boolean_expression')' {$$=new ASTNode($4 , $2 , $6 , errorCount);}
                |  y {$$=$1;}
                ;
-y : e CMP e {$$=new ASTNode($2 , $1 , $3);}  
+y : e CMP e {$$=new ASTNode($2 , $1 , $3 , errorCount);}  
   ;
 classes : class
         | classes class
@@ -563,8 +522,6 @@ call_list : x
                     }
                }
                }
-               //TO DO: VEzi cum acesezi astea , si maybe fa o metoda care sa verifice ce se intampla aici
-               //Vezi cum acceseszi Domeniul functiilor ca sa le dai assign la parametrii (Domeniu_careia... ii GLOBAL)
           ;
 /////////////////////////////Le folosim pe alea de mai jos daca vrem sa facem foo(a<-2) Care NU ARE fuckin sens , si pentru foo(goo(2) , 2) asta are sens , dar vedem
 // call_list : e
@@ -661,18 +618,29 @@ call_list : x
 
 x : e {$$=$1;}
   ;
-e : e '+' e   {$$=new ASTNode("+" , $1 , $3);}
-  | e '*' e   {$$=new ASTNode("*" , $1 , $3);}
-  | e '-' e   {$$=new ASTNode("-" , $1 , $3);}
-  | e '/' e   {$$=new ASTNode("/" , $1 , $3);}
+e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
+  | e '*' e   {$$=new ASTNode("*" , $1 , $3 , errorCount);}
+  | e '-' e   {$$=new ASTNode("-" , $1 , $3 , errorCount);}
+  | e '/' e   {$$=new ASTNode("/" , $1 , $3 , errorCount);}
   |'(' e ')'  {$$=$2;}
+  | TRUTH_VALUE{    if($1=="TRUE"){
+                         Value val(true);     
+                         cout<<"True"<<endl;    
+                         $$=new ASTNode(val , "bool", errorCount);
+                    }
+                    else{
+                         Value val(false);
+                         cout<<"False"<<endl;      
+                         $$=new ASTNode(val , "bool", errorCount);
+                    }
+               }
   | NR        {Value val(atoi(yytext));
-               $$=new ASTNode(val , "int");}//MERGE
+               $$=new ASTNode(val , "int" , errorCount);}//MERGE
   | REAL      {Value val((float)atof(yytext));
-               $$=new ASTNode(val , "float");}
+               $$=new ASTNode(val , "float" , errorCount);}
   | ID        {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-                    $$=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value($1) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1));
+                    $$=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value($1) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1) , errorCount);
                }
               }
   ;
@@ -699,6 +667,6 @@ int main(int argc, char** argv){
           delete i;
      }
 } 
-
-//TO DO : Am facut AST numa pt Assign din Statement 
-// FA SI PENTRU RESTU , mayb pt bool?
+//TO DO: VEZI LA BOOL la assign , cum le dai store
+//1TO DO: TRANZITIE AST ;(
+//2TO DO: Fa sa poti accesa Membrii unei clase , si dupa fiecare instanta sa aiba o copie independenta a acelor Membrii
