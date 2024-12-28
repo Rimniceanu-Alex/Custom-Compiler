@@ -69,7 +69,15 @@ void SymTable::printFunct(){
     for (const pair<string, IdInfo> &v : ids)
     {
         if(v.second.idType=="func"){
-            cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"]"<<endl;
+            if(v.second.type=="int"){
+                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"] Value: ["<<v.second.value.get_int()<<"]"<<endl;
+            }
+            else if(v.second.type=="float"){
+                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"] Value: ["<<v.second.value.get_int()<<"]"<<endl;
+            }
+            else{
+                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"]"<<endl;
+            }
             cout<<"Params:"<<endl;
             auto parametrii=this->get_params(v.first);
             for(auto i:parametrii){

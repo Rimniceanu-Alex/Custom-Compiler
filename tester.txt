@@ -4,12 +4,13 @@ int f (int a , int b){
 };
 int x (float a , float b , int c){
     a<-2.2;
-    return 12;
+    return 12;  
 };
 begin
 f(10 , 20);
 f(100 , 200);
 int a;
 a<-123*230;
-x(30 , 20.3 , 30.6);
+x(30.6 , 20.3 , 30);
+x(1.1, 1.2 , 2);
 end

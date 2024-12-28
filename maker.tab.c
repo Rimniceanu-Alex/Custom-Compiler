@@ -608,7 +608,7 @@ static const yytype_int16 yyrline[] =
      396,   411,   327,   423,   424,   436,   439,   440,   443,   444,
      447,   448,   449,   451,   453,   454,   458,   457,   473,   474,
      478,   479,   482,   485,   485,   487,   490,   491,   495,   501,
-     532,   660,   662,   663,   664,   665,   666,   667,   669,   671
+     533,   662,   664,   665,   666,   667,   668,   669,   671,   673
 };
 #endif
 
@@ -1558,21 +1558,21 @@ yyreduce:
 
   case 39: /* $@8: %empty  */
 #line 245 "maker.y"
-               {    cout<<(yyvsp[-1].ListOfNodes)->get_type_for_main()<<endl;
+               {    //cout<<$3->get_type_for_main()<<endl;
                     if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"int")==0){
                          if((yyvsp[-1].ListOfNodes)->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"float")==0){
                          if((int)(yyvsp[-1].ListOfNodes)->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -1606,21 +1606,21 @@ yyreduce:
 
   case 42: /* $@10: %empty  */
 #line 280 "maker.y"
-               {    cout<<(yyvsp[-1].ListOfNodes)->get_type_for_main()<<endl;
+               {    //cout<<$3->get_type_for_main()<<endl;
                    if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"int")==0){
                          if((yyvsp[-1].ListOfNodes)->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"float")==0){
                          if((int)(yyvsp[-1].ListOfNodes)->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -1730,21 +1730,21 @@ yyreduce:
 
   case 49: /* $@16: %empty  */
 #line 373 "maker.y"
-                              {cout<<(yyvsp[-1].ListOfNodes)->get_type_for_main()<<endl;
+                              {//cout<<$9->get_type_for_main()<<endl;
                                    if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"int")==0){
                          if((yyvsp[-1].ListOfNodes)->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp((yyvsp[-1].ListOfNodes)->get_type_for_main(),"float")==0){
                          if((int)(yyvsp[-1].ListOfNodes)->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -1887,22 +1887,23 @@ yyreduce:
                }
                else{
                class IdInfo* temp;
-               temp=*(param_checker.end()-1);
+               temp=*(param_checker.begin());
+                    //cout<<"Ma execut DUPA "<<(*temp).name<<endl;
                     if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "int")==0){
-                         cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
+                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
                          class Value val((yyvsp[0].ListOfNodes)->evaluatei());
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
                          domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                         param_checker.pop_back();
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         param_checker.erase(param_checker.begin());
                     }
                     else if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "float")==0){
-                         cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatef()<<endl;
+                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatef()<<endl;
                          class Value val((yyvsp[0].ListOfNodes)->evaluatef());
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
                          domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                         param_checker.pop_back();
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         param_checker.erase(param_checker.begin());
                     }
                     else{
                          errorCount++;
@@ -1910,11 +1911,11 @@ yyreduce:
                     }
                }
                }
-#line 1914 "maker.tab.c"
+#line 1915 "maker.tab.c"
     break;
 
   case 80: /* call_list: call_list ',' x  */
-#line 532 "maker.y"
+#line 533 "maker.y"
                            {
                if(param_checker.empty()){
                     errorCount++;
@@ -1922,24 +1923,25 @@ yyreduce:
                }
                else{
                class IdInfo* temp;
-               temp=*(param_checker.end()-1);
+               temp=*(param_checker.begin());
+               //cout<<"Ma execut PRIMUL "<<(*temp).name<<endl;
                if(strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "int")==0){
-                    cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatei()<<endl;
+                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
                     class Value val((yyvsp[0].ListOfNodes)->evaluatei());
                     //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
                     domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                    param_checker.pop_back();
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    param_checker.erase(param_checker.begin());
                     }
                else if (strcmp((yyvsp[0].ListOfNodes)->get_type_for_main() , "float")==0){
-                    cout<<Denumire_apelant<<"    "<<(yyvsp[0].ListOfNodes)->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<(yyvsp[0].ListOfNodes)->evaluatef()<<endl;
+                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatef()<<endl;
                     class Value val((yyvsp[0].ListOfNodes)->evaluatef());
                     //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
                     domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                    param_checker.pop_back();
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    param_checker.erase(param_checker.begin());
                }
                else{
                          errorCount++;
@@ -1947,71 +1949,71 @@ yyreduce:
                     }
                }
                }
-#line 1951 "maker.tab.c"
+#line 1953 "maker.tab.c"
     break;
 
   case 81: /* x: e  */
-#line 660 "maker.y"
+#line 662 "maker.y"
       {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1957 "maker.tab.c"
+#line 1959 "maker.tab.c"
     break;
 
   case 82: /* e: e '+' e  */
-#line 662 "maker.y"
+#line 664 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("+" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1963 "maker.tab.c"
+#line 1965 "maker.tab.c"
     break;
 
   case 83: /* e: e '*' e  */
-#line 663 "maker.y"
+#line 665 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("*" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1969 "maker.tab.c"
+#line 1971 "maker.tab.c"
     break;
 
   case 84: /* e: e '-' e  */
-#line 664 "maker.y"
+#line 666 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("-" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1975 "maker.tab.c"
+#line 1977 "maker.tab.c"
     break;
 
   case 85: /* e: e '/' e  */
-#line 665 "maker.y"
+#line 667 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("/" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes));}
-#line 1981 "maker.tab.c"
+#line 1983 "maker.tab.c"
     break;
 
   case 86: /* e: '(' e ')'  */
-#line 666 "maker.y"
+#line 668 "maker.y"
               {(yyval.ListOfNodes)=(yyvsp[-1].ListOfNodes);}
-#line 1987 "maker.tab.c"
+#line 1989 "maker.tab.c"
     break;
 
   case 87: /* e: NR  */
-#line 667 "maker.y"
+#line 669 "maker.y"
               {Value val(atoi(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "int");}
-#line 1994 "maker.tab.c"
+#line 1996 "maker.tab.c"
     break;
 
   case 88: /* e: REAL  */
-#line 669 "maker.y"
+#line 671 "maker.y"
               {Value val((float)atof(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "float");}
-#line 2001 "maker.tab.c"
+#line 2003 "maker.tab.c"
     break;
 
   case 89: /* e: ID  */
-#line 671 "maker.y"
+#line 673 "maker.y"
               {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                     (yyval.ListOfNodes)=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value((yyvsp[0].string)) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type((yyvsp[0].string)));
                }
               }
-#line 2011 "maker.tab.c"
+#line 2013 "maker.tab.c"
     break;
 
 
-#line 2015 "maker.tab.c"
+#line 2017 "maker.tab.c"
 
       default: break;
     }
@@ -2204,7 +2206,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 679 "maker.y"
+#line 681 "maker.y"
 
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;
@@ -2215,11 +2217,12 @@ int main(int argc, char** argv){
      current = new SymTable("global");
      Vector_Tabele.push_back(current);
      yyparse();
-     cout << "Variables:" <<endl;
+     cout << "Variables:" <<endl<<endl;
      for (auto i : Vector_Tabele){
           i->printVars();
      }
-     cout<<"Functions and their interior:"<<endl;
+     cout<<endl<<endl<<endl<<endl<<endl<<endl;
+     cout<<"Functions and their interior:"<<endl<<endl;
      for (auto i : Vector_Tabele){
           i->printFunct();
           delete i;

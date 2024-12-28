@@ -242,21 +242,21 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                      }
                //To DO : Implementeaza loopuril din if , while , for 
          | WHILE '(' boolean_expression  ')' 
-               {    cout<<$3->get_type_for_main()<<endl;
+               {    //cout<<$3->get_type_for_main()<<endl;
                     if(strcmp($3->get_type_for_main(),"int")==0){
                          if($3->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp($3->get_type_for_main(),"float")==0){
                          if((int)$3->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -277,21 +277,21 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                         current=current->next_domain_scope();
                                    }
          | IF '(' boolean_expression ')'
-               {    cout<<$3->get_type_for_main()<<endl;
+               {    //cout<<$3->get_type_for_main()<<endl;
                    if(strcmp($3->get_type_for_main(),"int")==0){
                          if($3->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp($3->get_type_for_main(),"float")==0){
                          if((int)$3->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -370,21 +370,21 @@ statement: ID ASSIGN {domeniul_caruia_ii_apartine_varabila=current->check_exista
                                    }
                               }//NO IDEA why it's the 4-th one , Trial and error ;P
                          } ';' boolean_expression ';'
-                              {cout<<$9->get_type_for_main()<<endl;
+                              {//cout<<$9->get_type_for_main()<<endl;
                                    if(strcmp($9->get_type_for_main(),"int")==0){
                          if($9->evaluatei()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else if(strcmp($9->get_type_for_main(),"float")==0){
                          if((int)$9->evaluatef()==true){
-                              printf("Expression is TRUE\n");
+                              //printf("Expression is TRUE\n");
                          }
                          else{
-                              printf("Expression is FALSE\n");
+                              //printf("Expression is FALSE\n");
                          }
                     }
                     else{
@@ -496,8 +496,8 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
                  current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
       ; 
-      //TO DO : TREBUIE AS VEZI ORDINEA CA-I fucky , ii Ultimul cu primul , ii oleaca messed up dar te descurci tu
-      //Verificam Parametrii de la coada la Cap pentru ca avem regula RECURSIVA la STANGA
+      //Cand adaugam parametrii in declaratia functiei o facem refursiv la DREAPTA , si cand ii apelam o facem recursiv la stanga
+     //TO DO: Apel de functie in apel de functie
 call_list : x 
                {
                if(param_checker.empty()){
@@ -506,22 +506,23 @@ call_list : x
                }
                else{
                class IdInfo* temp;
-               temp=*(param_checker.end()-1);
+               temp=*(param_checker.begin());
+                    //cout<<"Ma execut DUPA "<<(*temp).name<<endl;
                     if(strcmp($1->get_type_for_main() , "int")==0){
-                         cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
+                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
                          class Value val($1->evaluatei());
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
                          domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                         param_checker.pop_back();
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                         param_checker.erase(param_checker.begin());
                     }
                     else if(strcmp($1->get_type_for_main() , "float")==0){
-                         cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatef()<<endl;
+                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatef()<<endl;
                          class Value val($1->evaluatef());
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
                          domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                         param_checker.pop_back();
+                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                         param_checker.erase(param_checker.begin());
                     }
                     else{
                          errorCount++;
@@ -536,24 +537,25 @@ call_list : x
                }
                else{
                class IdInfo* temp;
-               temp=*(param_checker.end()-1);
+               temp=*(param_checker.begin());
+               //cout<<"Ma execut PRIMUL "<<(*temp).name<<endl;
                if(strcmp($3->get_type_for_main() , "int")==0){
-                    cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
+                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
                     class Value val($3->evaluatei());
                     //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
                     domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                    param_checker.pop_back();
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
+                    param_checker.erase(param_checker.begin());
                     }
                else if (strcmp($3->get_type_for_main() , "float")==0){
-                    cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatef()<<endl;
+                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatef()<<endl;
                     class Value val($3->evaluatef());
                     //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
                     domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                    param_checker.pop_back();
+                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
+                    param_checker.erase(param_checker.begin());
                }
                else{
                          errorCount++;
@@ -686,11 +688,12 @@ int main(int argc, char** argv){
      current = new SymTable("global");
      Vector_Tabele.push_back(current);
      yyparse();
-     cout << "Variables:" <<endl;
+     cout << "Variables:" <<endl<<endl;
      for (auto i : Vector_Tabele){
           i->printVars();
      }
-     cout<<"Functions and their interior:"<<endl;
+     cout<<endl<<endl<<endl<<endl<<endl<<endl;
+     cout<<"Functions and their interior:"<<endl<<endl;
      for (auto i : Vector_Tabele){
           i->printFunct();
           delete i;
