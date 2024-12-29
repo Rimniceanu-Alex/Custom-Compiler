@@ -59,25 +59,25 @@ extern int yydebug;
     CBEGIN = 260,                  /* CBEGIN  */
     CEND = 261,                    /* CEND  */
     REAL = 262,                    /* REAL  */
-    PRINT = 263,                   /* PRINT  */
-    TYPE_FUNCTION = 264,           /* TYPE_FUNCTION  */
-    ID = 265,                      /* ID  */
-    TYPE = 266,                    /* TYPE  */
-    Class_ID = 267,                /* Class_ID  */
-    Class_Type = 268,              /* Class_Type  */
-    IF = 269,                      /* IF  */
-    ELSE = 270,                    /* ELSE  */
-    WHILE = 271,                   /* WHILE  */
-    FOR = 272,                     /* FOR  */
-    CMP = 273,                     /* CMP  */
-    INC = 274,                     /* INC  */
-    DEC = 275,                     /* DEC  */
-    NR = 276,                      /* NR  */
-    CONNECT = 277,                 /* CONNECT  */
-    VOID = 278,                    /* VOID  */
-    RETURN = 279,                  /* RETURN  */
-    ASSIGN = 280,                  /* ASSIGN  */
-    TRUTH_VALUE = 281              /* TRUTH_VALUE  */
+    TYPE_FUNCTION = 263,           /* TYPE_FUNCTION  */
+    ID = 264,                      /* ID  */
+    TYPE = 265,                    /* TYPE  */
+    Class_ID = 266,                /* Class_ID  */
+    Class_Type = 267,              /* Class_Type  */
+    IF = 268,                      /* IF  */
+    ELSE = 269,                    /* ELSE  */
+    WHILE = 270,                   /* WHILE  */
+    FOR = 271,                     /* FOR  */
+    CMP = 272,                     /* CMP  */
+    INC = 273,                     /* INC  */
+    DEC = 274,                     /* DEC  */
+    NR = 275,                      /* NR  */
+    CONNECT = 276,                 /* CONNECT  */
+    VOID = 277,                    /* VOID  */
+    RETURN = 278,                  /* RETURN  */
+    ASSIGN = 279,                  /* ASSIGN  */
+    TRUTH_VALUE = 280,             /* TRUTH_VALUE  */
+    PRINT = 281                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

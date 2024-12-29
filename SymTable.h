@@ -5,7 +5,7 @@
 #include <stack>
 #include <cmath>
 #include <limits>
-
+class ASTNode;
 using namespace std;
 
 class Value{
@@ -50,6 +50,8 @@ class SymTable {
     map<string, IdInfo> ids;//String ii NUMELE variabilei , ids=informatii
     const char* name; //Domeniul de vizibilitate
     std::stack<SymTable*> above;
+    int changes=0;
+    ASTNode* body;
     public:
     SymTable(const char* name) :  name(name){}
     bool existsId(const char* s);
@@ -73,6 +75,9 @@ class SymTable {
     std::vector<IdInfo*> get_params(string s);//TO DO continua sa faci parametrii
     IdInfo* get_that_variable(string s);
     void set_value(const char* name , Value new_value);
+    void set_body(ASTNode*body);
+    void print_changes();
+    ASTNode* get_body();
     ~SymTable();
 };
 

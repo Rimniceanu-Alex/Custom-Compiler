@@ -305,7 +305,23 @@ IdInfo *SymTable::get_that_variable(string s)
 
 void SymTable::set_value(const char *name, Value new_value)
 {
+    ++changes;
     this->ids[name].value = new_value;
+}
+
+void SymTable::set_body(ASTNode *body)
+{
+    this->body=body;
+}
+
+void SymTable::print_changes()
+{
+    cout<<"Number of chagnes to the scope is   "<<changes<<endl;
+}
+
+ASTNode *SymTable::get_body()
+{
+    return body;
 }
 
 SymTable::~SymTable()
