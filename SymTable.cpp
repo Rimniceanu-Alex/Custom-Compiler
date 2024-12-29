@@ -67,8 +67,17 @@ void SymTable::printVars()
         else if(v.second.type == "float"&&(v.second.idType=="var"||v.second.idType=="param")){
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
         }
+        else if(v.second.type == "bool"&&(v.second.idType=="var"||v.second.idType=="param")){
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_bool() << "]" << endl;
+        }
         else if (v.second.type == "int"&&v.second.idType=="func"){
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
+        }
+        else if (v.second.type == "float"&&v.second.idType=="func"){
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
+        }
+        else if (v.second.type == "bool"&&v.second.idType=="func"){
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_bool() << "]" << endl;
         }
         else{
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]"<< endl;

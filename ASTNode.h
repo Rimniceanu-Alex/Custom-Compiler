@@ -12,7 +12,9 @@ class ASTNode
     int yylineno;
 
 public:
-    ASTNode(const string &nume, const string &assign, ASTNode *left_child, SymTable *table, int &errorCount, int yylineno) : value(Value()), type(nume), root(assign), left(left_child), right(nullptr), table(table), errorCount(errorCount), yylineno(yylineno) {};
+    ASTNode(const string &sequence, ASTNode *left_child, ASTNode *right_child, int &errorCount , int yylineno , SymTable *table) : value(Value()), root(sequence), left(left_child), right(right_child), errorCount(errorCount), table(table), yylineno(yylineno){};//Pt asignare statement_list
+    ASTNode(const string &sequence , ASTNode *left_child ,int &errorCount , int yylineno , SymTable *table ):root(sequence) , left(left_child) , right(nullptr) , value(Value()) , errorCount(errorCount) , yylineno(yylineno) , table(table){};//Pta asignare statement
+    ASTNode(const string &nume, const string &assign, ASTNode *left_child, SymTable *table, int &errorCount, int yylineno) : value(Value()), type(nume), root(assign), left(left_child), right(nullptr), table(table), errorCount(errorCount), yylineno(yylineno) {};//Constructor pentru Asignare
     ASTNode(const Value &val, const string &node_type, int &errorCount) : value(val), type(node_type), root(""), left(nullptr), right(nullptr), errorCount(errorCount), table(nullptr) {};
     ASTNode(const string &op, ASTNode *left_child, ASTNode *right_child, int &errorCount) : value(Value()), root(op), left(left_child), right(right_child), errorCount(errorCount), table(nullptr)
     {
@@ -44,7 +46,14 @@ public:
     void run()
     { // Type = numele variabilei
         // cout<<root<<endl<<type<<endl;
-        if (root == "<-")
+        if (root=="sequence"){
+            left->run();
+            right->run();
+        }
+        else if (root=="statement"){
+            left->run();
+        }
+        else if (root == "<-")
         {
             SymTable *domeniul_caruia_ii_apartine_varabila;
             domeniul_caruia_ii_apartine_varabila = table->check_existance_for_use(type.c_str(), errorCount, yylineno);

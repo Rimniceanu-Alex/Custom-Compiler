@@ -28,7 +28,7 @@ std::vector<IdInfo*> param_checker;
 
 %token  BGIN END CBEGIN CEND REAL PRINT TYPE_FUNCTION
 %token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE
-%type<ListOfNodes> e x y boolean_expression assign_node
+%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -46,7 +46,7 @@ main : BGIN
            current=currentmain;  
            Vector_Tabele.push_back(current);
           }
-           list END
+           list{$3->run();} END
                     {
                      //current->remove_from_above();//Scoatem din currentmain
                      current=current->next_domain_scope();
@@ -136,47 +136,14 @@ fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2
 arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
     ;
 //Listul e folosit in MAIN , Control functions , definitii de functii
-list :  statement ';' 
-     | list statement ';'
+list :  statement ';' {$$=new ASTNode("statement" , $1 , errorCount , yylineno, current);}
+     |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , yylineno, current);}
      ;
 list_for_else : list 
               | /*epsilon*/
               ;
-statement: assign_node {$1->run();}
-         |ID {
-               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                    {
-                      if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
-                           {
-                             errorCount++; 
-                             char*buff=new char[256];
-                             strcpy(buff ,"ID ");
-                             strcat(buff , $1);
-                             strcat(buff ," exists but is NOT a funciton"); 
-                             yyerror(buff);
-                             delete [] buff;
-                             buff=nullptr;
-                           }
-                       else{
-                         Denumire_apelant=new char[256];
-                         strcpy(Denumire_apelant , $1);
-                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params($1);
-                         for (auto i : Vector_Tabele){
-                              if(strcmp(i->get_dom_name(), $1)==0){
-                              domeniul_caruia_ii_apartine_varabila=i;
-                              }
-                         }
-                       }
-                    }
-              } 
-                '(' call_list ')'{delete[] Denumire_apelant;
-                                  Denumire_apelant=nullptr;
-                                  if(!param_checker.empty()){
-                                   errorCount++;
-                                   yyerror("Not enough parameters in function call");
-                                  }
-                                 } //Apel de functie
+statement: assign_node //{$1->run();}
+         |function_call_node //Apel de functie
      //     | ID ASSIGN {
      //                     domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
      //                 } 
@@ -279,63 +246,18 @@ statement: assign_node {$1->run();}
                               {
                                    current=current->next_domain_scope();
                               }
-         | FOR '(' ID ASSIGN //TO DO :Inlocuieste ID ASSING cu assign_node 
-               {
-                 domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($3 , errorCount , yylineno);
-                 if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-                    {
-                      if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="bool")
-                         {
-                           errorCount++; 
-                           char*buff=new char[256];
-                           strcpy(buff ,"Cannot assing arithmetic expression to ");
-                           strcat(buff , $3);
-                           strcat(buff ," which is a bool"); 
-                           yyerror(buff);
-                           delete [] buff;
-                           buff=nullptr;     
-                         }
-                    }
-               } 
-                                   x{
-                              if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-                                   if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="int"){
-                                        if(numeric_limits<int>::min()==($6->evaluatei())){
-                                             //errorCount++;
-                                             yyerror("Arithmetic expression is inccorect");
-                                        }
-                                        else{
-                                             class Value val($6->evaluatei());
-                                             domeniul_caruia_ii_apartine_varabila->set_value($3 , val);
-                                        }
-                                   }
-                                   else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($3)=="float"){
-                                        if(std::isnan($6->evaluatef())){
-                                             //errorCount++;
-                                             yyerror("Arithmetic expression is inccorect");
-                                        }
-                                        else{
-                                             class Value val($6->evaluatef());
-                                             domeniul_caruia_ii_apartine_varabila->set_value($3 , val);
-                                        }
-                                   }else{
-                                        errorCount++;
-                                        yyerror("Can only assing a int or a float to an int or a float");
-                                        
-                                   }
-                              }//NO IDEA why it's the 4-th one , Trial and error ;P
-                         } ';' boolean_expression ';'
+         | FOR '(' assign_node ';' boolean_expression ';'
                               {//cout<<$9->get_type_for_main()<<endl;
-                                   if(strcmp($9->get_type_for_main(),"int")==0){
-                         if($9->evaluatei()==true){
+                                   if(strcmp($5->get_type_for_main(),"int")==0){
+                         if($5->evaluatei()==true){
                               //printf("Expression is TRUE\n");
                          }
                          else{
                               //printf("Expression is FALSE\n");
                          }
                     }
-                    else if(strcmp($9->get_type_for_main(),"float")==0){
-                         if((int)$9->evaluatef()==true){
+                    else if(strcmp($5->get_type_for_main(),"float")==0){
+                         if((int)$5->evaluatef()==true){
                               //printf("Expression is TRUE\n");
                          }
                          else{
@@ -349,14 +271,14 @@ statement: assign_node {$1->run();}
                               } 
                                                        ID 
                {
-                 if(strcmp($3 , $12)!=0)
+                 if(strcmp($3->get_type_for_main() , $8)!=0)
                     {
                       errorCount++;
                       char*buff=new char[256];
                       strcpy(buff ,"The variable you're trying to inc/dec ");
-                      strcat(buff , $12);
+                      strcat(buff , $8);
                       strcat(buff ," is different from the one you assigned "); 
-                      strcat(buff , $3);
+                      strcat(buff , $3->get_type_for_main());
                       yyerror(buff);
                       delete [] buff;
                       buff=nullptr;
@@ -391,9 +313,45 @@ statement: assign_node {$1->run();}
          | TYPE_FUNCTION  '(' e ')'
          ;
 
-assign_node:ID ASSIGN x {
+assign_node:ID ASSIGN e {
                          $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
                          }
+           ;
+function_call_node:ID {
+               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                    {
+                      if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
+                           {
+                             errorCount++; 
+                             char*buff=new char[256];
+                             strcpy(buff ,"ID ");
+                             strcat(buff , $1);
+                             strcat(buff ," exists but is NOT a funciton"); 
+                             yyerror(buff);
+                             delete [] buff;
+                             buff=nullptr;
+                           }
+                       else{
+                         Denumire_apelant=new char[256];
+                         strcpy(Denumire_apelant , $1);
+                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params($1);
+                         for (auto i : Vector_Tabele){
+                              if(strcmp(i->get_dom_name(), $1)==0){
+                              domeniul_caruia_ii_apartine_varabila=i;
+                              }
+                         }
+                       }
+                    }
+              } 
+                '(' call_list ')'{delete[] Denumire_apelant;
+                                  Denumire_apelant=nullptr;
+                                  if(!param_checker.empty()){
+                                   errorCount++;
+                                   yyerror("Not enough parameters in function call");
+                                  }
+                                 }
+                  ;
 
 inc_dec: INC
        | DEC
@@ -457,7 +415,7 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
       ; 
       //Cand adaugam parametrii in declaratia functiei o facem refursiv la DREAPTA , si cand ii apelam o facem recursiv la stanga
      //TO DO: Apel de functie in apel de functie
-call_list : x 
+call_list : e 
                {
                if(param_checker.empty()){
                     errorCount++;
@@ -489,7 +447,7 @@ call_list : x
                     }
                }
                }
-          | call_list ',' x{
+          | call_list ',' e{
                if(param_checker.empty()){
                     errorCount++;
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
@@ -616,21 +574,23 @@ call_list : x
 //                                                   }
 //                          ;
 
-x : e {$$=$1;}
-  ;
 e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
   | e '*' e   {$$=new ASTNode("*" , $1 , $3 , errorCount);}
   | e '-' e   {$$=new ASTNode("-" , $1 , $3 , errorCount);}
   | e '/' e   {$$=new ASTNode("/" , $1 , $3 , errorCount);}
   |'(' e ')'  {$$=$2;}
-  | TRUTH_VALUE{    if($1=="TRUE"){
+  | TRUTH_VALUE{    
+                    //cout<<"Compieltrul vede  "<<$1<<endl<<endl<<endl;
+                    if(strcmp($1 ,"TRUE")==0){
                          Value val(true);     
-                         cout<<"True"<<endl;    
+                         // cout<<"True"<<endl; 
+                         // cout<<"In VAlue avem "<<val.get_bool()<<endl;   
                          $$=new ASTNode(val , "bool", errorCount);
                     }
                     else{
                          Value val(false);
-                         cout<<"False"<<endl;      
+                         // cout<<"False"<<endl;
+                         // cout<<"In VAlue avem "<<val.get_bool()<<endl;      
                          $$=new ASTNode(val , "bool", errorCount);
                     }
                }
@@ -667,6 +627,6 @@ int main(int argc, char** argv){
           delete i;
      }
 } 
-//TO DO: VEZI LA BOOL la assign , cum le dai store
+//TO DO : Baga apelul de functie in AST
 //1TO DO: TRANZITIE AST ;(
 //2TO DO: Fa sa poti accesa Membrii unei clase , si dupa fiecare instanta sa aiba o copie independenta a acelor Membrii
