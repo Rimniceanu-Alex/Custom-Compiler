@@ -1,5 +1,6 @@
-void foo(int ad){
-    Print(1313132);
+int foo(int ad){
+    Print(ad);
+    return ad;
 };
 
 begin
@@ -44,6 +45,7 @@ TypeOf(TRUE);
 bool maybe;
 maybe<-(((10==10)&&(20<30))&&(20==20));
 Print(maybe);
-foo(19);
+a<-2;
 foo(2);    
+foo(19*2);//Tre sa putem face functia sa apelez si Variabile+Sa bagam function call in gramtica lui e CUMVA
 end

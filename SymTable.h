@@ -58,8 +58,8 @@ class SymTable {
     void addVar(const char* type, const char* name, const char* id_type );
     void printVars();
     void printFunct();
-    string get_IdInfo_Type(string s);
-    string getValue_IDType(string s);
+    string get_IdInfo_Type(string s);//REDENUMESTE
+    string getValue_IDType(string s);//REDENUMESTE
     Value get_value(string s);
     const char* get_dom_name();
     string get_dom_location();

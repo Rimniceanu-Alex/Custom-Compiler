@@ -74,7 +74,7 @@ functions : TYPE ID
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
-               '(' list_param ')' CBEGIN list{    current->set_body($8);
+               '(' list_param ')' CBEGIN list{    //current->set_body($8);
                                                   // $8->run();
                                                        } RETURN e ';' {
                                                             if(strcmp($1, $11->get_type_for_main())==0){
@@ -97,6 +97,12 @@ functions : TYPE ID
                                                             }
                                                        } CEND ';' 
                                                                            {
+                                                                           class ASTNode* func_return;
+                                                                           // func_return=new ASTNode(current->next_domain_scope()->get_that_variable($2), errorCount , yylineno);
+                                                                           func_return=new ASTNode($2 , "<-" , $11 ,current, errorCount, yylineno);
+                                                                           class ASTNode* list_return;
+                                                                           list_return=new ASTNode("sequence" , $8 , func_return , errorCount , current);
+                                                                           current->set_body(list_return);
                                                                            current=current->next_domain_scope();
                                                                            }
           | VOID ID  
@@ -147,7 +153,7 @@ list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , errorCount , yylin
      |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , current);}
      ;
 statement: assign_node {$$=$1;}
-         |function_call_node //Apel de functie //TO DOOOO
+         |function_call_node{$$=$1;} //Apel de functie //TO DOOOO
          |while_node{$$=$1;}
          |if_node{$$=$1;}
          |for_node{$$=$1;}
@@ -157,7 +163,7 @@ statement: assign_node {$$=$1;}
          ;
 
 statement_main: assign_node {$$=$1;$$->run();}
-         |function_call_node //Apel de functie // TO DOOOO
+         |function_call_node{$$=$1;$$->run();} //Apel de functie // TO DOOOO
          |while_node{$$=$1;$$->run();}
          |if_node{$$=$1;$$->run();}
          |for_node{$$=$1;$$->run();}
@@ -208,6 +214,7 @@ function_call_node:ID
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
                                   }
+                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body() , errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
@@ -351,35 +358,35 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
      //TO DO: Apel de functie in apel de functie
 call_list : e 
                {
-               if(param_checker.empty()){
-                    errorCount++;
-                    yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
-               }
-               else{
-               class IdInfo* temp;
-               temp=*(param_checker.begin());
-                    //cout<<"Ma execut DUPA "<<(*temp).name<<endl;
-                    if(strcmp($1->get_type_for_main() , "int")==0){
-                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatei()<<endl;
-                         class Value val($1->evaluatei());
-                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                         param_checker.erase(param_checker.begin());
-                    }
-                    else if(strcmp($1->get_type_for_main() , "float")==0){
-                         //cout<<Denumire_apelant<<"    "<<$1->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$1->evaluatef()<<endl;
-                         class Value val($1->evaluatef());
-                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                         domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                         //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                         param_checker.erase(param_checker.begin());
+                    if(param_checker.empty()){
+                         errorCount++;
+                         yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                     }
                     else{
-                         errorCount++;
-                         yyerror("Unkown Parameter type");
+                    class IdInfo* temp;
+                    temp=*(param_checker.begin());
+                         if(temp->type==$1->get_type()){
+                              if(strcmp($1->get_type_for_main() , "int")==0){
+                                   class Value val($1->evaluatei());
+                                   domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                                   param_checker.erase(param_checker.begin());
+                              }
+                              else if(strcmp($1->get_type_for_main() , "float")==0){
+                                   class Value val($1->evaluatef());
+                                   domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                                   param_checker.erase(param_checker.begin());
+                              }
+                              else{
+                                   errorCount++;
+                                   yyerror("Unkown Parameter type");
+                              }
+                         }
+                         else{
+                              errorCount++;
+                              yyerror("Parameter missmatch");
+                              param_checker.erase(param_checker.begin());
+                         }
                     }
-               }
                }
           | call_list ',' e{
                if(param_checker.empty()){
@@ -387,32 +394,30 @@ call_list : e
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
                }
                else{
-               class IdInfo* temp;
-               temp=*(param_checker.begin());
-               //cout<<"Ma execut PRIMUL "<<(*temp).name<<endl;
-               if(strcmp($3->get_type_for_main() , "int")==0){
-                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatei()<<endl;
-                    class Value val($3->evaluatei());
-                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_int()<<endl;
-                    param_checker.erase(param_checker.begin());
+                    class IdInfo* temp;
+                    temp=*(param_checker.begin());
+                    if(temp->type==$3->get_type()){
+                         if(strcmp($3->get_type_for_main() , "int")==0){
+                              class Value val($3->evaluatei());
+                              domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                              param_checker.erase(param_checker.begin());
+                              }
+                         else if (strcmp($3->get_type_for_main() , "float")==0){
+                              class Value val($3->evaluatef());
+                              domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
+                              param_checker.erase(param_checker.begin());
+                         }
+                         else{
+                                   errorCount++;
+                                   yyerror("Unkown Parameter type");
+                              }
                     }
-               else if (strcmp($3->get_type_for_main() , "float")==0){
-                    //cout<<Denumire_apelant<<"    "<<$3->get_type_for_main()<<" "<<(*temp).name<<"    "<<param_checker.size()<<"  New Value="<<$3->evaluatef()<<endl;
-                    class Value val($3->evaluatef());
-                    //cout<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                    domeniul_caruia_ii_apartine_varabila->set_value((*temp).name.c_str() , val);
-                    //cout<<(*temp).name<<" "<<domeniul_caruia_ii_apartine_varabila->get_value((*temp).name).get_float()<<endl;
-                    param_checker.erase(param_checker.begin());
-               }
-               else{
-                         errorCount++;
-                         yyerror("Unkown Parameter type");
+                    else{
+                              errorCount++;
+                              yyerror("Parameter missmatch");
+                              param_checker.erase(param_checker.begin());
+                         }
                     }
-               }
                }
           ;
 /////////////////////////////Le folosim pe alea de mai jos daca vrem sa facem foo(a<-2) Care NU ARE fuckin sens , si pentru foo(goo(2) , 2) asta are sens , dar vedem
@@ -532,6 +537,7 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
                $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), errorCount , yylineno);//??? MAybe it will work like this?
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
+  //|function_call_node{$$=$1;} Too be continuedd;
   ;
         
 %%
@@ -548,9 +554,9 @@ int main(int argc, char** argv){
      for (auto i : Vector_Tabele){
           i->printVars();
      }
-     cout<<endl<<endl<<"RUlare auromatat"<<endl<<endl<<endl;
-     // for (auto i : Vector_Tabele){
-     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_location().c_str() ,"global-main-while-while")==0){
+     // cout<<endl<<endl<<"RUlare auromatat"<<endl<<endl<<endl;
+     //  for (auto i : Vector_Tabele){
+     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_location().c_str() ,"global-foo")==0){
      //           i->get_body()->run();
      //           i->get_body()->run();
      //      }

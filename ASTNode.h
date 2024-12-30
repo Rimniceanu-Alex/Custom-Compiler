@@ -286,6 +286,9 @@ public:
                     cout << "error: " << "Unkown TypeOf parameter at line: " << yylineno << endl;
                 }
             }
+        }else if(root=="func_call"){
+            left->run();
+            cout<<endl<<endl<<endl<<"Apelul de functie are typul"<<left->get_type()<<endl<<endl<<endl;
         }
     }
     int evaluatei()
