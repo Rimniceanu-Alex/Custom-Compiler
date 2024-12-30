@@ -27,7 +27,7 @@ std::vector<IdInfo*> param_checker;
      %}
 
 %token  BGIN END CBEGIN CEND REAL TYPE_FUNCTION
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT
 %type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for
 %start progr
 %left '+' '-' 

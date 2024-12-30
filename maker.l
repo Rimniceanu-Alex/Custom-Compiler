@@ -17,8 +17,6 @@
 "for" {yylval.string=strdup(yytext); return FOR;}
 "&&"|"||" {yylval.string=strdup(yytext); return CONNECT;}
 "=="|"!="|">"|"<"|"<="|">=" {yylval.string=strdup(yytext); return CMP;}
-"++" {yylval.string=strdup(yytext); return INC;}
-"--" {yylval.string=strdup(yytext); return DEC;}
 "\{" {return CBEGIN;}
 "\}" {return CEND;}
 "Print" {yylval.string=strdup(yytext); return PRINT; }

@@ -69,15 +69,13 @@ extern int yydebug;
     WHILE = 270,                   /* WHILE  */
     FOR = 271,                     /* FOR  */
     CMP = 272,                     /* CMP  */
-    INC = 273,                     /* INC  */
-    DEC = 274,                     /* DEC  */
-    NR = 275,                      /* NR  */
-    CONNECT = 276,                 /* CONNECT  */
-    VOID = 277,                    /* VOID  */
-    RETURN = 278,                  /* RETURN  */
-    ASSIGN = 279,                  /* ASSIGN  */
-    TRUTH_VALUE = 280,             /* TRUTH_VALUE  */
-    PRINT = 281                    /* PRINT  */
+    NR = 273,                      /* NR  */
+    CONNECT = 274,                 /* CONNECT  */
+    VOID = 275,                    /* VOID  */
+    RETURN = 276,                  /* RETURN  */
+    ASSIGN = 277,                  /* ASSIGN  */
+    TRUTH_VALUE = 278,             /* TRUTH_VALUE  */
+    PRINT = 279                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -91,7 +89,7 @@ union YYSTYPE
      char* string;
      class ASTNode* ListOfNodes;
 
-#line 95 "maker.tab.h"
+#line 93 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
