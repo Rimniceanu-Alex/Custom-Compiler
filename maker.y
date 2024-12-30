@@ -28,7 +28,7 @@ std::vector<IdInfo*> param_checker;
 
 %token  BGIN END CBEGIN CEND REAL TYPE_FUNCTION
 %token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP INC DEC NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT
-%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main
+%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -146,116 +146,14 @@ list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , errorCou
 list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , errorCount , yylineno, current);}
      |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , current);}
      ;
-list_for_else : list 
-              | /*epsilon*/
-              ;
-statement: assign_node {$$=$1;
-                      
-                         }
+statement: assign_node {$$=$1;}
          |function_call_node //Apel de functie
                //To DO : Implementeaza loopuril din if , while , for 
                //TO DO URGENT : VEzi cum faci sa ruleze toate CAND LE DAI RUN nu cum le declari
          |while_node{$$=$1;
                          }
-         | IF '(' boolean_expression ')'
-               {    //cout<<$3->get_type_for_main()<<endl;
-                   if(strcmp($3->get_type_for_main(),"int")==0){
-                         if($3->evaluatei()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else if(strcmp($3->get_type_for_main(),"float")==0){
-                         if((int)$3->evaluatef()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else{
-                         errorCount++;
-                         yyerror("Weird expressions in condition");
-                    }
-               } CBEGIN 
-                    {
-                         SymTable* currentCTRL;     
-                         currentCTRL = new SymTable($1);
-                         currentCTRL->assign_stack_above(current->return_stack_above());
-                         currentCTRL->add_above(current);
-                         current=currentCTRL;
-                         Vector_Tabele.push_back(current);
-                    } 
-                         list CEND
-                                   {
-                                        current=current->next_domain_scope();
-                                   }
-                                   ELSE CBEGIN
-                              {
-                                   SymTable* currentCTRL;     
-                                   currentCTRL = new SymTable($1);
-                                   currentCTRL->assign_stack_above(current->return_stack_above());
-                                   currentCTRL->add_above(current);
-                                   current=currentCTRL;
-                                   Vector_Tabele.push_back(current);
-                              }
-                                                  list_for_else CEND
-                              {
-                                   current=current->next_domain_scope();
-                              }
-         | FOR '(' assign_node ';' boolean_expression ';'
-                              {//cout<<$9->get_type_for_main()<<endl;
-                                   if(strcmp($5->get_type_for_main(),"int")==0){
-                         if($5->evaluatei()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else if(strcmp($5->get_type_for_main(),"float")==0){
-                         if((int)$5->evaluatef()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else{
-                         errorCount++;
-                         yyerror("Weird expressions in condition");
-                    }
-                              } 
-                                                       ID 
-               {
-                 if(strcmp($3->get_type_for_main() , $8)!=0)
-                    {
-                      errorCount++;
-                      char*buff=new char[256];
-                      strcpy(buff ,"The variable you're trying to inc/dec ");
-                      strcat(buff , $8);
-                      strcat(buff ," is different from the one you assigned "); 
-                      strcat(buff , $3->get_type_for_main());
-                      yyerror(buff);
-                      delete [] buff;
-                      buff=nullptr;
-                    }
-               }
-                                                            inc_dec ';' ')' CBEGIN 
-               {
-                 SymTable* currentCTRL;     
-                 currentCTRL = new SymTable($1);
-                 currentCTRL->assign_stack_above(current->return_stack_above());
-                 currentCTRL->add_above(current);
-                 current=currentCTRL;
-                 Vector_Tabele.push_back(current);
-               } 
-                                                                                    list CEND
-               {
-                 current=current->next_domain_scope();
-               }
+         |if_node{$$=$1;}
+         |for_node{$$=$1;}
          | declarations_interior
          | print_node{$$=$1;
          
@@ -272,105 +170,10 @@ statement_main: assign_node {$$=$1;
          |while_node{$$=$1;
                      $$->run();
                          }
-         | IF '(' boolean_expression ')'
-               {    //cout<<$3->get_type_for_main()<<endl;
-                   if(strcmp($3->get_type_for_main(),"int")==0){
-                         if($3->evaluatei()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else if(strcmp($3->get_type_for_main(),"float")==0){
-                         if((int)$3->evaluatef()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else{
-                         errorCount++;
-                         yyerror("Weird expressions in condition");
-                    }
-               } CBEGIN 
-                    {
-                         SymTable* currentCTRL;     
-                         currentCTRL = new SymTable($1);
-                         currentCTRL->assign_stack_above(current->return_stack_above());
-                         currentCTRL->add_above(current);
-                         current=currentCTRL;
-                         Vector_Tabele.push_back(current);
-                    } 
-                         list CEND
-                                   {
-                                        current=current->next_domain_scope();
-                                   }
-                                   ELSE CBEGIN
-                              {
-                                   SymTable* currentCTRL;     
-                                   currentCTRL = new SymTable($1);
-                                   currentCTRL->assign_stack_above(current->return_stack_above());
-                                   currentCTRL->add_above(current);
-                                   current=currentCTRL;
-                                   Vector_Tabele.push_back(current);
-                              }
-                                                  list_for_else CEND
-                              {
-                                   current=current->next_domain_scope();
-                              }
-         | FOR '(' assign_node ';' boolean_expression ';'
-                              {//cout<<$9->get_type_for_main()<<endl;
-                                   if(strcmp($5->get_type_for_main(),"int")==0){
-                         if($5->evaluatei()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else if(strcmp($5->get_type_for_main(),"float")==0){
-                         if((int)$5->evaluatef()==true){
-                              //printf("Expression is TRUE\n");
-                         }
-                         else{
-                              //printf("Expression is FALSE\n");
-                         }
-                    }
-                    else{
-                         errorCount++;
-                         yyerror("Weird expressions in condition");
-                    }
-                              } 
-                                                       ID 
-               {
-                 if(strcmp($3->get_type_for_main() , $8)!=0)
-                    {
-                      errorCount++;
-                      char*buff=new char[256];
-                      strcpy(buff ,"The variable you're trying to inc/dec ");
-                      strcat(buff , $8);
-                      strcat(buff ," is different from the one you assigned "); 
-                      strcat(buff , $3->get_type_for_main());
-                      yyerror(buff);
-                      delete [] buff;
-                      buff=nullptr;
-                    }
-               }
-                                                            inc_dec ';' ')' CBEGIN 
-               {
-                 SymTable* currentCTRL;     
-                 currentCTRL = new SymTable($1);
-                 currentCTRL->assign_stack_above(current->return_stack_above());
-                 currentCTRL->add_above(current);
-                 current=currentCTRL;
-                 Vector_Tabele.push_back(current);
-               } 
-                                                                                    list CEND
-               {
-                 current=current->next_domain_scope();
-               }
+         |if_node{$$=$1;
+                  $$->run();}
+         |for_node{$$=$1;
+                  $$->run();}
          | declarations_interior
          | print_node{$$=$1;
          $$->run();
@@ -440,11 +243,65 @@ while_node: WHILE '(' boolean_expression  ')' CBEGIN
                                         current=current->next_domain_scope();
                                    }
           ;
+if_node: IF '(' boolean_expression ')'CBEGIN 
+                    {
+                         SymTable* currentCTRL;     
+                         currentCTRL = new SymTable($1);
+                         currentCTRL->assign_stack_above(current->return_stack_above());
+                         currentCTRL->add_above(current);
+                         current=currentCTRL;
+                         Vector_Tabele.push_back(current);
+                    } 
+                         list{
+                              current->set_body($7);
+                         } CEND
+                                   {
+                                        current=current->next_domain_scope();
+                                   }
+                                   ELSE CBEGIN
+                              {
+                                   SymTable* currentCTRL;     
+                                   currentCTRL = new SymTable($1);
+                                   currentCTRL->assign_stack_above(current->return_stack_above());
+                                   currentCTRL->add_above(current);
+                                   current=currentCTRL;
+                                   Vector_Tabele.push_back(current);
+                              }
+                                                  list{
+                                                       current->set_body($14);
+                                                  } CEND
+                              {
+                                   class ASTNode* combine;
+                                   combine=new ASTNode($7 , $14 , errorCount);
+                                   $$=new ASTNode("if" , $3 , combine , errorCount , yylineno , current);
+                                   current=current->next_domain_scope();
+                              }
+       ;
+for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' CBEGIN 
+               {
+                 SymTable* currentCTRL;     
+                 currentCTRL = new SymTable($1);
+                 currentCTRL->assign_stack_above(current->return_stack_above());
+                 currentCTRL->add_above(current);
+                 current=currentCTRL;
+                 Vector_Tabele.push_back(current);
+               } 
+                                                                                    list{current->set_body($12);} CEND
+               {
+                 class ASTNode* combination1;
+                 combination1=new ASTNode($3 , $5 , errorCount);
+                 class ASTNode* combination2;
+                 combination2=new ASTNode($12 , $7 , errorCount);
+                 $$=new ASTNode("for", combination1 , combination2 , errorCount , yylineno , current);
+                 current=current->next_domain_scope();
+               }
+          ;
 print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , errorCount , yylineno);}//Vezi ca NU da print bine la variabile , s-ar putea sa trebuaisca sa folosesti SYMTable
           ;
-inc_dec: INC
-       | DEC
-       ;
+
+expression_for:assign_node{$$=$1;}
+              |e {$$=$1;}
+              ;
 
 declarations_interior: variables_interior
                      | class_initialize_interior
@@ -669,17 +526,12 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
   | e '/' e   {$$=new ASTNode("/" , $1 , $3 , errorCount);}
   |'(' e ')'  {$$=$2;}
   | TRUTH_VALUE{    
-                    //cout<<"Compieltrul vede  "<<$1<<endl<<endl<<endl;
                     if(strcmp($1 ,"TRUE")==0){
                          Value val(true);     
-                         // cout<<"True"<<endl; 
-                         // cout<<"In VAlue avem "<<val.get_bool()<<endl;   
                          $$=new ASTNode(val , "bool", errorCount);
                     }
                     else{
-                         Value val(false);
-                         // cout<<"False"<<endl;
-                         // cout<<"In VAlue avem "<<val.get_bool()<<endl;      
+                         Value val(false);   
                          $$=new ASTNode(val , "bool", errorCount);
                     }
                }
@@ -687,20 +539,12 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
                $$=new ASTNode(val , "int" , errorCount);}//MERGE
   | REAL      {Value val((float)atof(yytext));
                $$=new ASTNode(val , "float" , errorCount);}
-  | ID        
-          //      {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-          //      if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-          //           cout<<$1<<" are valoarea : "<<domeniul_caruia_ii_apartine_varabila->get_value($1).get_int()<<endl;
-          //           $$=new ASTNode(domeniul_caruia_ii_apartine_varabila->get_value($1) ,domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1) , errorCount);
-          //      }
-          //     }
-              {
+  | ID        {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
                $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), errorCount , yylineno);//??? MAybe it will work like this?
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
   ;
-//Modificam , dam SymTable* si acolo luam valoarea
         
 %%
 void yyerror(const char * s){
@@ -716,8 +560,10 @@ int main(int argc, char** argv){
      for (auto i : Vector_Tabele){
           i->printVars();
      }
+     cout<<endl<<endl<<"RUlare auromatat"<<endl<<endl<<endl;
      // for (auto i : Vector_Tabele){
-     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_name() ,"main")!=0){
+     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_location().c_str() ,"global-main-while-while")==0){
+     //           i->get_body()->run();
      //           i->get_body()->run();
      //      }
      // }

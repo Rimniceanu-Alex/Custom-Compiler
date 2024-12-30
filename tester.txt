@@ -14,5 +14,25 @@ while(a<50){
 };
 Print(a);
 a<-a+1;
-a<-a*100;   
+a<-a*100;
+if(20<3){
+    Print(a);
+}
+else{
+    int bar;
+    bar<-20;
+    int i;
+    i<-0;
+    while(bar<100){
+        Print(i);
+        i<-i+1;
+        bar<-bar+10;
+    };
+    Print(a+1);
+};
+Print(a);
+a<-10;
+for(a<-20; a<30 ; a<-a+1;){
+    Print(99);
+};
 end

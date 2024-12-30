@@ -70,3 +70,10 @@ else{
 float nr8 ;
 nr2 <- 20;
 end
+
+
+Deci la for ii for(i<-20 ; 123<1321; expresie);
+1)i<-20 la inceput
+2)LOOP: 1->123<1321
+        2->BLOCK
+        3->expresie
