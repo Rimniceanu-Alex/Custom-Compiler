@@ -59,23 +59,23 @@ extern int yydebug;
     CBEGIN = 260,                  /* CBEGIN  */
     CEND = 261,                    /* CEND  */
     REAL = 262,                    /* REAL  */
-    TYPE_FUNCTION = 263,           /* TYPE_FUNCTION  */
-    ID = 264,                      /* ID  */
-    TYPE = 265,                    /* TYPE  */
-    Class_ID = 266,                /* Class_ID  */
-    Class_Type = 267,              /* Class_Type  */
-    IF = 268,                      /* IF  */
-    ELSE = 269,                    /* ELSE  */
-    WHILE = 270,                   /* WHILE  */
-    FOR = 271,                     /* FOR  */
-    CMP = 272,                     /* CMP  */
-    NR = 273,                      /* NR  */
-    CONNECT = 274,                 /* CONNECT  */
-    VOID = 275,                    /* VOID  */
-    RETURN = 276,                  /* RETURN  */
-    ASSIGN = 277,                  /* ASSIGN  */
-    TRUTH_VALUE = 278,             /* TRUTH_VALUE  */
-    PRINT = 279                    /* PRINT  */
+    ID = 263,                      /* ID  */
+    TYPE = 264,                    /* TYPE  */
+    Class_ID = 265,                /* Class_ID  */
+    Class_Type = 266,              /* Class_Type  */
+    IF = 267,                      /* IF  */
+    ELSE = 268,                    /* ELSE  */
+    WHILE = 269,                   /* WHILE  */
+    FOR = 270,                     /* FOR  */
+    CMP = 271,                     /* CMP  */
+    NR = 272,                      /* NR  */
+    CONNECT = 273,                 /* CONNECT  */
+    VOID = 274,                    /* VOID  */
+    RETURN = 275,                  /* RETURN  */
+    ASSIGN = 276,                  /* ASSIGN  */
+    TRUTH_VALUE = 277,             /* TRUTH_VALUE  */
+    PRINT = 278,                   /* PRINT  */
+    TYPE_FUNCTION = 279            /* TYPE_FUNCTION  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

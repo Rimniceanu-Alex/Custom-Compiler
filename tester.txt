@@ -1,3 +1,7 @@
+void foo(int ad){
+    Print(1313132);
+};
+
 begin
 int a;
 a<-21;
@@ -30,9 +34,16 @@ else{
     };
     Print(a+1);
 };
-Print(a);
+Print(TRUE);
 a<-10;
 for(a<-20; a<30 ; a<-a+1;){
     Print(99);
 };
+TypeOf(a);
+TypeOf(TRUE);
+bool maybe;
+maybe<-(((10==10)&&(20<30))&&(20==20));
+Print(maybe);
+foo(19);
+foo(2);    
 end

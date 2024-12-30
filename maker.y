@@ -26,9 +26,9 @@ std::vector<IdInfo*> param_checker;
 %{
      %}
 
-%token  BGIN END CBEGIN CEND REAL TYPE_FUNCTION
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT
-%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for
+%token  BGIN END CBEGIN CEND REAL
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION
+%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -108,7 +108,7 @@ functions : TYPE ID
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
-               '(' list_param ')' CBEGIN list CEND ';' 
+               '(' list_param ')' CBEGIN list{    current->set_body($8);} CEND ';' 
                                    {
                                     current=current->next_domain_scope();
                                    }
@@ -147,42 +147,30 @@ list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , errorCount , yylin
      |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , current);}
      ;
 statement: assign_node {$$=$1;}
-         |function_call_node //Apel de functie
-               //To DO : Implementeaza loopuril din if , while , for 
-               //TO DO URGENT : VEzi cum faci sa ruleze toate CAND LE DAI RUN nu cum le declari
-         |while_node{$$=$1;
-                         }
+         |function_call_node //Apel de functie //TO DOOOO
+         |while_node{$$=$1;}
          |if_node{$$=$1;}
          |for_node{$$=$1;}
          | declarations_interior
-         | print_node{$$=$1;
-         
-         }
-         | TYPE_FUNCTION  '(' e ')'
+         | print_node{$$=$1;}
+         | type_fucntion_node{$$=$1;}
          ;
 
-statement_main: assign_node {$$=$1;
-                         $$->run();
-                         }
-         |function_call_node //Apel de functie
-               //To DO : Implementeaza loopuril din if , while , for 
-               //TO DO URGENT : VEzi cum faci sa ruleze toate CAND LE DAI RUN nu cum le declari
-         |while_node{$$=$1;
-                     $$->run();
-                         }
-         |if_node{$$=$1;
-                  $$->run();}
-         |for_node{$$=$1;
-                  $$->run();}
+statement_main: assign_node {$$=$1;$$->run();}
+         |function_call_node //Apel de functie // TO DOOOO
+         |while_node{$$=$1;$$->run();}
+         |if_node{$$=$1;$$->run();}
+         |for_node{$$=$1;$$->run();}
          | declarations_interior
-         | print_node{$$=$1;
-         $$->run();
-         }
-         | TYPE_FUNCTION  '(' e ')'
+         | print_node{$$=$1;$$->run();}
+         | type_fucntion_node{$$=$1;$$->run();}
          ;
 
 
 assign_node:ID ASSIGN e {
+                         $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
+                         }
+           |ID ASSIGN boolean_expression {
                          $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
                          }
            ;
@@ -298,7 +286,7 @@ for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' 
           ;
 print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , errorCount , yylineno);}//Vezi ca NU da print bine la variabile , s-ar putea sa trebuaisca sa folosesti SYMTable
           ;
-
+type_fucntion_node:TYPE_FUNCTION  '(' e ')' {$$=new ASTNode($1 , $3 , errorCount , yylineno);}
 expression_for:assign_node{$$=$1;}
               |e {$$=$1;}
               ;

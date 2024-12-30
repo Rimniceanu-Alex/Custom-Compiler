@@ -97,8 +97,36 @@ public:
                 //     cout<<test.name<<" "<<test.type<<" "<<test.value.get_int()<<endl<<endl;
                 if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(type.c_str()) == "bool")
                 {
-                    class Value val(left->evaluateb());
-                    domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                    if (left->root != "")
+                    {
+                        if (left->type == "int")
+                        {
+                            bool temp;
+                            if(left->evaluatei()==true){
+                                temp=true;
+                            }
+                            else{
+                                temp=false;
+                            }
+                            class Value val(temp);
+                            domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                        }
+                        else if (left->type == "float")
+                        {
+                            class Value val(left->evaluatef());
+                            domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                        }
+                        else
+                        {
+                            errorCount++;
+                            cout << "error: " << "What are you trying to assign to this bool?? at line: " << yylineno << endl;
+                        }
+                    }
+                    else
+                    {
+                        class Value val(left->evaluateb());
+                        domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                    }
                 }
                 else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(type.c_str()) == "int")
                 {
@@ -143,7 +171,11 @@ public:
                 }
                 else if (left->get_type() == "float")
                 {
-                    cout << left->evaluatef() << endl;
+                    cout << "Printed : " << left->evaluatef() << "  at line " << yylineno << endl;
+                }
+                else if (left->get_type() == "bool")
+                {
+                    cout << "Printed : " << std::boolalpha << left->evaluateb() << "  at line " << yylineno << endl;
                 }
                 else
                 {
@@ -239,6 +271,20 @@ public:
             {
                 errorCount++;
                 cout << "error : Weird expression in comparison at line " << yylineno << endl;
+            }
+        }
+        else if (root == "TypeOf")
+        {
+            {
+                if (left->get_type() != "")
+                {
+                    cout << "The type is " << left->get_type() << " at line " << yylineno << endl;
+                }
+                else
+                {
+                    errorCount++;
+                    cout << "error: " << "Unkown TypeOf parameter at line: " << yylineno << endl;
+                }
             }
         }
     }
