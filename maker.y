@@ -16,6 +16,7 @@ std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 char* Denumire_apelant=nullptr;
 std::vector<IdInfo*> param_checker;
+int hard_copy_counter=0;
 %}
 
 %union {
@@ -27,7 +28,7 @@ std::vector<IdInfo*> param_checker;
      %}
 
 %token  BGIN END CBEGIN CEND REAL
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING
 %type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node
 %start progr
 %left '+' '-' 
@@ -71,24 +72,24 @@ functions : TYPE ID
                 } 
                '(' list_param ')' CBEGIN list{    
                                                        } RETURN e ';' {
-                                                            if(strcmp($1, $11->get_type_for_main())==0){
-                                                                 if(strcmp($11->get_type_for_main() , "int")==0){
-                                                                      class Value val($11->evaluatei());
-                                                                      current->next_domain_scope()->set_value($2 , val );  
-                                                                 }
-                                                                 else if(strcmp($11->get_type_for_main() , "float")==0){
-                                                                      class Value val($11->evaluatef());
-                                                                      current->next_domain_scope()->set_value($2 , val ); 
-                                                                 }
-                                                                 else{
-                                                                      errorCount++;
-                                                                      yyerror("Unkown Type of Function");
-                                                                 }
-                                                            }
-                                                            else{
-                                                                 errorCount++;
-                                                                 yyerror("The Return type and the function type DON'T MATCH");
-                                                            }
+                                                            // if(strcmp($1, $11->get_type_for_main())==0){
+                                                            //      if(strcmp($11->get_type_for_main() , "int")==0){
+                                                            //           class Value val($11->evaluatei());
+                                                            //           current->next_domain_scope()->set_value($2 , val );  
+                                                            //      }
+                                                            //      else if(strcmp($11->get_type_for_main() , "float")==0){
+                                                            //           class Value val($11->evaluatef());
+                                                            //           current->next_domain_scope()->set_value($2 , val ); 
+                                                            //      }
+                                                            //      else{
+                                                            //           errorCount++;
+                                                            //           yyerror("Unkown Type of Function");
+                                                            //      }
+                                                            // }
+                                                            // else{
+                                                            //      errorCount++;
+                                                            //      yyerror("The Return type and the function type DON'T MATCH");
+                                                            // }
                                                        } CEND ';' 
                                                                            {
                                                                            class ASTNode* func_return;
@@ -175,7 +176,9 @@ assign_node:ID ASSIGN e {
            ;
 function_call_node:ID 
                {
-               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
+                    SymTable* hard_copy=current->deep_copy();
+                    ++hard_copy_counter;
+               domeniul_caruia_ii_apartine_varabila=hard_copy->check_existance_for_use($1 , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                     {
                       if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
@@ -193,11 +196,14 @@ function_call_node:ID
                          Denumire_apelant=new char[256];
                          strcpy(Denumire_apelant , $1);
                          param_checker=domeniul_caruia_ii_apartine_varabila->get_params($1);
+                         for(auto i: param_checker){
+                              cout<<i->name<<i->type<<endl;
+                         }
                          for (auto i : Vector_Tabele){
                               if(strcmp(i->get_dom_name(), $1)==0){
                               domeniul_caruia_ii_apartine_varabila=i;
                               }
-                         }
+                         }    
                        }
                     }
               } 
@@ -207,7 +213,7 @@ function_call_node:ID
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
                                   }
-                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable_copy($1) , &errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
@@ -346,7 +352,7 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
                  current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
       ; 
-     //TO DO: Apel de functie in apel de functie
+     //TO DO: Apel de functie in apel de functie Small issue
 call_list : e 
                {
                     if(param_checker.empty()){
@@ -437,6 +443,8 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
   |function_call_node{$$=$1;};
+  |STRING      {Value val($1);
+               $$=new ASTNode(val , "string" , &errorCount);}
   ;
         
 %%

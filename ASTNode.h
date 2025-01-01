@@ -10,24 +10,20 @@ class ASTNode
     ASTNode *right;
     SymTable *table;
     IdInfo *right_side_var;
-    IdInfo func_local;
     int nr_apeluri_functie = 0;
     int *errorCount;
     int yylineno;
+
 public:
-    ASTNode(){};
-    ASTNode(const string &func_call, ASTNode *left_child, IdInfo var_functie, int *errorCount, int yylineno) : root(func_call), left(left_child), right(nullptr), value(Value()), table(nullptr), func_local(var_functie), errorCount(errorCount), yylineno(yylineno)
-    {
-        left->right->right_side_var = &func_local;
-        left->right->func_local = func_local;
-    };
-    ASTNode(const string &print, ASTNode *left_child, int *errorCount, int yylineno) : root(print), left(left_child), right(nullptr), value(Value()), table(nullptr), errorCount(errorCount), yylineno(yylineno) {};                                                  // cout << global++ << ") Print a fost apelat" << endl; };                                                             // For Print
-    ASTNode(const string &sequence, ASTNode *left_child, ASTNode *right_child, int *errorCount, SymTable *table) : value(Value()), root(sequence), left(left_child), right(right_child), errorCount(errorCount), table(table) {};                                     // cout << global++ << ") Asignare sequance a fost apelat" << endl; }; // Pt asignare statement_list
-    ASTNode(const string &sequence, ASTNode *left_child, int *errorCount, int yylineno, SymTable *table) : root(sequence), left(left_child), right(nullptr), value(Value()), errorCount(errorCount), yylineno(yylineno), table(table) {};                             // cout << global++ << ") Asignare statement a fost apelat" << endl; };                          // Pta asignare statement
-    ASTNode(const string &nume, const string &assign, ASTNode *left_child, SymTable *table, int *errorCount, int yylineno) : value(Value()), type(nume), root(assign), left(left_child), right(nullptr), table(table), errorCount(errorCount), yylineno(yylineno) {}; // cout << global++ << ") Asignare <- a fost apelat" << endl; };     // Constructor pentru Asignare
-    ASTNode(const Value &val, const string &node_type, int *errorCount) : value(val), type(node_type), root(""), left(nullptr), right(nullptr), errorCount(errorCount), table(nullptr) {};                                                                            // cout << global++ << ") Asignare Nr , Floar , Bool a fost apelat" << endl; };
+    ASTNode() {};
+    ASTNode(const string &func_call, ASTNode *left_child, IdInfo *var_functie, int *errorCount, int yylineno) : root(func_call), left(left_child), right(nullptr), right_side_var(var_functie), value(Value()), table(nullptr), errorCount(errorCount), yylineno(yylineno) {};
+    ASTNode(const string &print, ASTNode *left_child, int *errorCount, int yylineno) : root(print), left(left_child), right(nullptr), value(Value()), table(nullptr), errorCount(errorCount), yylineno(yylineno) {};                                                  // For Print
+    ASTNode(const string &sequence, ASTNode *left_child, ASTNode *right_child, int *errorCount, SymTable *table) : value(Value()), root(sequence), left(left_child), right(right_child), errorCount(errorCount), table(table) {};                                     // Pt asignare statement_list
+    ASTNode(const string &sequence, ASTNode *left_child, int *errorCount, int yylineno, SymTable *table) : root(sequence), left(left_child), right(nullptr), value(Value()), errorCount(errorCount), yylineno(yylineno), table(table) {};                             // Pta asignare statement
+    ASTNode(const string &nume, const string &assign, ASTNode *left_child, SymTable *table, int *errorCount, int yylineno) : value(Value()), type(nume), root(assign), left(left_child), right(nullptr), table(table), errorCount(errorCount), yylineno(yylineno) {}; // Constructor pentru Asignare
+    ASTNode(const Value &val, const string &node_type, int *errorCount) : value(val), type(node_type), root(""), left(nullptr), right(nullptr), errorCount(errorCount), table(nullptr) {};                                                                            // Asignare Nr , Floar , Bool a fost apelat
     ASTNode(const string &control, ASTNode *left_child, ASTNode *right_child, int *errorCount, int yylineno, SymTable *table) : root(control), left(left_child), right(right_child), errorCount(errorCount), yylineno(yylineno) {}
-    ASTNode(ASTNode *left_child, ASTNode *right_child, int *errorCount) : left(left_child), right(right_child), errorCount(errorCount) {} // Imbinare pentru if_else
+    ASTNode(ASTNode *left_child, ASTNode *right_child, int *errorCount) : left(left_child), right(right_child), errorCount(errorCount) {}                                                          // Imbinare pentru if_else
     ASTNode(const string &op, ASTNode *left_child, ASTNode *right_child, int *errorCount) : value(Value()), root(op), left(left_child), right(right_child), errorCount(errorCount), table(nullptr) // Operatii
     {
         if ((left_child && right_child) && (left_child->get_type() == right_child->get_type()))
@@ -45,8 +41,51 @@ public:
     };
     ASTNode(IdInfo *variabila, int *errorCount, int yylineno) : left(nullptr), right(nullptr), errorCount(errorCount), yylineno(yylineno), right_side_var(variabila)
     {
-        type = variabila->type;
-        value = variabila->value;
+        type = right_side_var->type;
+        value = right_side_var->value;
+    };
+    ASTNode *deep_copy() const
+    {
+        ASTNode *copy = new ASTNode();
+        copy->value = this->value;
+        copy->type = this->type;
+        copy->root = this->root;
+        copy->nr_apeluri_functie = nr_apeluri_functie;
+        copy->yylineno = yylineno;
+        if (left != nullptr)
+        {
+            copy->left = this->left->deep_copy();
+        }
+        else
+        {
+            copy->left = nullptr;
+        }
+        if (right != nullptr)
+        {
+            copy->right = this->right->deep_copy();
+        }
+        else
+        {
+            copy->left = nullptr;
+        }
+        if (table != nullptr)
+        {
+            copy->table = table->deep_copy();
+        }
+        else
+        {
+            copy->table = nullptr;
+        }
+        if (right_side_var != nullptr)
+        {
+            copy->right_side_var = new IdInfo(*right_side_var);
+        }
+        else
+        {
+            copy->right_side_var = nullptr;
+        }
+        copy->errorCount = errorCount;
+        return copy;
     };
     const char *get_type_for_main()
     {
@@ -55,17 +94,6 @@ public:
     string get_type()
     {
 
-        if (func_local.name != "")
-        {
-            if (right_side_var == nullptr)
-            {
-                return func_local.type;
-            }
-            else
-            {
-                return func_local.name;
-            }
-        }
         if (right_side_var == nullptr)
         {
             return type;
@@ -117,7 +145,16 @@ public:
                         }
                         else if (left->type == "float")
                         {
-                            class Value val(left->evaluatef());
+                            bool temp;
+                            if (left->evaluatef() == true)
+                            {
+                                temp = true;
+                            }
+                            else
+                            {
+                                temp = false;
+                            }
+                            class Value val(temp);
                             domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
                         }
                         else
@@ -140,16 +177,19 @@ public:
                         errorCount++;
                         cout << "error: " << "Arithmetic expression is inccorect at line: " << yylineno << endl;
                     }
-                    else if (func_local.name == "")
+                    // else if (func_local.name == "")
+                    // {
+                    else
                     {
                         class Value val(checker);
                         domeniul_caruia_ii_apartine_varabila->set_value(get_type().c_str(), val);
                     }
-                    else if (func_local.name != "")
-                    {
-                        class Value val(checker);
-                        right_side_var->value = val;
-                    }
+                    // }
+                    // else if (func_local.name != "")
+                    // {
+                    //     class Value val(checker);
+                    //     right_side_var->value = val;
+                    // }
                 }
                 else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(type.c_str()) == "float")
                 {
@@ -173,24 +213,26 @@ public:
         }
         else if (root == "Print")
         {
+            if (left->get_type() == "int")
             {
-                if (left->get_type() == "int")
-                {
-                    cout << "Printed : " << left->evaluatei() << "  at line " << yylineno << endl;
-                }
-                else if (left->get_type() == "float")
-                {
-                    cout << "Printed : " << left->evaluatef() << "  at line " << yylineno << endl;
-                }
-                else if (left->get_type() == "bool")
-                {
-                    cout << "Printed : " << std::boolalpha << left->evaluateb() << "  at line " << yylineno << endl;
-                }
-                else
-                {
-                    errorCount++;
-                    cout << "error: " << "Unkown print parameter at line: " << yylineno << endl;
-                }
+                cout << "Printed : " << left->evaluatei() << "  at line " << yylineno << endl;
+            }
+            else if (left->get_type() == "float")
+            {
+                cout << "Printed : " << left->evaluatef() << "  at line " << yylineno << endl;
+            }
+            else if (left->get_type() == "bool")
+            {
+                cout << "Printed : " << std::boolalpha << left->evaluateb() << "  at line " << yylineno << endl;
+            }
+            else if (left->get_type() == "string")
+            {
+                cout << "Printed : " << left->evaluates() << "  at line " << yylineno << endl;
+            }
+            else
+            {
+                errorCount++;
+                cout << "error: " << "Unkown print parameter at line: " << yylineno << endl;
             }
         }
         else if (root == "while")
@@ -233,6 +275,17 @@ public:
             else if (left->get_type() == "float")
             {
                 if (left->evaluatef() == true)
+                {
+                    right->left->run();
+                }
+                else
+                {
+                    right->right->run();
+                }
+            }
+            else if (left->get_type() == "bool")
+            {
+                if (left->evaluateb() == true)
                 {
                     right->left->run();
                 }
@@ -291,12 +344,10 @@ public:
         else if (root == "func_call") // TO DO , vezi cum o integrezi in Expresii sa poti face foo(2)+foo(3) , tre sa modifici oelaca si in <-
                                       // TO DO Vezi cum faci sa poti face apel de functie VOID
         {                             // type=tipul functiei , value=valoarea functiei DUPA assign , left=corpul functiei , right=nullptr
-            cout<<"-----Inainte sa exectuam CORPUL functiei nume:[" << func_local.name << "] type:[" << func_local.type << "] value:[" << func_local.value.get_int() << "]   COrpul :["<<left<<"]" << endl;
             left->run();
             ++nr_apeluri_functie;
-            type = func_local.type;
-            value = func_local.value;
-            cout<<"+++++Dupa ce am executat CORPUL functiei nume:[" << func_local.name << "] type:[" << func_local.type << "] value:[" << func_local.value.get_int() << "]   COrpul :["<<left<<"]" << endl;
+            type = right_side_var->type;
+            value = right_side_var->value;
         }
     }
     int evaluatei()
@@ -308,11 +359,11 @@ public:
                 if (nr_apeluri_functie == 0)
                 {
                     this->run();
-                    return func_local.value.get_int();
+                    return right_side_var->value.get_int();
                 }
                 else
                 {
-                    return func_local.value.get_int();
+                    return right_side_var->value.get_int();
                 }
             }
             if (right_side_var != nullptr)
@@ -511,11 +562,45 @@ public:
                 return false;
             }
         }
+        else if (root == "==")
+        {
+            return left->evaluateb() == right->evaluateb();
+        }
+        else if (root == "!=")
+        {
+            return left->evaluateb() != right->evaluateb();
+        }
         else
         {
             errorCount++;
-            cout << "This Method is for BOOL ASSIGN ONLY" << endl;
+            cout << "This Method is for BOOL ASSIGN ONLY are left/right??" << endl;
             return false;
+        }
+    };
+    string evaluates()
+    {
+        if ((left == nullptr) || (right == nullptr))
+        {
+            if (right_side_var != nullptr)
+            {
+                return right_side_var->value.get_string();
+            }
+            if (type == "string")
+            {
+                return value.get_string();
+            }
+            else
+            {
+                errorCount++;
+                cout << "This Method is for STRINGS ONLY" << endl;
+                return "";
+            }
+        }
+        else
+        {
+            errorCount++;
+            cout << "String has noo operations yet" << endl;
+            return "";
         }
     };
     ~ASTNode()

@@ -22,6 +22,15 @@ Value::Value(string x)
 {
     StringValue = x;
 }
+Value::Value(const char *x)
+{
+    StringValue=x;
+        // if (StringValue.length() > 2) {
+        //     StringValue = StringValue.substr(1, StringValue.length() - 2);
+        // } else {
+        //     StringValue = "";
+        // }
+}
 Value::Value()
 {
 }
@@ -61,51 +70,65 @@ void SymTable::printVars()
 {
     for (const pair<string, IdInfo> &v : ids)
     {
-        if (v.second.type == "int"&&(v.second.idType=="var"||v.second.idType=="param"))
+        if (v.second.type == "int" && (v.second.idType == "var" || v.second.idType == "param"))
         {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
         }
-        else if(v.second.type == "float"&&(v.second.idType=="var"||v.second.idType=="param")){
+        else if (v.second.type == "float" && (v.second.idType == "var" || v.second.idType == "param"))
+        {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
         }
-        else if(v.second.type == "bool"&&(v.second.idType=="var"||v.second.idType=="param")){
+        else if (v.second.type == "bool" && (v.second.idType == "var" || v.second.idType == "param"))
+        {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_bool() << "]" << endl;
         }
-        else if (v.second.type == "int"&&v.second.idType=="func"){
+        else if (v.second.type == "int" && v.second.idType == "func")
+        {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_int() << "]" << endl;
         }
-        else if (v.second.type == "float"&&v.second.idType=="func"){
+        else if (v.second.type == "float" && v.second.idType == "func")
+        {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_float() << "]" << endl;
         }
-        else if (v.second.type == "bool"&&v.second.idType=="func"){
+        else if (v.second.type == "bool" && v.second.idType == "func")
+        {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_bool() << "]" << endl;
         }
-        else{
-            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]"<< endl;
+        else
+        {
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "]" << endl;
         }
     }
 }
-void SymTable::printFunct(){
+void SymTable::printFunct()
+{
     for (const pair<string, IdInfo> &v : ids)
     {
-        if(v.second.idType=="func"){
-            if(v.second.type=="int"){
-                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"] Value: ["<<v.second.value.get_int()<<"]"<<endl;
+        if (v.second.idType == "func")
+        {
+            if (v.second.type == "int")
+            {
+                cout << "Vizibilitate: [" << this->get_dom_location() << "] Name : [" << v.first << "] Return type: [" << v.second.type << "] Value: [" << v.second.value.get_int() << "]" << endl;
             }
-            else if(v.second.type=="float"){
-                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"] Value: ["<<v.second.value.get_int()<<"]"<<endl;
+            else if (v.second.type == "float")
+            {
+                cout << "Vizibilitate: [" << this->get_dom_location() << "] Name : [" << v.first << "] Return type: [" << v.second.type << "] Value: [" << v.second.value.get_int() << "]" << endl;
             }
-            else{
-                cout<<"Vizibilitate: ["<<this->get_dom_location()<<"] Name : ["<<v.first<<"] Return type: ["<<v.second.type<<"]"<<endl;
+            else
+            {
+                cout << "Vizibilitate: [" << this->get_dom_location() << "] Name : [" << v.first << "] Return type: [" << v.second.type << "]" << endl;
             }
-            cout<<"Params:"<<endl;
-            auto parametrii=this->get_params(v.first);
-            for(auto i:parametrii){
-                if((*i).type=="int"){
-                cout<<(*i).name<<" "<<(*i).type<<" "<<(*i).value.get_int()<<endl;
+            cout << "Params:" << endl;
+            auto parametrii = this->get_params(v.first);
+            for (auto i : parametrii)
+            {
+                if ((*i).type == "int")
+                {
+                    cout << (*i).name << " " << (*i).type << " " << (*i).value.get_int() << endl;
                 }
-                else if((*i).type=="float"){
-                cout<<(*i).name<<" "<<(*i).type<<" "<<(*i).value.get_float()<<endl;
+                else if ((*i).type == "float")
+                {
+                    cout << (*i).name << " " << (*i).type << " " << (*i).value.get_float() << endl;
                 }
             }
         }
@@ -289,12 +312,12 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
     }
 }
 
-void SymTable::add_params(const char* function , IdInfo* parametru)
+void SymTable::add_params(const char *function, IdInfo *parametru)
 {
     ids[function].params.push_back(parametru);
 }
 
-std::vector<IdInfo*> SymTable::get_params(string s)
+std::vector<IdInfo *> SymTable::get_params(string s)
 {
     return this->ids[s].params;
 }
@@ -306,7 +329,7 @@ IdInfo *SymTable::get_that_variable(string s)
 
 IdInfo SymTable::get_that_variable_copy(string s)
 {
-    IdInfo copie=ids[s];
+    IdInfo copie = ids[s];
     return copie;
 }
 
@@ -318,12 +341,12 @@ void SymTable::set_value(const char *name, Value new_value)
 
 void SymTable::set_body(ASTNode *body)
 {
-    this->body=body;
+    this->body = body;
 }
 
 void SymTable::print_changes()
 {
-    cout<<"Number of chagnes to the scope is   "<<changes<<endl;
+    cout << "Number of chagnes to the scope is   " << changes << endl;
 }
 
 ASTNode *SymTable::get_body()
@@ -332,8 +355,37 @@ ASTNode *SymTable::get_body()
 }
 ASTNode *SymTable::get_body_copy()
 {
-    ASTNode* copiedNode = new ASTNode(*body);
+    ASTNode *copiedNode = new ASTNode(*body);
     return copiedNode;
+}
+
+SymTable *SymTable::deep_copy() const
+{
+    SymTable *copy = new SymTable(name); // Au acelasi num fucking DUH
+    copy->ids = ids;
+    std::stack<SymTable *> tmp = above;
+    std::stack<SymTable *> copy_stack;
+    while (!tmp.empty())
+    {
+        SymTable *original = tmp.top();
+        tmp.pop();
+        if (original != nullptr)
+        {
+            copy_stack.push(original->deep_copy());
+        }
+        else
+            copy_stack.push(nullptr);
+    }
+    while (!copy_stack.empty())
+    {
+        copy->above.push(copy_stack.top());
+        copy_stack.pop();
+    }
+    copy->changes=changes;
+    if(this->body){
+        copy->body=this->body->deep_copy();
+    } 
+    return copy;
 }
 
 SymTable::~SymTable()

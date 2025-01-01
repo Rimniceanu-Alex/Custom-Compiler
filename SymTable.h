@@ -22,6 +22,7 @@ public:
     Value(float x);
     Value(bool x);
     Value(string type);
+    Value(const char * x);
     string tostring() const;
     int get_int() const;
     float get_float() const;
@@ -99,5 +100,6 @@ public:
     void print_changes();
     ASTNode *get_body();
     ASTNode *get_body_copy();
+    SymTable* deep_copy()const;
     ~SymTable();
 };

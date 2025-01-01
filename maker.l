@@ -26,6 +26,7 @@
 "<-" {return ASSIGN;}
 0|[1-9][0-9]* {return NR;}
 0\.[0-9]+|[1-9][0-9]*\.[0-9]+ {return REAL;}
+\"[a-zA-Z0-9 \s ]*\" { yylval.string = strdup(yytext);return STRING; }
 [ \t] ;
 \n {yylineno++;}
 . {return yytext[0];}

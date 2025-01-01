@@ -75,7 +75,8 @@ extern int yydebug;
     ASSIGN = 276,                  /* ASSIGN  */
     TRUTH_VALUE = 277,             /* TRUTH_VALUE  */
     PRINT = 278,                   /* PRINT  */
-    TYPE_FUNCTION = 279            /* TYPE_FUNCTION  */
+    TYPE_FUNCTION = 279,           /* TYPE_FUNCTION  */
+    STRING = 280                   /* STRING  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -84,12 +85,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "maker.y"
+#line 22 "maker.y"
 
      char* string;
      class ASTNode* ListOfNodes;
 
-#line 93 "maker.tab.h"
+#line 94 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
