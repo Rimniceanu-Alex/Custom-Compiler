@@ -1,15 +1,24 @@
-int foo(int ad , int ab){
+int foo(int ad){
+    while(ad<10){
     Print(ad);
+    ad<-ad+1;
+    };
+    if(ad==10){
+        Print(222);
+    }
+    else{
+    };
     return ad;
 };
 int goo(int ad){
     Print(ad);
     return ad;
 };
+void woow(int a){
+    Print(20);
+};
 begin
 int a;
 a<-2;
-foo(4 , 3);
-foo(20 , 3);
-a<-foo(10 ,3)+goo(100);
+a<-foo(4)+foo(3);
 end

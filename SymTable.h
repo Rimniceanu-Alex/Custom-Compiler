@@ -46,14 +46,14 @@ public:
     std::vector<IdInfo *> params; // for functions //este * pentru ca noi vrem ca schimbarile Parametrilor sa fie reflectate.
     IdInfo() {}
     IdInfo(const char *type, const char *name, const char *idType) : type(type), name(name), idType(idType) {}
-    IdInfo(const IdInfo &other)
-        : idType(other.idType), type(other.type), name(other.name), value(other.value)
-    {
-        for (auto *param : other.params)
-        {
-            params.push_back(new IdInfo(*param));
-        }
-    }
+    // IdInfo(const IdInfo &other)
+    //     : idType(other.idType), type(other.type), name(other.name), value(other.value)
+    // {
+    //     for (auto *param : other.params)
+    //     {
+    //         params.push_back(new IdInfo(*param));
+    //     }
+    // }
     // ~IdInfo()
     // {
     //     for (auto *param : params)

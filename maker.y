@@ -40,19 +40,15 @@ progr :  classes global_classes_declaration class_initialize_initial main {if (e
 main : BGIN
           {SymTable* currentmain;     
            currentmain = new SymTable("main");
-           //current->add_above(currentmain);
            currentmain->assign_stack_above(current->return_stack_above());
            currentmain->add_above(current);
            current=currentmain;  
            Vector_Tabele.push_back(current);
           }
            list_main{current->set_body($3);
-               //$3->run();
                } END
                     {
-                     //current->remove_from_above();//Scoatem din currentmain
                      current=current->next_domain_scope();
-                     //current->remove_from_above();//Scoatem din current
                     }
      ;
 global_classes_declaration: variables_generator functions_generator
@@ -68,14 +64,12 @@ functions : TYPE ID
                 { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
                   class SymTable* function_scope;
                   function_scope=new SymTable($2);
-                  //current->add_above(function_scope);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
-               '(' list_param ')' CBEGIN list{    //current->set_body($8);
-                                                  // $8->run();
+               '(' list_param ')' CBEGIN list{    
                                                        } RETURN e ';' {
                                                             if(strcmp($1, $11->get_type_for_main())==0){
                                                                  if(strcmp($11->get_type_for_main() , "int")==0){
@@ -98,16 +92,12 @@ functions : TYPE ID
                                                        } CEND ';' 
                                                                            {
                                                                            class ASTNode* func_return;
-                                                                           // func_return=new ASTNode(current->next_domain_scope()->get_that_variable($2), errorCount , yylineno);
                                                                            func_return=new ASTNode($2 , "<-" , $11 ,current, &errorCount, yylineno);
                                                                            class ASTNode* list_return;
                                                                            list_return=new ASTNode("sequence" , $8 , func_return , &errorCount , current);
                                                                            current->set_body(list_return);
                                                                            current=current->next_domain_scope();
                                                                            }
-                         //                                                   ID ASSIGN e {
-                         // $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
-                         // }
           | VOID ID  
                 { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
                   class SymTable* function_scope;
@@ -233,7 +223,6 @@ while_node: WHILE '(' boolean_expression  ')' CBEGIN
                          list{
                               
                               current->set_body($7);
-                              // $8->run();
                               }
                               CEND
                                    {
@@ -357,7 +346,6 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
                  current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
       ; 
-      //Cand adaugam parametrii in declaratia functiei o facem refursiv la DREAPTA , si cand ii apelam o facem recursiv la stanga
      //TO DO: Apel de functie in apel de functie
 call_list : e 
                {
@@ -423,98 +411,6 @@ call_list : e
                     }
                }
           ;
-/////////////////////////////Le folosim pe alea de mai jos daca vrem sa facem foo(a<-2) Care NU ARE fuckin sens , si pentru foo(goo(2) , 2) asta are sens , dar vedem
-// call_list : e
-//           | call_list ',' e
-//           | statement_for_call_list
-//           | call_list ',' statement_for_call_list
-//           ;
-
-// statement_for_call_list: ID ASSIGN      
-//                          {
-//                               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-//                               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-//                                    {
-//                                         if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="bool")
-//                                              {
-//                                                   {errorCount++; 
-//                                                   char*buff=new char[256];
-//                                                   strcpy(buff ,"Cannot assing arithmetic expression to ");
-//                                                   strcat(buff , $1);
-//                                                   strcat(buff ," which is a bool"); 
-//                                                   yyerror(buff);
-//                                                   delete [] buff;
-//                                                   buff=nullptr;
-//                                                   }
-//                                              }
-//                                    }
-//                          } 
-//                                         x    {//cout<<$4->evaluatei()<<endl<<$4->get_type()<<endl;
-//                                                   if(domeniul_caruia_ii_apartine_varabila!=nullptr){
-//                                                        if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="int"){
-//                                                             if(numeric_limits<int>::min()==($4->evaluatei())){
-//                                                                  errorCount++;
-//                                                                  yyerror("Arithmetic expression is inccorect");
-//                                                             }
-//                                                             else{
-//                                                                  class Value val($4->evaluatei());
-//                                                                  domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
-//                                                             }
-//                                                        }
-//                                                        else if(domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)=="float"){
-//                                                             if(std::isnan($4->evaluatef())){
-//                                                                  errorCount++;
-//                                                                  yyerror("Arithmetic expression is inccorect");
-//                                                             }
-//                                                             else{
-//                                                                  class Value val($4->evaluatef());
-//                                                                  //cout<<$4->evaluatef()<<endl<<$4->get_type()<<endl;
-//                                                                  domeniul_caruia_ii_apartine_varabila->set_value($1 , val);
-//                                                             }
-//                                                        }else{
-//                                                             errorCount++;
-//                                                             yyerror("Can only assing a int or a float to an int or a float");
-                                                            
-//                                                        }
-//                                                   }//NO IDEA why it's the 4-th one , Trial and error ;P
-//                                              } 
-//                          | ID {
-//                                    domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-//                                    if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-//                                         {
-//                                              if(domeniul_caruia_ii_apartine_varabila->getValue_IDType($1)!="func")
-//                                                   {
-//                                                        errorCount++; 
-//                                                        char*buff=new char[256];
-//                                                        strcpy(buff ,"ID ");
-//                                                        strcat(buff , $1);
-//                                                        strcat(buff ," exists but is NOT a funciton"); 
-//                                                        yyerror(buff);
-//                                                        delete [] buff;
-//                                                        buff=nullptr;
-//                                                   }
-//                                         }
-//                               } 
-//                               '(' call_list ')' //Apel de functie
-//                          | ID ASSIGN 
-//                                    {domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);} 
-//                                         TRUTH_VALUE {
-//                                                        if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-//                                                        {
-//                                                             if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type($1)!="bool")
-//                                                                  {
-//                                                                       errorCount++; 
-//                                                                       char*buff=new char[256];
-//                                                                       strcpy(buff ,"Variable ");
-//                                                                       strcat(buff , $1);
-//                                                                       strcat(buff ," is not a bool"); 
-//                                                                       yyerror(buff);
-//                                                                       delete [] buff;
-//                                                                       buff=nullptr;
-//                                                                  }   
-//                                                        }
-//                                                   }
-//                          ;
 
 e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
   | e '*' e   {$$=new ASTNode("*" , $1 , $3 , &errorCount);}
@@ -557,30 +453,6 @@ int main(int argc, char** argv){
      for (auto i : Vector_Tabele){
           i->printVars();
      }
-     // cout<<endl<<endl<<"RUlare auromatat"<<endl<<endl<<endl;
-     //  for (auto i : Vector_Tabele){
-     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_location().c_str() ,"global-foo")==0){
-     //           i->get_body()->run();
-     //           i->get_body()->run();
-     //      }
-     // }
-
-
-
-     //      cout<<endl<<endl;
-     // for (auto i : Vector_Tabele){
-     //      if(i->get_body()!=nullptr && strcmp(i->get_dom_name() ,"main")==0){
-     //      cout<<i->get_dom_name()<<endl;
-     //      for(auto j=0 ; j<10 ; ++j){
-     //      i->get_body()->run();
-     //      }
-     //           }
-     //      }
-     //      cout<<endl<<endl;
-     //      cout << "Variables:" <<endl<<endl;
-     //      for (auto i : Vector_Tabele){
-     //      i->printVars();
-     // }
      cout<<endl<<endl<<endl<<endl<<endl<<endl;
      cout<<"Functions and their interior:"<<endl<<endl;
      for (auto i : Vector_Tabele){
