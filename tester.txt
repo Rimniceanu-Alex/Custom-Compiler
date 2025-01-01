@@ -1,51 +1,15 @@
-int foo(int ad){
+int foo(int ad , int ab){
     Print(ad);
     return ad;
 };
-
+int goo(int ad){
+    Print(ad);
+    return ad;
+};
 begin
 int a;
-a<-21;
-a<-a+21;
-while(a<50){
-    int b;
-    b<-2;
-    while(b<4){
-    Print(b);
-    b<-b+1;
-    };
-    Print(a);
-    a<-a+1;
-};
-Print(a);
-a<-a+1;
-a<-a*100;
-if(20<3){
-    Print(a);
-}
-else{
-    int bar;
-    bar<-20;
-    int i;
-    i<-0;
-    while(bar<100){
-        Print(i);
-        i<-i+1;
-        bar<-bar+10;
-    };
-    Print(a+1);
-};
-Print(TRUE);
-a<-10;
-for(a<-20; a<30 ; a<-a+1;){
-    Print(99);
-};
-TypeOf(a);
-TypeOf(TRUE);
-bool maybe;
-maybe<-(((10==10)&&(20<30))&&(20==20));
-Print(maybe);
 a<-2;
-foo(2);    
-foo(19*2);//Tre sa putem face functia sa apelez si Variabile+Sa bagam function call in gramtica lui e CUMVA
+foo(4 , 3);
+foo(20 , 3);
+a<-foo(10 ,3)+goo(100);
 end

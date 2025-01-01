@@ -99,12 +99,15 @@ functions : TYPE ID
                                                                            {
                                                                            class ASTNode* func_return;
                                                                            // func_return=new ASTNode(current->next_domain_scope()->get_that_variable($2), errorCount , yylineno);
-                                                                           func_return=new ASTNode($2 , "<-" , $11 ,current, errorCount, yylineno);
+                                                                           func_return=new ASTNode($2 , "<-" , $11 ,current, &errorCount, yylineno);
                                                                            class ASTNode* list_return;
-                                                                           list_return=new ASTNode("sequence" , $8 , func_return , errorCount , current);
+                                                                           list_return=new ASTNode("sequence" , $8 , func_return , &errorCount , current);
                                                                            current->set_body(list_return);
                                                                            current=current->next_domain_scope();
                                                                            }
+                         //                                                   ID ASSIGN e {
+                         // $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
+                         // }
           | VOID ID  
                 { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
                   class SymTable* function_scope;
@@ -146,14 +149,14 @@ fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2
 arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
     ;
 //Listul e folosit in MAIN , Control functions , definitii de functii
-list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , errorCount , yylineno, current);}
-          |  statement_main ';' list_main {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , current);}
+list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
+          |  statement_main ';' list_main {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
           ;
-list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , errorCount , yylineno, current);}
-     |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , errorCount , current);}
+list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
+     |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
      ;
 statement: assign_node {$$=$1;}
-         |function_call_node{$$=$1;} //Apel de functie //TO DOOOO
+         |function_call_node{$$=$1;} 
          |while_node{$$=$1;}
          |if_node{$$=$1;}
          |for_node{$$=$1;}
@@ -163,7 +166,7 @@ statement: assign_node {$$=$1;}
          ;
 
 statement_main: assign_node {$$=$1;$$->run();}
-         |function_call_node{$$=$1;$$->run();} //Apel de functie // TO DOOOO
+         |function_call_node{$$=$1;$$->run();} 
          |while_node{$$=$1;$$->run();}
          |if_node{$$=$1;$$->run();}
          |for_node{$$=$1;$$->run();}
@@ -174,10 +177,10 @@ statement_main: assign_node {$$=$1;$$->run();}
 
 
 assign_node:ID ASSIGN e {
-                         $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
+                         $$=new ASTNode($1 , "<-" , $3 ,current, &errorCount, yylineno);
                          }
            |ID ASSIGN boolean_expression {
-                         $$=new ASTNode($1 , "<-" , $3 ,current, errorCount, yylineno);
+                         $$=new ASTNode($1 , "<-" , $3 ,current, &errorCount, yylineno);
                          }
            ;
 function_call_node:ID 
@@ -214,7 +217,7 @@ function_call_node:ID
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
                                   }
-                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body() , errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie
+                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable_copy($1) , &errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
@@ -234,7 +237,7 @@ while_node: WHILE '(' boolean_expression  ')' CBEGIN
                               }
                               CEND
                                    {
-                                        $$=new ASTNode("while" , $3 , $7 , errorCount , yylineno , current);
+                                        $$=new ASTNode("while" , $3 , $7 , &errorCount , yylineno , current);
                                         current=current->next_domain_scope();
                                    }
           ;
@@ -267,8 +270,8 @@ if_node: IF '(' boolean_expression ')'CBEGIN
                                                   } CEND
                               {
                                    class ASTNode* combine;
-                                   combine=new ASTNode($7 , $14 , errorCount);
-                                   $$=new ASTNode("if" , $3 , combine , errorCount , yylineno , current);
+                                   combine=new ASTNode($7 , $14 , &errorCount);
+                                   $$=new ASTNode("if" , $3 , combine , &errorCount , yylineno , current);
                                    current=current->next_domain_scope();
                               }
        ;
@@ -284,16 +287,16 @@ for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' 
                                                                                     list{current->set_body($12);} CEND
                {
                  class ASTNode* combination1;
-                 combination1=new ASTNode($3 , $5 , errorCount);
+                 combination1=new ASTNode($3 , $5 , &errorCount);
                  class ASTNode* combination2;
-                 combination2=new ASTNode($12 , $7 , errorCount);
-                 $$=new ASTNode("for", combination1 , combination2 , errorCount , yylineno , current);
+                 combination2=new ASTNode($12 , $7 , &errorCount);
+                 $$=new ASTNode("for", combination1 , combination2 , &errorCount , yylineno , current);
                  current=current->next_domain_scope();
                }
           ;
-print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , errorCount , yylineno);}//Vezi ca NU da print bine la variabile , s-ar putea sa trebuaisca sa folosesti SYMTable
+print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , &errorCount , yylineno);}//Vezi ca NU da print bine la variabile , s-ar putea sa trebuaisca sa folosesti SYMTable
           ;
-type_fucntion_node:TYPE_FUNCTION  '(' e ')' {$$=new ASTNode($1 , $3 , errorCount , yylineno);}
+type_fucntion_node:TYPE_FUNCTION  '(' e ')' {$$=new ASTNode($1 , $3 , &errorCount , yylineno);}
 expression_for:assign_node{$$=$1;}
               |e {$$=$1;}
               ;
@@ -303,10 +306,10 @@ declarations_interior: variables_interior
                      ;          
 
 boolean_expression: '(' boolean_expression ')' {$$=$2;}
-               |  '('boolean_expression')' CONNECT '('boolean_expression')' {$$=new ASTNode($4 , $2 , $6 , errorCount);}
+               |  '('boolean_expression')' CONNECT '('boolean_expression')' {$$=new ASTNode($4 , $2 , $6 , &errorCount);}
                |  y {$$=$1;}
                ;
-y : e CMP e {$$=new ASTNode($2 , $1 , $3 , errorCount);}  
+y : e CMP e {$$=new ASTNode($2 , $1 , $3 , &errorCount);}  
   ;
 classes : class
         | classes class
@@ -513,31 +516,31 @@ call_list : e
 //                                                   }
 //                          ;
 
-e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , errorCount);}
-  | e '*' e   {$$=new ASTNode("*" , $1 , $3 , errorCount);}
-  | e '-' e   {$$=new ASTNode("-" , $1 , $3 , errorCount);}
-  | e '/' e   {$$=new ASTNode("/" , $1 , $3 , errorCount);}
+e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
+  | e '*' e   {$$=new ASTNode("*" , $1 , $3 , &errorCount);}
+  | e '-' e   {$$=new ASTNode("-" , $1 , $3 , &errorCount);}
+  | e '/' e   {$$=new ASTNode("/" , $1 , $3 , &errorCount);}
   |'(' e ')'  {$$=$2;}
   | TRUTH_VALUE{    
                     if(strcmp($1 ,"TRUE")==0){
                          Value val(true);     
-                         $$=new ASTNode(val , "bool", errorCount);
+                         $$=new ASTNode(val , "bool", &errorCount);
                     }
                     else{
                          Value val(false);   
-                         $$=new ASTNode(val , "bool", errorCount);
+                         $$=new ASTNode(val , "bool", &errorCount);
                     }
                }
   | NR        {Value val(atoi(yytext));
-               $$=new ASTNode(val , "int" , errorCount);}//MERGE
+               $$=new ASTNode(val , "int" , &errorCount);}//MERGE
   | REAL      {Value val((float)atof(yytext));
-               $$=new ASTNode(val , "float" , errorCount);}
+               $$=new ASTNode(val , "float" , &errorCount);}
   | ID        {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-               $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), errorCount , yylineno);//??? MAybe it will work like this?
+               $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), &errorCount , yylineno);//??? MAybe it will work like this?
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
-  //|function_call_node{$$=$1;} Too be continuedd;
+  |function_call_node{$$=$1;};
   ;
         
 %%

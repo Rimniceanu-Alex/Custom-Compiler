@@ -1,5 +1,6 @@
-#include "SymTable.h"
+#include "ASTNode.h"
 #include <cstring>
+#include "SymTable.h"
 using namespace std;
 
 Value::Value(int x)
@@ -303,6 +304,12 @@ IdInfo *SymTable::get_that_variable(string s)
     return &ids[s];
 }
 
+IdInfo SymTable::get_that_variable_copy(string s)
+{
+    IdInfo copie=ids[s];
+    return copie;
+}
+
 void SymTable::set_value(const char *name, Value new_value)
 {
     ++changes;
@@ -322,6 +329,11 @@ void SymTable::print_changes()
 ASTNode *SymTable::get_body()
 {
     return body;
+}
+ASTNode *SymTable::get_body_copy()
+{
+    ASTNode* copiedNode = new ASTNode(*body);
+    return copiedNode;
 }
 
 SymTable::~SymTable()
