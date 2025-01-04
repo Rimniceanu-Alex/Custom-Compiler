@@ -1,0 +1,6 @@
+Vizibilitate: [global] name: [Mee] data_type: [class] ID_TYPE: [class]
+Vizibilitate: [global] name: [boo] data_type: [int] ID_TYPE: [var] Value:[100]
+Vizibilitate: [global] name: [goo] data_type: [int] ID_TYPE: [func] Value:[1]
+Vizibilitate: [global] name: [roo] data_type: [int] ID_TYPE: [func] Value:[1578646976]
+Vizibilitate: [global] name: [woow] data_type: [void] ID_TYPE: [func]
+Vizibilitate: [global] name: [work] data_type: [bool] ID_TYPE: [func] Value:[true]

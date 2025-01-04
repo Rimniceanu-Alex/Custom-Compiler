@@ -1,0 +1,16 @@
+Vizibilitate: [global] Name : [goo] Return type: [int] Value: [1]
+Params:
+ad int 1
+Vizibilitate: [global] Name : [roo] Return type: [int] Value: [1578646976]
+Params:
+x int 1578646976
+z int 1578646976
+Vizibilitate: [global] Name : [woow] Return type: [void]
+Params:
+a int 1578642192
+Vizibilitate: [global] Name : [work] Return type: [bool]
+Params:
+a int 1578653312
+Vizibilitate: [global-Mee] Name : [foo] Return type: [int] Value: [1578640592]
+Params:
+aoo int 1578644608

@@ -4,6 +4,7 @@
 #include <vector>
 #include <stack>
 #include <stdbool.h>
+#include <fstream>
 #include "ASTNode.h"
 extern FILE* yyin;
 extern char* yytext;
@@ -213,7 +214,7 @@ function_call_node:ID
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
                                   }
-                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
@@ -443,7 +444,7 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
   |function_call_node{$$=$1;};
-  |STRING      {Value val($1);
+  |STRING      {Value val($1);     
                $$=new ASTNode(val , "string" , &errorCount);}
   ;
         
@@ -457,16 +458,45 @@ int main(int argc, char** argv){
      current = new SymTable("global");
      Vector_Tabele.push_back(current);
      yyparse();
-     cout << "Variables:" <<endl<<endl;
-     for (auto i : Vector_Tabele){
-          i->printVars();
+     streambuf* StandardOutput = std::cout.rdbuf();
+     ofstream file("global.txt");
+     if (!file.is_open()) {
+          cout<< "Error opening file" << endl;
+          return 1;
      }
-     cout<<endl<<endl<<endl<<endl<<endl<<endl;
-     cout<<"Functions and their interior:"<<endl<<endl;
+     cout.rdbuf(file.rdbuf());
+     for (auto i : Vector_Tabele){
+          if(i->get_dom_name()=="global"){
+          i->printVars();
+          }
+     }
+     file.close();
+     cout.rdbuf(StandardOutput);
+     file.open("Other_scope.txt");
+     if (!file.is_open()) {
+          cout<< "Error opening file" << endl;
+          return 1;
+     }
+     cout.rdbuf(file.rdbuf());
+     for (auto i : Vector_Tabele){
+          if(i->get_dom_name()!="global"){
+          i->printVars();
+          }
+     }
+     file.close();
+     cout.rdbuf(StandardOutput);
+     file.open("fucntions.txt");
+     if (!file.is_open()) {
+          cout<< "Error opening file" << endl;
+          return 1;
+     }
+     cout.rdbuf(file.rdbuf());
      for (auto i : Vector_Tabele){
           i->printFunct();
           delete i;
      }
+     file.close();
+     cout.rdbuf(StandardOutput);
 } 
 //TO DO : Baga apelul de functie in AST
 //1TO DO: TRANZITIE AST ;(

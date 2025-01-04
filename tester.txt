@@ -1,3 +1,11 @@
+class Mee:{
+    int z;
+    int foo(int aoo ){
+        aoo <-2;
+        return aoo;
+    };
+};
+int boo;
 int goo(int ad){
     Print(ad);
     return ad;
@@ -14,6 +22,7 @@ bool work(int a) {
     return FALSE; 
 };
 begin
+Mee classinst;
 int a;
 a<-2;
 goo(4);
@@ -21,6 +30,8 @@ a<-goo(123);
 Print(a);
 a<-goo(1)+2+3+5;
 bool maybe;
+boo<-100;
+Print(boo*23);
 maybe<-(10.0==10.0);
 Print(maybe);
 if(maybe==TRUE){
@@ -30,5 +41,11 @@ else{
     Print(222222);
 };
 string ok;
-ok<-"Finnally  ad a ";//Asign la String PLUUS fa si Functie de tipul String
+ok<-"Okey";
+string ok1;
+ok1<-"Not Okey";
+ok<-ok+ok1;
+Print(ok);
+Print(ok+"YEAAA"+ok1);
+Print("Hell"+" Yea");
 end

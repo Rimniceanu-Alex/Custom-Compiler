@@ -16,7 +16,7 @@ class ASTNode
 
 public:
     ASTNode() {};
-    ASTNode(const string &func_call, ASTNode *left_child, IdInfo *var_functie, int *errorCount, int yylineno) : root(func_call), left(left_child), right(nullptr), right_side_var(var_functie), value(Value()), table(nullptr), errorCount(errorCount), yylineno(yylineno) {};
+    ASTNode(const string &func_call, ASTNode *left_child, IdInfo *var_functie, int *errorCount, int yylineno , SymTable* current) : root(func_call), left(left_child), right(nullptr), right_side_var(var_functie), value(Value()), table(current), errorCount(errorCount), yylineno(yylineno) {};
     ASTNode(const string &print, ASTNode *left_child, int *errorCount, int yylineno) : root(print), left(left_child), right(nullptr), value(Value()), table(nullptr), errorCount(errorCount), yylineno(yylineno) {};                                                  // For Print
     ASTNode(const string &sequence, ASTNode *left_child, ASTNode *right_child, int *errorCount, SymTable *table) : value(Value()), root(sequence), left(left_child), right(right_child), errorCount(errorCount), table(table) {};                                     // Pt asignare statement_list
     ASTNode(const string &sequence, ASTNode *left_child, int *errorCount, int yylineno, SymTable *table) : root(sequence), left(left_child), right(nullptr), value(Value()), errorCount(errorCount), yylineno(yylineno), table(table) {};                             // Pta asignare statement
@@ -177,31 +177,38 @@ public:
                         errorCount++;
                         cout << "error: " << "Arithmetic expression is inccorect at line: " << yylineno << endl;
                     }
-                    // else if (func_local.name == "")
-                    // {
                     else
                     {
                         class Value val(checker);
                         domeniul_caruia_ii_apartine_varabila->set_value(get_type().c_str(), val);
                     }
-                    // }
-                    // else if (func_local.name != "")
-                    // {
-                    //     class Value val(checker);
-                    //     right_side_var->value = val;
-                    // }
                 }
                 else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(type.c_str()) == "float")
                 {
-                    if (std::isnan(left->evaluatef()))
+                    float checker = left->evaluatef();
+                    if (std::isnan(checker))
                     {
                         errorCount++;
                         cout << "error: " << "Arithmetic expression is inccorect at line: " << yylineno << endl;
                     }
                     else
                     {
-                        class Value val(left->evaluatef());
+                        class Value val(checker);
                         domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                    }
+                }
+                else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(get_type().c_str()) == "string")
+                {
+                    string checker = left->evaluates();
+                    if ("" == checker)
+                    {
+                        errorCount++;
+                        cout << "error: " << "String expression is inccorect at line: " << yylineno << endl;
+                    }
+                    else
+                    {
+                        class Value val(checker);
+                        domeniul_caruia_ii_apartine_varabila->set_value(get_type().c_str(), val);
                     }
                 }
                 else
@@ -345,6 +352,9 @@ public:
                                       // TO DO Vezi cum faci sa poti face apel de functie VOID
         {                             // type=tipul functiei , value=valoarea functiei DUPA assign , left=corpul functiei , right=nullptr
             left->run();
+            // cout<<"Func_call"<<endl;
+            // cout<<table->get_dom_name();
+            // table->printFunct(); // aparent Func_call primeste Main ca si SYM table (Eu trebuie sa fac copii de FUNCTION_TABLE nu de main)
             ++nr_apeluri_functie;
             type = right_side_var->type;
             value = right_side_var->value;
@@ -593,6 +603,17 @@ public:
             {
                 errorCount++;
                 cout << "This Method is for STRINGS ONLY" << endl;
+                return "";
+            }
+        }
+        if (left->get_type() == right->get_type()){
+            if (root == "+")
+            {
+                return left->evaluates() + right->evaluates();
+            }
+            else{
+                errorCount++;
+                cout<<"Unkown operation for strings"<<endl;
                 return "";
             }
         }

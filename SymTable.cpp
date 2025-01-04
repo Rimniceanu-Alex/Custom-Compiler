@@ -25,11 +25,13 @@ Value::Value(string x)
 Value::Value(const char *x)
 {
     StringValue=x;
-        // if (StringValue.length() > 2) {
-        //     StringValue = StringValue.substr(1, StringValue.length() - 2);
-        // } else {
-        //     StringValue = "";
-        // }
+    if(StringValue[0]=='"'){
+        if (StringValue.length() > 2) {
+            StringValue = StringValue.substr(1, StringValue.length() - 2);
+        } else {
+            StringValue = "";
+        }
+    }
 }
 Value::Value()
 {
