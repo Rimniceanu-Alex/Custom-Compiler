@@ -88,6 +88,7 @@ public:
     void add_above(SymTable *new_domain);
     void add_bellow(SymTable *new_domain);
     std::stack<SymTable *> return_stack_above();
+    std::stack<SymTable *> return_stack_bellow();
     void assign_stack_above(std::stack<SymTable *> stack_above);
     void remove_from_above();
     SymTable *next_domain_scope();

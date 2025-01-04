@@ -1,8 +1,8 @@
 class Mee:{
     int z;
     int foo(int aoo ){
-        aoo <-2;
         Print("THE FUNCTION IN THE CLASS WORKSS");
+        Print(aoo);
         return aoo;
     };
 };
@@ -51,5 +51,5 @@ Print(ok+"YEAAA"+ok1);
 Print("Hell"+" Yea");
 classinst.z<-100;
 a<-a+classinst.z;
-classinst.foo(2);
+a<-classinst.foo(10)+classinst.foo(100);
 end

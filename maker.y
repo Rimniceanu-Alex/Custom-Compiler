@@ -190,7 +190,8 @@ assign_node:ID ASSIGN e {
                          $$=new ASTNode(class_mem , "<-" , $5 ,current, &errorCount, yylineno);
                          }
            ;
-function_call_node:ID 
+function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care reprezinta fucntia
+                    //TO DO TO DO TO DO FIX THISSS Plus ii fucked cand apelam o metoda.
                {
                     SymTable* hard_copy=current->deep_copy();
                     ++hard_copy_counter;
@@ -254,14 +255,31 @@ function_call_node:ID
                              buff=nullptr;
                            }
                        else{
+                         SymTable* tmp;
+                         tmp=Vector_Tabele[0];
+                         stack<SymTable*>copy_stack=tmp->return_stack_bellow();
+                         //cout<<"++++++++++++++"<<current->get_IdInfo_Type($1)<<endl;
+                         while(!copy_stack.empty()){
+                              if(strcmp(copy_stack.top()->get_dom_name(),(current->get_IdInfo_Type($1)).c_str())==0){
+                                   tmp=copy_stack.top();
+                                   domeniul_caruia_ii_apartine_varabila=tmp;
+                              }
+                              copy_stack.pop();
+                         }
                          Denumire_apelant=new char[256];
                          strcpy(Denumire_apelant , class_mem.c_str());
-                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params(class_mem.c_str());
+                         //Tre as verificam Scopeurile pana ajungem la SCopeul fucntiei DIN clasa
+                         //cout<<"++++++++++++"<<tmp->get_dom_name()<<endl;
+                         // cout<<"---------"<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
+                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params($3);
+                         if(param_checker.empty()){
+                              cout<<"Fucker's empty from the start"<<endl;
+                         }
                          for(auto i: param_checker){
-                              //cout<<i->name<<i->type<<endl;
+                              // cout<<"!!!!!!!!!!!!!!!!!!!!!"<<i->name<<i->type<<endl;
                          }
                          for (auto i : Vector_Tabele){
-                              if(strcmp(i->get_dom_name(), class_mem.c_str())==0){
+                              if(strcmp(i->get_dom_name(), $3)==0){
                               domeniul_caruia_ii_apartine_varabila=i;
                               }
                          }    

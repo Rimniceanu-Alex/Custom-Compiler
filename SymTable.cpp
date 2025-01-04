@@ -191,6 +191,11 @@ std::stack<SymTable *> SymTable::return_stack_above()
     return this->above;
 }
 
+std::stack<SymTable *> SymTable::return_stack_bellow()
+{
+    return scopes_in_global;
+}
+
 void SymTable::assign_stack_above(std::stack<SymTable *> stack_above)
 {
     this->above = stack_above;
