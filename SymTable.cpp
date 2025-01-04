@@ -61,6 +61,7 @@ void SymTable::addVar(const char *type, const char *name, const char *id_type)
 {
     IdInfo var(type, name, id_type);
     ids[name] = var;
+    add_members(name);
 }
 
 bool SymTable::existsId(const char *var)
@@ -180,6 +181,11 @@ void SymTable::add_above(SymTable *new_domain)
     this->above.push(new_domain);
 }
 
+void SymTable::add_bellow(SymTable *new_domain)
+{
+    this->scopes_in_global.push(new_domain);
+}
+
 std::stack<SymTable *> SymTable::return_stack_above()
 {
     return this->above;
@@ -226,6 +232,49 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
             }
         }
         this->addVar(a, b, c);
+        if(c=="class_instance"){
+            cout<<"This is a class instancec of class ["<<a<<"]"<<endl;
+            cout<<this->get_dom_location()<<endl<<"Verificam scopeurile de deasupra"<<endl;
+            std::stack<SymTable *> Copy_table1;
+            SymTable* tempor;
+            Copy_table1=this->above;
+            while(!Copy_table1.empty()){
+                if(strcmp(Copy_table1.top()->get_dom_name() , "global")==0){
+                    tempor=Copy_table1.top();
+                }
+                Copy_table1.pop();
+            }
+            std::stack<SymTable *> Copy_table2; // Verificam daca a fost declarata anterior intr-un Domeniu de vizibilitate local sau nu
+            Copy_table2= tempor->scopes_in_global;
+            if(Copy_table2.empty()){
+                cout<<"Fucker's empty"<<endl;
+            }
+            while(!Copy_table2.empty()){
+                //cout<<endl<<Copy_table2.top()->get_dom_name()<<endl<<endl;
+        //        if(strcmp(Copy_table.top()->get_dom_name() ,"global")==0){
+        //             cout<<"Entered"<<endl;
+        //             std::stack<SymTable *> Copy_table2;
+        //             Copy_table2=Copy_table.top()->above;
+        //             while(!Copy_table2.empty()){
+        //                 cout<<Copy_table2.top()<<endl;
+        //                 Copy_table2.pop();
+        //             }
+        //        }
+                if(strcmp(Copy_table2.top()->get_dom_name(), a)==0){
+                    cout<<"FOUND IT "<<a<<endl;
+                    map<string, IdInfo>variabile;
+                    variabile=Copy_table2.top()->get_map();
+                    for(const pair<string , IdInfo>d : variabile){
+                        string buff=b;
+                        string name=buff+"."+d.first;
+                        this->addVar(d.second.type.c_str() , name.c_str() , d.second.idType.c_str());
+                        cout<<d.first<<" "<<d.second.idType<<" "<<d.second.type<<endl;
+                    }
+                }
+                Copy_table2.pop();
+            }
+            
+        }
     }
     else
     {
@@ -388,6 +437,21 @@ SymTable *SymTable::deep_copy() const
         copy->body=this->body->deep_copy();
     } 
     return copy;
+}
+
+void SymTable::add_members(const char* s)
+{
+    members.push_back(s);
+}
+
+vector<const char *> SymTable::get_members()
+{
+    return members;
+}
+
+map<string, IdInfo> SymTable::get_map()
+{
+    return ids;
 }
 
 SymTable::~SymTable()

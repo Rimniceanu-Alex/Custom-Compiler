@@ -68,8 +68,10 @@ functions : TYPE ID
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
+                  current->add_bellow(function_scope);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
+                  //cout<<endl<<"Scope-ul functiei "<<current->get_dom_name()<<endl;
                 } 
                '(' list_param ')' CBEGIN list{    
                                                        } RETURN e ';' {
@@ -106,6 +108,7 @@ functions : TYPE ID
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
+                  current->add_bellow(function_scope);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
@@ -174,6 +177,18 @@ assign_node:ID ASSIGN e {
            |ID ASSIGN boolean_expression {
                          $$=new ASTNode($1 , "<-" , $3 ,current, &errorCount, yylineno);
                          }
+           |ID'.'ID ASSIGN e {
+                         string buff1=$1;
+                         string buff3=$3;
+                         string class_mem=buff1+'.'+buff3;
+                         $$=new ASTNode(class_mem , "<-" , $5 ,current, &errorCount, yylineno);
+                         }
+           |ID'.'ID ASSIGN boolean_expression {
+                         string buff1=$1;
+                         string buff3=$3;
+                         string class_mem=buff1+'.'+buff3;
+                         $$=new ASTNode(class_mem , "<-" , $5 ,current, &errorCount, yylineno);
+                         }
            ;
 function_call_node:ID 
                {
@@ -198,7 +213,7 @@ function_call_node:ID
                          strcpy(Denumire_apelant , $1);
                          param_checker=domeniul_caruia_ii_apartine_varabila->get_params($1);
                          for(auto i: param_checker){
-                              cout<<i->name<<i->type<<endl;
+                              //cout<<i->name<<i->type<<endl;
                          }
                          for (auto i : Vector_Tabele){
                               if(strcmp(i->get_dom_name(), $1)==0){
@@ -215,6 +230,55 @@ function_call_node:ID
                                    yyerror("Not enough parameters in function call");
                                   }
                                   $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                 }
+                                 //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
+                  | ID'.'ID
+               {
+                    string buff1=$1;
+                    string buff3=$3;
+                    string class_mem=buff1+'.'+buff3;
+                    SymTable* hard_copy=current->deep_copy();
+                    ++hard_copy_counter;
+               domeniul_caruia_ii_apartine_varabila=hard_copy->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                    {
+                      if(domeniul_caruia_ii_apartine_varabila->getValue_IDType(class_mem.c_str())!="func")
+                           {
+                             errorCount++; 
+                             char*buff=new char[256];
+                             strcpy(buff ,"ID ");
+                             strcat(buff , class_mem.c_str());
+                             strcat(buff ," exists but is NOT a funciton"); 
+                             yyerror(buff);
+                             delete [] buff;
+                             buff=nullptr;
+                           }
+                       else{
+                         Denumire_apelant=new char[256];
+                         strcpy(Denumire_apelant , class_mem.c_str());
+                         param_checker=domeniul_caruia_ii_apartine_varabila->get_params(class_mem.c_str());
+                         for(auto i: param_checker){
+                              //cout<<i->name<<i->type<<endl;
+                         }
+                         for (auto i : Vector_Tabele){
+                              if(strcmp(i->get_dom_name(), class_mem.c_str())==0){
+                              domeniul_caruia_ii_apartine_varabila=i;
+                              }
+                         }    
+                       }
+                    }
+              } 
+                '(' call_list ')'{
+                                   string buff1=$1;
+                                   string buff3=$3;
+                                   string class_mem=buff1+'.'+buff3;
+                                  delete[] Denumire_apelant;
+                                  Denumire_apelant=nullptr;
+                                  if(!param_checker.empty()){
+                                   errorCount++;
+                                   yyerror("Not enough parameters in function call");
+                                  }
+                                  $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable(class_mem.c_str()) , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
@@ -318,6 +382,7 @@ class :  Class_Type Class_ID ':' CBEGIN
             class_scope=new SymTable($2);
             class_scope->assign_stack_above(current->return_stack_above());
             class_scope->add_above(current);
+            current->add_bellow(class_scope);
             current=class_scope;
             Vector_Tabele.push_back(current);
           }
@@ -443,6 +508,13 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), &errorCount , yylineno);//??? MAybe it will work like this?
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
+  | ID'.'ID {
+               string buff1=$1;
+               string buff3=$3;
+               string class_mem=buff1+'.'+buff3;
+               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
+               $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable(class_mem.c_str()), &errorCount , yylineno);
+               }
   |function_call_node{$$=$1;};
   |STRING      {Value val($1);     
                $$=new ASTNode(val , "string" , &errorCount);}

@@ -69,6 +69,8 @@ class SymTable
     map<string, IdInfo> ids; // String ii NUMELE variabilei , ids=informatii
     const char *name;        // Domeniul de vizibilitate
     std::stack<SymTable *> above;
+    std::stack<SymTable *> scopes_in_global;
+    vector<const char *>members;
     int changes = 0;
     ASTNode *body;
 
@@ -84,6 +86,7 @@ public:
     const char *get_dom_name();
     string get_dom_location();
     void add_above(SymTable *new_domain);
+    void add_bellow(SymTable *new_domain);
     std::stack<SymTable *> return_stack_above();
     void assign_stack_above(std::stack<SymTable *> stack_above);
     void remove_from_above();
@@ -101,5 +104,8 @@ public:
     ASTNode *get_body();
     ASTNode *get_body_copy();
     SymTable* deep_copy()const;
+    void add_members(const char* s);
+    vector<const char*> get_members();
+    map<string, IdInfo> get_map();
     ~SymTable();
 };
