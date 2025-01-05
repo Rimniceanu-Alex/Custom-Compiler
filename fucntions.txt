@@ -1,12 +1,9 @@
-Vizibilitate: [global] Name : [goo] Return type: [int] Value: [7]
+Vizibilitate: [global-goo] Name : [goo] Return type: [int] Value: [100]
 Params:
-Vizibilitate: [global] Name : [roo] Return type: [int] Value: [3]
+ad int 100
+Vizibilitate: [global-foo] Name : [foo] Return type: [int] Value: [10]
 Params:
-Vizibilitate: [global] Name : [woow] Return type: [void]
+ad int 10
+Vizibilitate: [global-soo] Name : [soo] Return type: [string]
 Params:
-Vizibilitate: [global] Name : [work] Return type: [bool]
-Params:
-Vizibilitate: [global-Mee] Name : [foo] Return type: [int] Value: [-1137771376]
-Params:
-Vizibilitate: [global-main] Name : [classinst.foo] Return type: [int] Value: [9]
-Params:
+ad int 1252444080

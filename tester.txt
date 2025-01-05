@@ -1,57 +1,49 @@
-class Mee:{
-    int z;
-    int foo(int aoo ){
-        Print("THE FUNCTION IN THE CLASS WORKSS");
-        Print(aoo);
-        return aoo;
-    };
-};
-int boo;
 int goo(int ad){
     Print(ad);
     return ad;
 };
-int roo(int x , int z){
-    Print(x);
-    Print(z);
-    Print(x+z);
-    return x+z;
+int foo(int ad){
+    Print(ad);
+    return ad;
 };
-void woow(int a){
-    Print(20);
+void max(int a , int b){
+    if(a>b){
+        Print(a);
+    }
+    else{
+        Print(b);
+    };
 };
-bool work(int a) {
-    Print(TRUE);
-    return FALSE; 
+string soo(int ad){
+    Print(ad);
+    return "Yes";
 };
 begin
-Mee classinst;
 int a;
 a<-2;
-roo(1 , 2);
-goo(4);
-a<-goo(123);
-Print(a);
-a<-goo(1)+2+3+5;
-bool maybe;
-boo<-100;
-Print(boo*23);
-maybe<-(10.0==10.0);
-Print(maybe);
-if(maybe==TRUE){
-    Print(10000);
+if(a==2){
+    Print("Correct");
+    a<-5;
 }
 else{
-    Print(222222);
+    Print("Incorrect");
 };
-string ok;
-ok<-"Okey";
-string ok1;
-ok1<-"Not Okey";
-ok<-ok+ok1;
-Print(ok);
-Print(ok+"YEAAA"+ok1);
-Print("Hell"+" Yea");
+Print(a);
+while(a<10){
+    Print(a);
+    a<-a+1;
+    if(a==10){
+        Print("About to exit");
+    }
+    else{};
+};
 goo(4);
-a<-goo(5)+goo(7);
+goo(3);
+goo(2);
+a<-foo(10)+goo(100);
+int aa;
+aa<-10;
+int ab;
+ab<-20;
+max(aa ,100);
 end

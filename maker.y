@@ -31,7 +31,7 @@ int hard_copy_counter=0;
 
 %token  BGIN END CBEGIN CEND REAL
 %token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING
-%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node
+%type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node list_else
 %start progr
 %left '+' '-' 
 %left '*' '/'
@@ -69,6 +69,11 @@ functions : TYPE ID
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
+                  IdInfo* variabila;
+                  variabila=function_scope->get_function_core();
+                  variabila->name=$2;
+                  variabila->type=$1;
+                  variabila->idType="func";
                   current->add_bellow(function_scope);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
@@ -148,6 +153,8 @@ arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $
 list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
           |  statement_main ';' list_main {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
           ;
+list_else: list{$$=$1;}
+         | /*epsilon*/ {$$=new ASTNode();}
 list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
      |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
      ;
@@ -156,7 +163,7 @@ statement: assign_node {$$=$1;}
          |while_node{$$=$1;}
          |if_node{$$=$1;}
          |for_node{$$=$1;}
-         | declarations_interior
+         | declarations_interior{$$=new ASTNode();}
          | print_node{$$=$1;}
          | type_fucntion_node{$$=$1;}
          ;
@@ -166,7 +173,7 @@ statement_main: assign_node {$$=$1;$$->run();}
          |while_node{$$=$1;$$->run();}
          |if_node{$$=$1;$$->run();}
          |for_node{$$=$1;$$->run();}
-         | declarations_interior
+         | declarations_interior{$$=new ASTNode();}
          | print_node{$$=$1;$$->run();}
          | type_fucntion_node{$$=$1;$$->run();}
          ;
@@ -195,7 +202,15 @@ function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care re
                     //TO DO TO DO TO DO FIX THISSS Plus ii fucked cand apelam o metoda.
                {
                     SymTable* tmp=nullptr;
-                    stack<SymTable*> copy=Vector_Tabele[0]->return_stack_bellow();
+                    SymTable*globol;
+                    stack<SymTable*> search=current->return_stack_above();
+                    while(!search.empty()){
+                         if(strcmp(search.top()->get_dom_name(), "global")==0){
+                              globol=search.top();
+                         }
+                         search.pop();
+                    }
+                    stack<SymTable*> copy=globol->return_stack_bellow();
                     while(!copy.empty()){
                          if(strcmp(copy.top()->get_dom_name(),$1)==0){
                          tmp=copy.top();
@@ -215,7 +230,6 @@ function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care re
                          }
                           stack<IdInfo*> func_params=param_checker;
                          while(!func_params.empty()){
-                              cout<<func_params.top()->name<<"  "<<func_params.top()->type<<"    "<<func_params.top()->idType<<endl;
                               func_params.pop();
                          }
                     }
@@ -227,10 +241,9 @@ function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care re
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
                                   }
-                                   cout<<endl<<endl<<endl<<endl<<endl<<endl<<"!!!!!Rulam in Func_call"<<endl;
-                                   functia_apelata->get_body()->run();//BODY-U E BUN;//URGGEN , vezi cum e trat fucntion call-u in AST , body-u intra in AST BUN
-                                   cout<<endl<<endl<<endl<<endl<<endl;
-                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                   SymTable* test;
+                                   test=current->deep_copy();//e nevoei de copie?
+                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno , test);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
           //         | ID'.'ID
@@ -315,7 +328,7 @@ while_node: WHILE '(' boolean_expression  ')' CBEGIN
                               }
                               CEND
                                    {
-                                        $$=new ASTNode("while" , $3 , $7 , &errorCount , yylineno , current);
+                                        $$=new ASTNode("while" , $3 , $7 , &errorCount , yylineno);
                                         current=current->next_domain_scope();
                                    }
           ;
@@ -343,13 +356,13 @@ if_node: IF '(' boolean_expression ')'CBEGIN
                                    current=currentCTRL;
                                    Vector_Tabele.push_back(current);
                               }
-                                                  list{
+                                                  list_else{
                                                        current->set_body($14);
                                                   } CEND
                               {
                                    class ASTNode* combine;
                                    combine=new ASTNode($7 , $14 , &errorCount);
-                                   $$=new ASTNode("if" , $3 , combine , &errorCount , yylineno , current);
+                                   $$=new ASTNode("if" , $3 , combine , &errorCount , yylineno);
                                    current=current->next_domain_scope();
                               }
        ;
@@ -368,7 +381,7 @@ for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' 
                  combination1=new ASTNode($3 , $5 , &errorCount);
                  class ASTNode* combination2;
                  combination2=new ASTNode($12 , $7 , &errorCount);
-                 $$=new ASTNode("for", combination1 , combination2 , &errorCount , yylineno , current);
+                 $$=new ASTNode("for", combination1 , combination2 , &errorCount , yylineno );
                  current=current->next_domain_scope();
                }
           ;

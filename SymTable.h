@@ -6,6 +6,7 @@
 #include <stack>
 #include <cmath>
 #include <limits>
+#include <cstring>  
 class ASTNode;
 using namespace std;
 
@@ -29,13 +30,6 @@ public:
     bool get_bool() const;
     string get_string() const;
 };
-// class ParamList {
-//     std::vector<int> integers;
-//     std::vector<float> floaters;
-//     std::vector<bool> boolers;
-//     std::vector<char*> charsers;
-
-// };
 
 class IdInfo
 {
@@ -47,21 +41,6 @@ public:
     std::vector<IdInfo *> params; // for functions //este * pentru ca noi vrem ca schimbarile Parametrilor sa fie reflectate.
     IdInfo() {}
     IdInfo(const char *type, const char *name, const char *idType) : type(type), name(name), idType(idType) {}
-    // IdInfo(const IdInfo &other)
-    //     : idType(other.idType), type(other.type), name(other.name), value(other.value)
-    // {
-    //     for (auto *param : other.params)
-    //     {
-    //         params.push_back(new IdInfo(*param));
-    //     }
-    // }
-    // ~IdInfo()
-    // {
-    //     for (auto *param : params)
-    //     {
-    //         delete param;
-    //     }
-    // }
     IdInfo* deep_copy()const;
 };
 
@@ -72,8 +51,8 @@ class SymTable
     std::stack<SymTable *> above;
     std::stack<SymTable *> scopes_in_global;
     std::stack<IdInfo*>function_params;
-    //vector<const char *>members;
     int changes = 0;
+    IdInfo function_core;
     ASTNode *body;
 
 public:
@@ -97,20 +76,14 @@ public:
     void check_existance_for_declaration(const char *a, const char *b, const char *c, int &errorCount, int yylineno);
     SymTable *check_existance_for_use(const char *b, int &errorCount, int yylineno);
     void check_existance_for_class_instance(const char *a, const char *b, int &errorCount, int yylineno);
-    void add_params(const char *function, IdInfo *parametru);
     void add_function_params(IdInfo*param);
-    std::vector<IdInfo *> get_params(string s);
     std::stack<IdInfo*> get_function_params();
     IdInfo *get_that_variable(string s);
-    IdInfo get_that_variable_copy(string s);
     void set_value(const char *name, Value new_value);
     void set_body(ASTNode *body);
-    void print_changes();
     ASTNode *get_body();
-    // ASTNode *get_body_copy();
-    // SymTable* deep_copy()const;
-    // void add_members(const char* s);
-    // vector<const char*> get_members();
+    IdInfo* get_function_core();
     map<string, IdInfo> get_map();
+    SymTable* deep_copy()const;
     ~SymTable();
 };
