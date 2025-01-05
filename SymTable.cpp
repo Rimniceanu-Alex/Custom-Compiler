@@ -61,7 +61,7 @@ void SymTable::addVar(const char *type, const char *name, const char *id_type)
 {
     IdInfo var(type, name, id_type);
     ids[name] = var;
-    add_members(name);
+    //add_members(name);
 }
 
 bool SymTable::existsId(const char *var)
@@ -373,9 +373,19 @@ void SymTable::add_params(const char *function, IdInfo *parametru)
     ids[function].params.push_back(parametru);
 }
 
+void SymTable::add_function_params(IdInfo *param)
+{
+    function_params.push(param);
+}
+
 std::vector<IdInfo *> SymTable::get_params(string s)
 {
     return this->ids[s].params;
+}
+
+std::stack<IdInfo *> SymTable::get_function_params()
+{
+    return function_params;
 }
 
 IdInfo *SymTable::get_that_variable(string s)
@@ -409,50 +419,87 @@ ASTNode *SymTable::get_body()
 {
     return body;
 }
-ASTNode *SymTable::get_body_copy()
-{
-    ASTNode *copiedNode = new ASTNode(*body);
-    return copiedNode;
-}
+// ASTNode *SymTable::get_body_copy()
+// {
+//     ASTNode *copiedNode = new ASTNode(*body);
+//     return copiedNode;
+// }
 
-SymTable *SymTable::deep_copy() const
-{
-    SymTable *copy = new SymTable(name); // Au acelasi num fucking DUH
-    copy->ids = ids;
-    std::stack<SymTable *> tmp = above;
-    std::stack<SymTable *> copy_stack;
-    while (!tmp.empty())
-    {
-        SymTable *original = tmp.top();
-        tmp.pop();
-        if (original != nullptr)
-        {
-            copy_stack.push(original->deep_copy());
-        }
-        else
-            copy_stack.push(nullptr);
-    }
-    while (!copy_stack.empty())
-    {
-        copy->above.push(copy_stack.top());
-        copy_stack.pop();
-    }
-    copy->changes=changes;
-    if(this->body){
-        copy->body=this->body->deep_copy();
-    } 
-    return copy;
-}
+// SymTable *SymTable::deep_copy() const
+// {
+//     SymTable *copy = new SymTable(name); // Au acelasi num fucking DUH
+//     copy->ids = ids;
+//     std::stack<SymTable *> tmp = above;
+//     std::stack<SymTable *> copy_stack;
+//     while (!tmp.empty())
+//     {
+//         SymTable *original = tmp.top();
+//         tmp.pop();
+//         if (original != nullptr)
+//         {
+//             copy_stack.push(original->deep_copy());
+//         }
+//         else
+//             copy_stack.push(nullptr);
+//     }
+//     while (!copy_stack.empty())
+//     {
+//         copy->above.push(copy_stack.top());
+//         copy_stack.pop();
+//     }
+//     std::stack<SymTable *> tmp2 = scopes_in_global;
+//     std::stack<SymTable *> copy_stack2;
+//     while (!tmp.empty())
+//     {
+//         SymTable *original = tmp2.top();
+//         tmp2.pop();
+//         if (original != nullptr)
+//         {
+//             copy_stack2.push(original->deep_copy());
+//         }
+//         else
+//             copy_stack2.push(nullptr);
+//     }
+//     while (!copy_stack2.empty())
+//     {
+//         copy->scopes_in_global.push(copy_stack2.top());
+//         copy_stack2.pop();
+//     }
+//     std::stack<IdInfo *> tmp3 = function_params;
+//     std::stack<IdInfo *> copy_stack3;
+//     while (!tmp3.empty())
+//     {
+//         IdInfo *original = tmp3.top();
+//         tmp3.pop();
+//         if (original != nullptr)
+//         {
+//             copy_stack3.push(original->deep_copy());
+//         }
+//         else
+//             copy_stack3.push(nullptr);
+//     }
+//     while (!copy_stack3.empty())
+//     {
+//         copy->function_params.push(copy_stack3.top());
+//         copy_stack3.pop();
+//     }
+//     copy->changes=changes;
+//     if(this->body){
+//         copy->body=this->body->deep_copy();
+//     } 
+//     cout<<"&&&&&&&&&&&&&&&&&&&&&&&&   AJunge, aici in deep_Copy9)?"<<endl;//Not usable , ii circulara
+//     return copy;
+// }
 
-void SymTable::add_members(const char* s)
-{
-    members.push_back(s);
-}
+// void SymTable::add_members(const char* s)
+// {
+//     members.push_back(s);
+// }
 
-vector<const char *> SymTable::get_members()
-{
-    return members;
-}
+// vector<const char *> SymTable::get_members()
+// {
+//     return members;
+// }
 
 map<string, IdInfo> SymTable::get_map()
 {
@@ -462,4 +509,22 @@ map<string, IdInfo> SymTable::get_map()
 SymTable::~SymTable()
 {
     ids.clear();
+}
+
+IdInfo *IdInfo::deep_copy() const
+{
+    IdInfo*copy=new IdInfo();
+    copy->idType=idType;
+    copy->type=type;
+    copy->name=name;
+    copy->value=value;
+    for (const IdInfo *param:params){
+        if(param){
+            copy->params.push_back(param->deep_copy());
+        }
+        else{
+            copy->params.push_back(nullptr);
+        }
+    }
+    return copy;
 }

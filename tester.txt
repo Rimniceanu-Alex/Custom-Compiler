@@ -12,6 +12,8 @@ int goo(int ad){
     return ad;
 };
 int roo(int x , int z){
+    Print(x);
+    Print(z);
     Print(x+z);
     return x+z;
 };
@@ -26,6 +28,7 @@ begin
 Mee classinst;
 int a;
 a<-2;
+roo(1 , 2);
 goo(4);
 a<-goo(123);
 Print(a);
@@ -49,7 +52,6 @@ ok<-ok+ok1;
 Print(ok);
 Print(ok+"YEAAA"+ok1);
 Print("Hell"+" Yea");
-classinst.z<-100;
-a<-a+classinst.z;
-a<-classinst.foo(10)+classinst.foo(100);
+goo(4);
+a<-goo(5)+goo(7);
 end

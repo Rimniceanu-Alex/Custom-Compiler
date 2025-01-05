@@ -62,6 +62,7 @@ public:
     //         delete param;
     //     }
     // }
+    IdInfo* deep_copy()const;
 };
 
 class SymTable
@@ -70,7 +71,8 @@ class SymTable
     const char *name;        // Domeniul de vizibilitate
     std::stack<SymTable *> above;
     std::stack<SymTable *> scopes_in_global;
-    vector<const char *>members;
+    std::stack<IdInfo*>function_params;
+    //vector<const char *>members;
     int changes = 0;
     ASTNode *body;
 
@@ -96,17 +98,19 @@ public:
     SymTable *check_existance_for_use(const char *b, int &errorCount, int yylineno);
     void check_existance_for_class_instance(const char *a, const char *b, int &errorCount, int yylineno);
     void add_params(const char *function, IdInfo *parametru);
+    void add_function_params(IdInfo*param);
     std::vector<IdInfo *> get_params(string s);
+    std::stack<IdInfo*> get_function_params();
     IdInfo *get_that_variable(string s);
     IdInfo get_that_variable_copy(string s);
     void set_value(const char *name, Value new_value);
     void set_body(ASTNode *body);
     void print_changes();
     ASTNode *get_body();
-    ASTNode *get_body_copy();
-    SymTable* deep_copy()const;
-    void add_members(const char* s);
-    vector<const char*> get_members();
+    // ASTNode *get_body_copy();
+    // SymTable* deep_copy()const;
+    // void add_members(const char* s);
+    // vector<const char*> get_members();
     map<string, IdInfo> get_map();
     ~SymTable();
 };

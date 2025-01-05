@@ -1,0 +1,4 @@
+In function call nu ma folosesc doare de Scopeul functiei.
+O sa facem asa:
+-punem un camp nou in SYM TABLE care sa reprezinte parametrii functiei , in loc sa-l facem in id-ul functiei din global 
+il facem intr-un camp special din scope-ul functiei.

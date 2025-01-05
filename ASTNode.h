@@ -44,49 +44,49 @@ public:
         type = right_side_var->type;
         value = right_side_var->value;
     };
-    ASTNode *deep_copy() const
-    {
-        ASTNode *copy = new ASTNode();
-        copy->value = this->value;
-        copy->type = this->type;
-        copy->root = this->root;
-        copy->nr_apeluri_functie = nr_apeluri_functie;
-        copy->yylineno = yylineno;
-        if (left != nullptr)
-        {
-            copy->left = this->left->deep_copy();
-        }
-        else
-        {
-            copy->left = nullptr;
-        }
-        if (right != nullptr)
-        {
-            copy->right = this->right->deep_copy();
-        }
-        else
-        {
-            copy->left = nullptr;
-        }
-        if (table != nullptr)
-        {
-            copy->table = table->deep_copy();
-        }
-        else
-        {
-            copy->table = nullptr;
-        }
-        if (right_side_var != nullptr)
-        {
-            copy->right_side_var = new IdInfo(*right_side_var);
-        }
-        else
-        {
-            copy->right_side_var = nullptr;
-        }
-        copy->errorCount = errorCount;
-        return copy;
-    };
+    // ASTNode *deep_copy() const
+    // {
+    //     ASTNode *copy = new ASTNode();
+    //     copy->value = this->value;
+    //     copy->type = this->type;
+    //     copy->root = this->root;
+    //     copy->nr_apeluri_functie = nr_apeluri_functie;
+    //     copy->yylineno = yylineno;
+    //     if (left != nullptr)
+    //     {
+    //         copy->left = this->left->deep_copy();
+    //     }
+    //     else
+    //     {
+    //         copy->left = nullptr;
+    //     }
+    //     if (right != nullptr)
+    //     {
+    //         copy->right = this->right->deep_copy();
+    //     }
+    //     else
+    //     {
+    //         copy->left = nullptr;
+    //     }
+    //     if (table != nullptr)
+    //     {
+    //         copy->table = table->deep_copy();
+    //     }
+    //     else
+    //     {
+    //         copy->table = nullptr;
+    //     }
+    //     if (right_side_var != nullptr)
+    //     {
+    //         copy->right_side_var = new IdInfo(*right_side_var);
+    //     }
+    //     else
+    //     {
+    //         copy->right_side_var = nullptr;
+    //     }
+    //     copy->errorCount = errorCount;
+    //     return copy;
+    // };
     const char *get_type_for_main()
     {
         return type.c_str();
