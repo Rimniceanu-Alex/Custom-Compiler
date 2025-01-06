@@ -1,10 +1,18 @@
+class Mee:{
+    int z;
+    int foo(int aoo ){
+        Print("THE FUNCTION IN THE CLASS WORKSS");
+        Print(aoo);
+        return aoo;
+    };
+};
 int goo(int ad){
     Print(ad);
     return ad;
 };
-int foo(int ad){
+int foo(int ad ){
     Print(ad);
-    return ad;
+    return ad*2;
 };
 void max(int a , int b){
     if(a>b){
@@ -14,9 +22,15 @@ void max(int a , int b){
         Print(b);
     };
 };
-string soo(int ad){
+int soo(string ad){
     Print(ad);
-    return "Yes";
+    return 10;
+};
+bool aoga(bool a){
+    return a;
+};
+void nothing(){
+    Print("nothing");
 };
 begin
 int a;
@@ -40,10 +54,23 @@ while(a<10){
 goo(4);
 goo(3);
 goo(2);
-a<-foo(10)+goo(100);
 int aa;
 aa<-10;
 int ab;
 ab<-20;
 max(aa ,100);
-end
+Print(soo("woo"));
+bool maybe;
+maybe<-11==12;
+Print(aoga(maybe));
+for(ab<-10 ; ab<89 ; ab<-ab+1;){
+    Print(89-ab);
+};
+max(10, 20);
+Mee test;
+a<-13+foo(10)+goo(100);
+a<-test.foo(1123);
+test.z<-101;
+a<-a+test.z;
+a<-test.foo(foo(10));
+end 

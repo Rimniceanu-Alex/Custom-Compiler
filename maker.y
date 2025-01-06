@@ -18,6 +18,7 @@ std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 char* Denumire_apelant=nullptr;
 std::stack<IdInfo*> param_checker;
+std::stack<IdInfo*>Temp_stack;
 int hard_copy_counter=0;
 %}
 
@@ -77,32 +78,11 @@ functions : TYPE ID
                   current->add_bellow(function_scope);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
-                  //cout<<endl<<"Scope-ul functiei "<<current->get_dom_name()<<endl;
                 } 
-               '(' list_param ')' CBEGIN list{    
-                                                       } RETURN e ';' {
-                                                            // if(strcmp($1, $11->get_type_for_main())==0){
-                                                            //      if(strcmp($11->get_type_for_main() , "int")==0){
-                                                            //           class Value val($11->evaluatei());
-                                                            //           current->next_domain_scope()->set_value($2 , val );  
-                                                            //      }
-                                                            //      else if(strcmp($11->get_type_for_main() , "float")==0){
-                                                            //           class Value val($11->evaluatef());
-                                                            //           current->next_domain_scope()->set_value($2 , val ); 
-                                                            //      }
-                                                            //      else{
-                                                            //           errorCount++;
-                                                            //           yyerror("Unkown Type of Function");
-                                                            //      }
-                                                            // }
-                                                            // else{
-                                                            //      errorCount++;
-                                                            //      yyerror("The Return type and the function type DON'T MATCH");
-                                                            // }
-                                                       } CEND ';' 
+               '(' list_param_epsilon ')' CBEGIN list_else RETURN e ';'CEND ';' 
                                                                            {
                                                                            class ASTNode* func_return;
-                                                                           func_return=new ASTNode($2 , "<-" , $11 ,current, &errorCount, yylineno);
+                                                                           func_return=new ASTNode($2 , "<-" , $10 ,current, &errorCount, yylineno);
                                                                            class ASTNode* list_return;
                                                                            list_return=new ASTNode("sequence" , $8 , func_return , &errorCount , current);
                                                                            current->set_body(list_return);
@@ -118,7 +98,7 @@ functions : TYPE ID
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 } 
-               '(' list_param ')' CBEGIN list{    current->set_body($8);} CEND ';' 
+               '(' list_param_epsilon ')' CBEGIN list{    current->set_body($8);} CEND ';' 
                                    {
                                     current=current->next_domain_scope();
                                    }
@@ -149,12 +129,13 @@ fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2
 
 arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
     ;
-//Listul e folosit in MAIN , Control functions , definitii de functii
+//Listul e folosit in MAIN , Control functions , list_else
 list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
           |  statement_main ';' list_main {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
           ;
 list_else: list{$$=$1;}
          | /*epsilon*/ {$$=new ASTNode();}
+         ;
 list :  statement ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
      |  statement ';' list {$$=new ASTNode("sequence" , $1 ,$3 , &errorCount , current);}
      ;
@@ -167,7 +148,6 @@ statement: assign_node {$$=$1;}
          | print_node{$$=$1;}
          | type_fucntion_node{$$=$1;}
          ;
-
 statement_main: assign_node {$$=$1;$$->run();}
          |function_call_node{$$=$1;$$->run();} 
          |while_node{$$=$1;$$->run();}
@@ -177,8 +157,6 @@ statement_main: assign_node {$$=$1;$$->run();}
          | print_node{$$=$1;$$->run();}
          | type_fucntion_node{$$=$1;$$->run();}
          ;
-
-
 assign_node:ID ASSIGN e {
                          $$=new ASTNode($1 , "<-" , $3 ,current, &errorCount, yylineno);
                          }
@@ -198,9 +176,14 @@ assign_node:ID ASSIGN e {
                          $$=new ASTNode(class_mem , "<-" , $5 ,current, &errorCount, yylineno);
                          }
            ;
-function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care reprezinta fucntia
-                    //TO DO TO DO TO DO FIX THISSS Plus ii fucked cand apelam o metoda.
+function_call_node:ID 
                {
+                    if(!param_checker.empty()){
+                         while(!param_checker.empty()){
+                         Temp_stack.push(param_checker.top());
+                         param_checker.pop();
+                         }
+                    }
                     SymTable* tmp=nullptr;
                     SymTable*globol;
                     stack<SymTable*> search=current->return_stack_above();
@@ -235,83 +218,104 @@ function_call_node:ID // NU folosesti SymTable-u functiei , ce variabila care re
                     }
                
               } 
-                '(' call_list ')'{delete[] Denumire_apelant;
-                                  Denumire_apelant=nullptr;
+                '(' call_list_epsilon ')'{
                                   if(!param_checker.empty()){
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
+                                   while(!param_checker.empty()){
+                                        cout<<param_checker.top()->name<<endl;
+                                        param_checker.pop();
+                                   }
                                   }
-                                   SymTable* test;
-                                   test=current->deep_copy();//e nevoei de copie?
-                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable($1) , &errorCount , yylineno , test);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  if(!Temp_stack.empty()){
+                                   while(!Temp_stack.empty()){
+                                        param_checker.push(Temp_stack.top());
+                                        Temp_stack.pop();
+                                   }
+                                  }
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
-          //         | ID'.'ID
-          //      {
-          //           string buff1=$1;
-          //           string buff3=$3;
-          //           string class_mem=buff1+'.'+buff3;
-          //           SymTable* hard_copy=current->deep_copy();
-          //           ++hard_copy_counter;
-          //      domeniul_caruia_ii_apartine_varabila=hard_copy->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
-          //      if(domeniul_caruia_ii_apartine_varabila!=nullptr)
-          //           {
-          //             if(domeniul_caruia_ii_apartine_varabila->getValue_IDType(class_mem.c_str())!="func")
-          //                  {
-          //                    errorCount++; 
-          //                    char*buff=new char[256];
-          //                    strcpy(buff ,"ID ");
-          //                    strcat(buff , class_mem.c_str());
-          //                    strcat(buff ," exists but is NOT a funciton"); 
-          //                    yyerror(buff);
-          //                    delete [] buff;
-          //                    buff=nullptr;
-          //                  }
-          //              else{
-          //                SymTable* tmp;
-          //                tmp=Vector_Tabele[0];
-          //                stack<SymTable*>copy_stack=tmp->return_stack_bellow();
-          //                //cout<<"++++++++++++++"<<current->get_IdInfo_Type($1)<<endl;
-          //                while(!copy_stack.empty()){
-          //                     if(strcmp(copy_stack.top()->get_dom_name(),(current->get_IdInfo_Type($1)).c_str())==0){
-          //                          tmp=copy_stack.top();
-          //                          domeniul_caruia_ii_apartine_varabila=tmp;
-          //                     }
-          //                     copy_stack.pop();
-          //                }
-          //                Denumire_apelant=new char[256];
-          //                strcpy(Denumire_apelant , class_mem.c_str());
-          //                //Tre as verificam Scopeurile pana ajungem la SCopeul fucntiei DIN clasa
-          //                //cout<<"++++++++++++"<<tmp->get_dom_name()<<endl;
-          //                // cout<<"---------"<<domeniul_caruia_ii_apartine_varabila->get_dom_name()<<endl;
-          //                param_checker=domeniul_caruia_ii_apartine_varabila->get_params($3);
-          //                if(param_checker.empty()){
-          //                     cout<<"Fucker's empty from the start"<<endl;
-          //                }
-          //                for(auto i: param_checker){
-          //                     // cout<<"!!!!!!!!!!!!!!!!!!!!!"<<i->name<<i->type<<endl;
-          //                }
-          //                for (auto i : Vector_Tabele){
-          //                     if(strcmp(i->get_dom_name(), $3)==0){
-          //                     domeniul_caruia_ii_apartine_varabila=i;
-          //                     }
-          //                }    
-          //              }
-          //           }
-          //     } 
-          //       '(' call_list ')'{
-          //                          string buff1=$1;
-          //                          string buff3=$3;
-          //                          string class_mem=buff1+'.'+buff3;
-          //                         delete[] Denumire_apelant;
-          //                         Denumire_apelant=nullptr;
-          //                         if(!param_checker.empty()){
-          //                          errorCount++;
-          //                          yyerror("Not enough parameters in function call");
-          //                         }
-          //                         $$=new ASTNode("func_call" , domeniul_caruia_ii_apartine_varabila->get_body_copy() , domeniul_caruia_ii_apartine_varabila->next_domain_scope()->get_that_variable(class_mem.c_str()) , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
-          //                        }
-          //                        //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
+                  | ID'.'ID
+               {
+                     if(!param_checker.empty()){
+                         while(!param_checker.empty()){
+                         Temp_stack.push(param_checker.top());
+                         param_checker.pop();
+                         }
+                    }
+                    string buff1=$1;
+                    string buff3=$3;
+                    string class_mem=buff1+'.'+buff3;
+                    // SymTable* hard_copy=current->deep_copy();
+                    // ++hard_copy_counter;
+               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr)
+                    {
+                         SymTable* tmp=nullptr;
+                         SymTable*globol;
+                         stack<SymTable*> search=current->return_stack_above();
+                         while(!search.empty()){
+                              if(strcmp(search.top()->get_dom_name(), "global")==0){
+                                   globol=search.top();
+                              }
+                              search.pop();
+                         }
+                         stack<SymTable*>copy_stack=globol->return_stack_bellow();
+                         //cout<<"++++++++++++++"<<current->get_IdInfo_Type($1)<<endl;
+                         while(!copy_stack.empty()){
+                              if(strcmp(copy_stack.top()->get_dom_name(),(current->get_IdInfo_Type($1)).c_str())==0){
+                                   tmp=copy_stack.top();
+                                   domeniul_caruia_ii_apartine_varabila=tmp;
+                              }
+                              copy_stack.pop();
+                         }
+                         if(tmp==nullptr){
+                              errorCount++;
+                              yyerror("Nu exista clasa");
+                         }
+                         else{
+                         stack<SymTable*>stacks=tmp->return_stack_bellow();
+                         // cout<<"Continut clasa"<<endl;
+                         while(!stacks.empty()){
+                              // cout<<stacks.top()->get_dom_name()<<endl;
+                              if(strcmp(stacks.top()->get_dom_name(), $3)==0){
+                                   tmp=stacks.top();
+                                   functia_apelata=stacks.top();
+                              }
+                              stacks.pop();
+                         }
+                         if(tmp==nullptr){
+                              errorCount++;
+                              yyerror("Nu exista functia");
+                         }
+                         stack<IdInfo*> inversion=functia_apelata->get_function_params();
+                         while(!inversion.empty()){
+                              param_checker.push(inversion.top());
+                              inversion.pop();
+                         }
+                         }
+                       
+                    }
+              } 
+                '(' call_list ')'{
+                                 if(!param_checker.empty()){
+                                   errorCount++;
+                                   yyerror("Not enough parameters in function call");
+                                   while(!param_checker.empty()){
+                                        cout<<param_checker.top()->name<<endl;
+                                        param_checker.pop();
+                                   }
+                                  }
+                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  if(!Temp_stack.empty()){
+                                   while(!Temp_stack.empty()){
+                                        param_checker.push(Temp_stack.top());
+                                        Temp_stack.pop();
+                                   }
+                                  }
+                                 }
+                                 //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
                   ;
 while_node: WHILE '(' boolean_expression  ')' CBEGIN 
                {
@@ -440,6 +444,9 @@ class_instance : Class_ID ID {current->check_existance_for_class_instance($1 , $
 class_instance_interior : Class_ID ID {current->check_existance_for_class_instance($1 , $2, errorCount , yylineno);}
                         ;
 
+list_param_epsilon: list_param
+                  | /*epsilon*/
+                  ;
 list_param : param 
            | list_param ','  param 
            ;
@@ -451,6 +458,9 @@ param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , err
                 }
       ; 
      //TO DO: Apel de functie in apel de functie Small issue
+call_list_epsilon:call_list
+                 |/*epsilon*/
+                 ;
 call_list : e 
                {
                     //cout<<"Apelat e "<<$1->evaluatei()<<endl;
@@ -469,6 +479,16 @@ call_list : e
                               }
                               else if(strcmp($1->get_type_for_main() , "float")==0){
                                    class Value val($1->evaluatef());
+                                   temp->value=val;
+                                   param_checker.pop();
+                              }
+                              else if(strcmp($1->get_type_for_main() , "string")==0){
+                                   class Value val($1->evaluates());
+                                   temp->value=val;
+                                   param_checker.pop();
+                              }
+                               else if(strcmp($1->get_type_for_main() , "bool")==0){
+                                   class Value val($1->evaluateb());
                                    temp->value=val;
                                    param_checker.pop();
                               }
@@ -501,6 +521,16 @@ call_list : e
                               }
                          else if (strcmp($3->get_type_for_main() , "float")==0){
                               class Value val($3->evaluatef());
+                              temp->value=val;
+                              param_checker.pop();
+                         }
+                         else if (strcmp($3->get_type_for_main() , "string")==0){
+                              class Value val($3->evaluates());
+                              temp->value=val;
+                              param_checker.pop();
+                         }
+                         else if (strcmp($3->get_type_for_main() , "bool")==0){
+                              class Value val($3->evaluateb());
                               temp->value=val;
                               param_checker.pop();
                          }

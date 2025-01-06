@@ -246,9 +246,6 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
         this->addVar(a, b, c);
         if (c == "class_instance")
         {
-            cout << "This is a class instancec of class [" << a << "]" << endl;
-            cout << this->get_dom_location() << endl
-                 << "Verificam scopeurile de deasupra" << endl;
             std::stack<SymTable *> Copy_table1;
             SymTable *tempor;
             Copy_table1 = this->above;
@@ -264,13 +261,13 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
             Copy_table2 = tempor->scopes_in_global;
             if (Copy_table2.empty())
             {
-                cout << "Fucker's empty" << endl;
+                cout << "Scope is empty" << endl;
             }
             while (!Copy_table2.empty())
             {
                 if (strcmp(Copy_table2.top()->get_dom_name(), a) == 0)
                 {
-                    cout << "FOUND IT " << a << endl;
+                    //cout << "FOUND IT " << a << endl;
                     map<string, IdInfo> variabile;
                     variabile = Copy_table2.top()->get_map();
                     for (const pair<string, IdInfo> d : variabile)
@@ -278,7 +275,7 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
                         string buff = b;
                         string name = buff + "." + d.first;
                         this->addVar(d.second.type.c_str(), name.c_str(), d.second.idType.c_str());
-                        cout << d.first << " " << d.second.idType << " " << d.second.type << endl;
+                        //cout << d.first << " " << d.second.idType << " " << d.second.type << endl;
                     }
                 }
                 Copy_table2.pop();

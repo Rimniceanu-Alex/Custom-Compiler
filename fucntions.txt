@@ -1,9 +1,13 @@
+Vizibilitate: [global-Mee-foo] Name : [foo] Return type: [int] Value: [1123]
+Params:
+aoo int 20
 Vizibilitate: [global-goo] Name : [goo] Return type: [int] Value: [100]
 Params:
 ad int 100
-Vizibilitate: [global-foo] Name : [foo] Return type: [int] Value: [10]
+Vizibilitate: [global-foo] Name : [foo] Return type: [int] Value: [20]
 Params:
 ad int 10
-Vizibilitate: [global-soo] Name : [soo] Return type: [string]
+Vizibilitate: [global-soo] Name : [soo] Return type: [int] Value: [10]
 Params:
-ad int 1252444080
+Vizibilitate: [global-aoga] Name : [aoga] Return type: [bool]
+Params:

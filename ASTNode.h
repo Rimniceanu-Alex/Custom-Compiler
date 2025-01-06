@@ -46,7 +46,7 @@ public:
     };
     const char *get_type_for_main()
     {
-        return type.c_str();
+        return get_type().c_str();
     }
     string get_type()
     {
@@ -185,19 +185,23 @@ public:
         {
             if (left->get_type() == "int")
             {
-                cout << "Printed : " << left->evaluatei() << "  at line " << yylineno << endl;
+                int answer=left->evaluatei();
+                cout << "Printed : " << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "float")
             {
-                cout << "Printed : " << left->evaluatef() << "  at line " << yylineno << endl;
+                float answer=left->evaluatef();
+                cout << "Printed : " << answer  << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "bool")
             {
-                cout << "Printed : " << std::boolalpha << left->evaluateb() << "  at line " << yylineno << endl;
+                bool answer=left->evaluateb();
+                cout << "Printed : " << std::boolalpha << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "string")
             {
-                cout << "Printed : " << left->evaluates() << "  at line " << yylineno << endl;
+                string answer=left->evaluates();
+                cout << "Printed : " <<answer<< "  at line " << yylineno << endl;
             }
             else
             {
@@ -428,6 +432,18 @@ public:
     {
         if ((left == nullptr) || (right == nullptr))
         {
+            if (root == "func_call")
+            {
+                if (nr_apeluri_functie == 0)
+                {
+                    this->run();
+                    return right_side_var->value.get_float();
+                }
+                else
+                {
+                    return right_side_var->value.get_float();
+                }
+            }
             if (right_side_var != nullptr)
             {
                 return right_side_var->value.get_float();
@@ -517,6 +533,18 @@ public:
     {
         if ((left == nullptr) || (right == nullptr))
         {
+            if (root == "func_call")
+            {
+                if (nr_apeluri_functie == 0)
+                {
+                    this->run();
+                    return right_side_var->value.get_bool();
+                }
+                else
+                {
+                    return right_side_var->value.get_bool();
+                }
+            }
             if (right_side_var != nullptr)
             {
                 return right_side_var->value.get_bool();
@@ -551,6 +579,18 @@ public:
     {
         if ((left == nullptr) || (right == nullptr))
         {
+            if (root == "func_call")
+            {
+                if (nr_apeluri_functie == 0)
+                {
+                    this->run();
+                    return right_side_var->value.get_string();
+                }
+                else
+                {
+                    return right_side_var->value.get_string();
+                }
+            }
             if (right_side_var != nullptr)
             {
                 return right_side_var->value.get_string();
