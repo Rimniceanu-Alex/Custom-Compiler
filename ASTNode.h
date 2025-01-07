@@ -180,6 +180,10 @@ public:
                     cout << "error: " << "Can only assing a int or a float to an int or a float at line: " << yylineno << endl;
                 }
             }
+            else{
+                errorCount++;
+                cout<<"error: "<<"This ID is not usable in an assign at line "<<yylineno<<endl;
+            }
         }
         else if (root == "Print")
         {

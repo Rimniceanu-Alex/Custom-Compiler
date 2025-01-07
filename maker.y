@@ -16,10 +16,11 @@ class SymTable* domeniul_caruia_ii_apartine_varabila;
 class SymTable* functia_apelata;
 std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
-char* Denumire_apelant=nullptr;
 std::stack<IdInfo*> param_checker;
 std::stack<IdInfo*>Temp_stack;
-int hard_copy_counter=0;
+std::vector<int>array_size;
+string array_name;
+string nr;
 %}
 
 %union {
@@ -31,7 +32,7 @@ int hard_copy_counter=0;
      %}
 
 %token  BGIN END CBEGIN CEND REAL
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING 
 %type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node list_else
 %start progr
 %left '+' '-' 
@@ -65,7 +66,7 @@ functions_generator : functions_generator functions
                     | functions
                     ;
 functions : TYPE ID  
-                { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
+                { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno , array_size);
                   class SymTable* function_scope;
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
@@ -89,7 +90,7 @@ functions : TYPE ID
                                                                            current=current->next_domain_scope();
                                                                            }
           | VOID ID  
-                { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno);
+                { current->check_existance_for_declaration($1, $2 , "func" , errorCount , yylineno , array_size);
                   class SymTable* function_scope;
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
@@ -111,23 +112,33 @@ variables: fundamentals
          | arr
          ;
 
-fundamentals : TYPE ID ';'{current->check_existance_for_declaration($1, $2 , "var" , errorCount , yylineno);}
+fundamentals : TYPE ID ';'{current->check_existance_for_declaration($1, $2 , "var" , errorCount , yylineno, array_size);}
      ;
 
-arr : TYPE ID arr_list ';' {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
+arr : TYPE ID arr_list ';' {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno , array_size);
+                              }
     ;
 
-arr_list : '[' NR ']' arr_list
-         | '[' NR ']'
+arr_list : '[' size ']'{array_name+='['+nr+']';} arr_list
+         | '[' size ']'{array_name+='['+nr+']';}
          ;
+size:e{array_size.push_back($1->evaluatei());
+        nr=to_string($1->evaluatei());
+        cout<<nr<<endl;}
+    ;
 variables_interior: fundamentals_interior
          | arr_interior
          ;
 
-fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2 , "var" , errorCount , yylineno);}
+fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2 , "var" , errorCount , yylineno , array_size);}
      ;
 
-arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno);}
+arr_interior : TYPE ID arr_list  {cout<<"Urmeaza checkul"<<endl;current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno , array_size);
+                                   array_size.clear();
+                                   for(int i=0 ; i<array_size.size();++i){
+                                        cout<<array_size[i]<<endl;
+                                   };
+                                   }
     ;
 //Listul e folosit in MAIN , Control functions , list_else
 list_main :  statement_main ';' {$$=new ASTNode("final_sequence" , $1 , &errorCount , yylineno, current);}
@@ -175,7 +186,11 @@ assign_node:ID ASSIGN e {
                          string class_mem=buff1+'.'+buff3;
                          $$=new ASTNode(class_mem , "<-" , $5 ,current, &errorCount, yylineno);
                          }
+           |ID_Array ASSIGN e {string copie=array_name;$$=new ASTNode(copie , "<-" , $3 ,current, &errorCount, yylineno);array_name.clear();}
+           |ID_Array ASSIGN boolean_expression {$$=new ASTNode(array_name , "<-" , $3 ,current, &errorCount, yylineno);array_name.clear();}
            ;
+ID_Array:ID{array_name=$1;} arr_list 
+        ;
 function_call_node:ID 
                {
                     if(!param_checker.empty()){
@@ -247,8 +262,6 @@ function_call_node:ID
                     string buff1=$1;
                     string buff3=$3;
                     string class_mem=buff1+'.'+buff3;
-                    // SymTable* hard_copy=current->deep_copy();
-                    // ++hard_copy_counter;
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr)
                     {
@@ -412,7 +425,7 @@ classes : class
                                         
 class :  Class_Type Class_ID ':' CBEGIN 
           {
-            current->check_existance_for_declaration($1, $2 , "class" , errorCount , yylineno);
+            current->check_existance_for_declaration($1, $2 , "class" , errorCount , yylineno , array_size);
             SymTable* class_scope;
             class_scope=new SymTable($2);
             class_scope->assign_stack_above(current->return_stack_above());
@@ -452,7 +465,7 @@ list_param : param
            ;
 
             
-param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , errorCount , yylineno);
+param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , errorCount , yylineno , array_size);
                  current->add_function_params(current->get_that_variable($2));
                //   current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
@@ -569,7 +582,12 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                $$=new ASTNode(val , "float" , &errorCount);}
   | ID        {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use($1 , errorCount , yylineno);
-               $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), &errorCount , yylineno);//??? MAybe it will work like this?
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                    $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable($1), &errorCount , yylineno);//??? MAybe it will work like this?
+               }
+               else{
+                    $$=new ASTNode();
+               }
                //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
   | ID'.'ID {
@@ -577,7 +595,22 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                string buff3=$3;
                string class_mem=buff1+'.'+buff3;
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(class_mem.c_str() , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
                $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable(class_mem.c_str()), &errorCount , yylineno);
+               }
+               else{
+                    $$=new ASTNode();
+               }
+               }
+  | ID_Array   {
+               domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(array_name.c_str() , errorCount , yylineno);
+               if(domeniul_caruia_ii_apartine_varabila!=nullptr){
+                    $$=new ASTNode( domeniul_caruia_ii_apartine_varabila->get_that_variable(array_name.c_str()), &errorCount , yylineno);
+               }
+               else{
+                    $$=new ASTNode();
+               }
+               array_name.clear();
                }
   |function_call_node{$$=$1;};
   |STRING      {Value val($1);     

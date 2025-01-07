@@ -73,4 +73,7 @@ a<-test.foo(1123);
 test.z<-101;
 a<-a+test.z;
 a<-test.foo(foo(10));
+int arr[10][2];
+arr[0][0]<-10;
+a<-arr[0][0];
 end 

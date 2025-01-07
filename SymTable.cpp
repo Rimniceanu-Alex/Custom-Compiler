@@ -109,7 +109,7 @@ void SymTable::printVars()
 void SymTable::printFunct()
 {
     IdInfo *var = this->get_function_core();
-    if (var->name!= "")
+    if (var->name != "")
     {
         if (var->type == "int")
         {
@@ -124,9 +124,10 @@ void SymTable::printFunct()
             cout << "Vizibilitate: [" << get_dom_location() << "] Name : [" << get_dom_name() << "] Return type: [" << var->type << "]" << endl;
         }
         cout << "Params:" << endl;
-        auto reverse=get_function_params();
-        stack<IdInfo*> parametrii ;
-        while(!reverse.empty()){
+        auto reverse = get_function_params();
+        stack<IdInfo *> parametrii;
+        while (!reverse.empty())
+        {
             parametrii.push(reverse.top());
             reverse.pop();
         }
@@ -218,7 +219,7 @@ SymTable *SymTable::next_domain_scope()
     return this->above.top();
 }
 
-void SymTable::check_existance_for_declaration(const char *a, const char *b, const char *c, int &errorCount, int yylineno)
+void SymTable::check_existance_for_declaration(const char *a, const char *b, const char *c, int &errorCount, int yylineno, std::vector<int> array_size)
 {
     if (!this->existsId(b))
     {
@@ -244,7 +245,7 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
             }
         }
         this->addVar(a, b, c);
-        if (c == "class_instance")
+        if (strcmp(c, "class_instance") == 0)
         {
             std::stack<SymTable *> Copy_table1;
             SymTable *tempor;
@@ -267,7 +268,7 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
             {
                 if (strcmp(Copy_table2.top()->get_dom_name(), a) == 0)
                 {
-                    //cout << "FOUND IT " << a << endl;
+                    // cout << "FOUND IT " << a << endl;
                     map<string, IdInfo> variabile;
                     variabile = Copy_table2.top()->get_map();
                     for (const pair<string, IdInfo> d : variabile)
@@ -275,10 +276,44 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
                         string buff = b;
                         string name = buff + "." + d.first;
                         this->addVar(d.second.type.c_str(), name.c_str(), d.second.idType.c_str());
-                        //cout << d.first << " " << d.second.idType << " " << d.second.type << endl;
+                        // cout << d.first << " " << d.second.idType << " " << d.second.type << endl;
                     }
                 }
                 Copy_table2.pop();
+            }
+        }
+        else if (strcmp(c, "array") == 0)
+        {
+            int dimensions = array_size.size();
+            vector<int> indices(dimensions, 0); 
+
+            while (true)
+            {
+                string constructor = b;
+                for (int i = 0; i < dimensions; ++i)
+                {
+                    constructor += "[" + to_string(indices[i]) + "]";
+                }
+                cout << constructor << endl;
+                this->addVar(a, constructor.c_str(), "var");
+                int dim = dimensions - 1;
+                while (dim >= 0)
+                {
+                    indices[dim]++;
+                    if (indices[dim] < array_size[dim])
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        indices[dim] = 0;
+                        dim--;
+                    }
+                }
+
+                // If we've carried past the first dimension, we're done
+                if (dim < 0)
+                    break;
             }
         }
     }
@@ -329,7 +364,13 @@ SymTable *SymTable::check_existance_for_use(const char *b, int &errorCount, int 
     }
     else
     {
+        if(this->getValue_IDType((b))=="array"){
+            errorCount++;
+            return nullptr;
+        }
+        else{
         return this;
+        }
     }
     return nullptr;
 }
@@ -354,7 +395,8 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
     }
     if (temp->existsId(a))
     {
-        this->check_existance_for_declaration(a, b, "class_instance", errorCount, yylineno);
+        std::vector<int> array_size;
+        this->check_existance_for_declaration(a, b, "class_instance", errorCount, yylineno, array_size);
         return;
     }
     else
@@ -405,7 +447,6 @@ IdInfo *SymTable::get_function_core()
     return &function_core;
 }
 
-
 map<string, IdInfo> SymTable::get_map()
 {
     return ids;
@@ -413,7 +454,7 @@ map<string, IdInfo> SymTable::get_map()
 
 SymTable *SymTable::deep_copy() const
 {
-    //Modificam sa nu fie copii deep la Stackuri/!!!!!!!!!!!!!!!!!!!!!1
+    // Modificam sa nu fie copii deep la Stackuri/!!!!!!!!!!!!!!!!!!!!!1
     SymTable *copy = new SymTable(name); // Au acelasi num fucking DUH
     copy->ids = ids;
     std::stack<SymTable *> tmp = above;
@@ -442,7 +483,7 @@ SymTable *SymTable::deep_copy() const
         tmp2.pop();
         if (original != nullptr)
         {
-            copy_stack2.push(original);//Nu Stiu cum FACI DAR fa-l sa fie DEPP_COPY() tu pe asta vrei sa-l schimbi muie ca de aici acceseaza global0u
+            copy_stack2.push(original); // Nu Stiu cum FACI DAR fa-l sa fie DEPP_COPY() tu pe asta vrei sa-l schimbi muie ca de aici acceseaza global0u
         }
         else
             copy_stack2.push(nullptr);
@@ -470,11 +511,12 @@ SymTable *SymTable::deep_copy() const
         copy->function_params.push(copy_stack3.top());
         copy_stack3.pop();
     }
-    copy->changes=changes;
-    copy->function_core=function_core;
-    if(this->body){
-        copy->body=this->body;
-    } 
+    copy->changes = changes;
+    copy->function_core = function_core;
+    if (this->body)
+    {
+        copy->body = this->body;
+    }
     // cout<<"&&&&&&&&&&&&&&&&&&&&&&&&   AJunge, aici in deep_Copy9)?"<<endl;//Not usable , ii circulara
     return copy;
 }

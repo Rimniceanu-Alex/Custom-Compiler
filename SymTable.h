@@ -73,7 +73,7 @@ public:
     void assign_stack_above(std::stack<SymTable *> stack_above);
     void remove_from_above();
     SymTable *next_domain_scope();
-    void check_existance_for_declaration(const char *a, const char *b, const char *c, int &errorCount, int yylineno);
+    void check_existance_for_declaration(const char *a, const char *b, const char *c, int &errorCount, int yylineno ,std::vector<int>array_size);
     SymTable *check_existance_for_use(const char *b, int &errorCount, int yylineno);
     void check_existance_for_class_instance(const char *a, const char *b, int &errorCount, int yylineno);
     void add_function_params(IdInfo*param);

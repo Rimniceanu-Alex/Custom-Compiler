@@ -1,0 +1,32 @@
+class A :{
+    int a;
+    string a1;
+    int funct(int a2){a2<-a2+1; return a2;};
+};
+int foo(int a){
+    Print(a);
+    return a;
+};
+int foo1(int a){
+    Print(a);
+    return a;
+};
+
+begin
+int x;
+x <- 4;
+int y;
+y <- 78;
+A a;
+A b;
+b.a<-100;
+a.a<-10;
+if( x / 2 == 2){
+    x <- x +y;
+    Print(x);
+} else {};
+x<-foo1(19)+foo(20);
+Print(x);
+x<-a.a+b.funct(30);
+Print(x);
+end
