@@ -18,6 +18,7 @@ std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 std::stack<IdInfo*> param_checker;
 std::stack<IdInfo*>Temp_stack;
+// std::stack<std::stack<IdInfo*>>Mega_Stack;
 std::vector<int>array_size;
 string array_name;
 string nr;
@@ -124,7 +125,8 @@ arr_list : '[' size ']'{array_name+='['+nr+']';} arr_list
          ;
 size:e{array_size.push_back($1->evaluatei());
         nr=to_string($1->evaluatei());
-        cout<<nr<<endl;}
+     }
+     //    cout<<nr<<endl;}
     ;
 variables_interior: fundamentals_interior
          | arr_interior
@@ -193,6 +195,10 @@ ID_Array:ID{array_name=$1;} arr_list
         ;
 function_call_node:ID 
                {
+                    // if(!Mega_Stack.empty()){
+                    //      Temp_stack=Mega_Stack.top();
+                    //      Mega_Stack.pop();
+                    // }
                     if(!param_checker.empty()){
                          while(!param_checker.empty()){
                          Temp_stack.push(param_checker.top());
@@ -242,12 +248,13 @@ function_call_node:ID
                                         param_checker.pop();
                                    }
                                   }
-                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);
                                   if(!Temp_stack.empty()){
                                    while(!Temp_stack.empty()){
                                         param_checker.push(Temp_stack.top());
                                         Temp_stack.pop();
                                    }
+                                   // Mega_Stack.push(Temp_stack);
                                   }
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei
@@ -275,7 +282,6 @@ function_call_node:ID
                               search.pop();
                          }
                          stack<SymTable*>copy_stack=globol->return_stack_bellow();
-                         //cout<<"++++++++++++++"<<current->get_IdInfo_Type($1)<<endl;
                          while(!copy_stack.empty()){
                               if(strcmp(copy_stack.top()->get_dom_name(),(current->get_IdInfo_Type($1)).c_str())==0){
                                    tmp=copy_stack.top();
@@ -289,9 +295,7 @@ function_call_node:ID
                          }
                          else{
                          stack<SymTable*>stacks=tmp->return_stack_bellow();
-                         // cout<<"Continut clasa"<<endl;
                          while(!stacks.empty()){
-                              // cout<<stacks.top()->get_dom_name()<<endl;
                               if(strcmp(stacks.top()->get_dom_name(), $3)==0){
                                    tmp=stacks.top();
                                    functia_apelata=stacks.top();
@@ -320,7 +324,7 @@ function_call_node:ID
                                         param_checker.pop();
                                    }
                                   }
-                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);//S-ar putea s- schimb sa semene cu o expresie    //COPIE??
+                                  $$=new ASTNode("func_call" , functia_apelata->get_body() , functia_apelata->get_function_core() , &errorCount , yylineno , current);
                                   if(!Temp_stack.empty()){
                                    while(!Temp_stack.empty()){
                                         param_checker.push(Temp_stack.top());
@@ -402,7 +406,7 @@ for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' 
                  current=current->next_domain_scope();
                }
           ;
-print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , &errorCount , yylineno);}//Vezi ca NU da print bine la variabile , s-ar putea sa trebuaisca sa folosesti SYMTable
+print_node: PRINT '(' e ')'{$$=new ASTNode($1 , $3 , &errorCount , yylineno);}
           ;
 type_fucntion_node:TYPE_FUNCTION  '(' e ')' {$$=new ASTNode($1 , $3 , &errorCount , yylineno);}
 expression_for:assign_node{$$=$1;}
@@ -467,16 +471,13 @@ list_param : param
             
 param : TYPE ID {current->check_existance_for_declaration($1, $2 , "param" , errorCount , yylineno , array_size);
                  current->add_function_params(current->get_that_variable($2));
-               //   current->next_domain_scope()->add_params(current->get_dom_name(), current->get_that_variable($2));//adaugam in parametrii varaibilei ID FUNC care e declarata in domeniu de deasupra
                 }
       ; 
-     //TO DO: Apel de functie in apel de functie Small issue
 call_list_epsilon:call_list
                  |/*epsilon*/
                  ;
 call_list : e 
                {
-                    //cout<<"Apelat e "<<$1->evaluatei()<<endl;
                     if(param_checker.empty()){
                          errorCount++;
                          yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
@@ -518,7 +519,6 @@ call_list : e
                     }
                }
           | call_list ',' e{
-               // cout<<"Apelat call_list , e "<<$3->evaluatei()<<endl;
                if(param_checker.empty()){
                     errorCount++;
                     yyerror("The number of parameters in the call doesnt match the number of params in the fucntion");
@@ -577,7 +577,7 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                     }
                }
   | NR        {Value val(atoi(yytext));
-               $$=new ASTNode(val , "int" , &errorCount);}//MERGE
+               $$=new ASTNode(val , "int" , &errorCount);}
   | REAL      {Value val((float)atof(yytext));
                $$=new ASTNode(val , "float" , &errorCount);}
   | ID        {
@@ -588,7 +588,6 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
                else{
                     $$=new ASTNode();
                }
-               //$$=new ASTNode($1 , current , errorCount , yylineno); FUCK THIS LINE IN PARTICULAR (AM TRECUT PRIN MUSCIAL DE 3 ORI LA ASTA)
               }
   | ID'.'ID {
                string buff1=$1;
@@ -667,6 +666,3 @@ int main(int argc, char** argv){
      file.close();
      cout.rdbuf(StandardOutput);
 } 
-//TO DO : Baga apelul de functie in AST
-//1TO DO: TRANZITIE AST ;(
-//2TO DO: Fa sa poti accesa Membrii unei clase , si dupa fiecare instanta sa aiba o copie independenta a acelor Membrii

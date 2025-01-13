@@ -219,7 +219,6 @@ public:
             {
                 while (left->evaluatei() == true)
                 {
-                    // printf("Expression is TRUE\n");
                     right->run();
                 }
             }
@@ -227,7 +226,6 @@ public:
             {
                 while ((int)left->evaluatef() == true)
                 {
-                    // printf("Expression is TRUE\n");
                     right->run();
                 }
             }
@@ -285,7 +283,6 @@ public:
             {
                 while (left->right->evaluatei() == true)
                 {
-                    // printf("Expression is TRUE\n");
                     right->left->run();
                     right->right->run();
                 }
@@ -294,7 +291,6 @@ public:
             {
                 while (left->right->evaluatef() == true)
                 {
-                    // printf("Expression is TRUE\n");
                     right->left->run();
                     right->right->run();
                 }
@@ -319,8 +315,7 @@ public:
                 }
             }
         }
-        else if (root == "func_call") // TO DO , vezi cum o integrezi in Expresii sa poti face foo(2)+foo(3) , tre sa modifici oelaca si in <-
-                                      // TO DO Vezi cum faci sa poti face apel de functie VOID
+        else if (root == "func_call")
         {                             // type=tipul functiei , value=valoarea functiei DUPA assign , left=corpul functiei , right=nullptr
             left->run();
             ++nr_apeluri_functie;
@@ -626,7 +621,7 @@ public:
         else
         {
             errorCount++;
-            cout << "String has noo operations yet" << endl;
+            cout << "Type Missmatch" << endl;
             return "";
         }
     };

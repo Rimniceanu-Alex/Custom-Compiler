@@ -73,7 +73,12 @@ a<-test.foo(1123);
 test.z<-101;
 a<-a+test.z;
 a<-test.foo(foo(10));
+Print(a);
 int arr[10][2];
 arr[0][0]<-10;
 a<-arr[0][0];
+Print(123);
+Print(foo(arr[0][0]));
+max(20,foo(100));
+char adc;
 end 
