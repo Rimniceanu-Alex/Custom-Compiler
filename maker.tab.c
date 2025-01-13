@@ -88,12 +88,11 @@ std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 std::stack<IdInfo*> param_checker;
 std::stack<IdInfo*>Temp_stack;
-// std::stack<std::stack<IdInfo*>>Mega_Stack;
 std::vector<int>array_size;
 string array_name;
 string nr;
 
-#line 97 "maker.tab.c"
+#line 96 "maker.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -229,11 +228,11 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Second part of user prologue.  */
-#line 32 "maker.y"
+#line 31 "maker.y"
 
      
 
-#line 237 "maker.tab.c"
+#line 236 "maker.tab.c"
 
 
 #ifdef short
@@ -618,19 +617,19 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    42,    42,    43,    47,    54,    46,    60,    61,    62,
-      63,    66,    67,    70,    69,    94,   103,    93,   109,   110,
-     112,   113,   116,   119,   123,   123,   124,   126,   131,   132,
-     135,   138,   146,   147,   149,   150,   152,   153,   155,   156,
-     157,   158,   159,   160,   161,   162,   164,   165,   166,   167,
-     168,   169,   170,   171,   173,   176,   179,   185,   191,   192,
-     194,   194,   197,   196,   262,   261,   338,   346,   337,   357,
-     365,   368,   372,   380,   356,   391,   399,   390,   409,   411,
-     412,   413,   416,   417,   420,   421,   422,   424,   426,   427,
-     431,   430,   447,   448,   452,   453,   456,   459,   459,   461,
-     464,   465,   467,   468,   472,   476,   477,   479,   521,   564,
-     565,   566,   567,   568,   569,   579,   581,   583,   592,   604,
-     614,   615
+       0,    41,    41,    42,    46,    53,    45,    59,    60,    61,
+      62,    65,    66,    69,    68,    93,   102,    92,   108,   109,
+     111,   112,   115,   118,   122,   122,   123,   125,   130,   131,
+     134,   137,   145,   146,   148,   149,   151,   152,   154,   155,
+     156,   157,   158,   159,   160,   161,   163,   164,   165,   166,
+     167,   168,   169,   170,   172,   175,   178,   184,   190,   191,
+     193,   193,   196,   195,   257,   256,   333,   341,   332,   352,
+     360,   363,   367,   375,   351,   386,   394,   385,   404,   406,
+     407,   408,   411,   412,   415,   416,   417,   419,   421,   422,
+     426,   425,   442,   443,   447,   448,   451,   454,   454,   456,
+     459,   460,   462,   463,   467,   471,   472,   474,   516,   559,
+     560,   561,   562,   563,   564,   574,   576,   578,   587,   599,
+     609,   610
 };
 #endif
 
@@ -1354,19 +1353,19 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* progr: classes global_classes_declaration class_initialize_initial main  */
-#line 42 "maker.y"
-                                                                          {if (errorCount == 0) cout<< "The program is correct!" << endl;}
-#line 1360 "maker.tab.c"
+#line 41 "maker.y"
+                                                                          {}
+#line 1359 "maker.tab.c"
     break;
 
   case 3: /* progr: global_classes_declaration main  */
-#line 43 "maker.y"
-                                         {if (errorCount == 0) cout<< "The program is correct!" << endl;}
-#line 1366 "maker.tab.c"
+#line 42 "maker.y"
+                                         {}
+#line 1365 "maker.tab.c"
     break;
 
   case 4: /* $@1: %empty  */
-#line 47 "maker.y"
+#line 46 "maker.y"
           {SymTable* currentmain;     
            currentmain = new SymTable("main");
            currentmain->assign_stack_above(current->return_stack_above());
@@ -1374,26 +1373,26 @@ yyreduce:
            current=currentmain;  
            Vector_Tabele.push_back(current);
           }
-#line 1378 "maker.tab.c"
+#line 1377 "maker.tab.c"
     break;
 
   case 5: /* $@2: %empty  */
-#line 54 "maker.y"
+#line 53 "maker.y"
                     {current->set_body((yyvsp[0].ListOfNodes));
                }
-#line 1385 "maker.tab.c"
+#line 1384 "maker.tab.c"
     break;
 
   case 6: /* main: BGIN $@1 list_main $@2 END  */
-#line 56 "maker.y"
+#line 55 "maker.y"
                     {
                      current=current->next_domain_scope();
                     }
-#line 1393 "maker.tab.c"
+#line 1392 "maker.tab.c"
     break;
 
   case 13: /* $@3: %empty  */
-#line 70 "maker.y"
+#line 69 "maker.y"
                 { current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "func" , errorCount , yylineno , array_size);
                   class SymTable* function_scope;
                   function_scope=new SymTable((yyvsp[0].string));
@@ -1408,11 +1407,11 @@ yyreduce:
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 }
-#line 1412 "maker.tab.c"
+#line 1411 "maker.tab.c"
     break;
 
   case 14: /* functions: TYPE ID $@3 '(' list_param_epsilon ')' CBEGIN list_else RETURN e ';' CEND ';'  */
-#line 85 "maker.y"
+#line 84 "maker.y"
                                                                            {
                                                                            class ASTNode* func_return;
                                                                            func_return=new ASTNode((yyvsp[-11].string) , "<-" , (yyvsp[-3].ListOfNodes) ,current, &errorCount, yylineno);
@@ -1421,11 +1420,11 @@ yyreduce:
                                                                            current->set_body(list_return);
                                                                            current=current->next_domain_scope();
                                                                            }
-#line 1425 "maker.tab.c"
+#line 1424 "maker.tab.c"
     break;
 
   case 15: /* $@4: %empty  */
-#line 94 "maker.y"
+#line 93 "maker.y"
                 { current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "func" , errorCount , yylineno , array_size);
                   class SymTable* function_scope;
                   function_scope=new SymTable((yyvsp[0].string));
@@ -1435,269 +1434,266 @@ yyreduce:
                   current=function_scope;
                   Vector_Tabele.push_back(current);
                 }
-#line 1439 "maker.tab.c"
+#line 1438 "maker.tab.c"
     break;
 
   case 16: /* $@5: %empty  */
-#line 103 "maker.y"
+#line 102 "maker.y"
                                                      {    current->set_body((yyvsp[0].ListOfNodes));}
-#line 1445 "maker.tab.c"
+#line 1444 "maker.tab.c"
     break;
 
   case 17: /* functions: VOID ID $@4 '(' list_param_epsilon ')' CBEGIN list $@5 CEND ';'  */
-#line 104 "maker.y"
+#line 103 "maker.y"
                                    {
                                     current=current->next_domain_scope();
                                    }
-#line 1453 "maker.tab.c"
+#line 1452 "maker.tab.c"
     break;
 
   case 22: /* fundamentals: TYPE ID ';'  */
-#line 116 "maker.y"
+#line 115 "maker.y"
                           {current->check_existance_for_declaration((yyvsp[-2].string), (yyvsp[-1].string) , "var" , errorCount , yylineno, array_size);}
-#line 1459 "maker.tab.c"
+#line 1458 "maker.tab.c"
     break;
 
   case 23: /* arr: TYPE ID arr_list ';'  */
-#line 119 "maker.y"
+#line 118 "maker.y"
                            {current->check_existance_for_declaration((yyvsp[-3].string), (yyvsp[-2].string) , "array" , errorCount , yylineno , array_size);
                               }
-#line 1466 "maker.tab.c"
+#line 1465 "maker.tab.c"
     break;
 
   case 24: /* $@6: %empty  */
-#line 123 "maker.y"
+#line 122 "maker.y"
                        {array_name+='['+nr+']';}
-#line 1472 "maker.tab.c"
+#line 1471 "maker.tab.c"
     break;
 
   case 26: /* arr_list: '[' size ']'  */
-#line 124 "maker.y"
+#line 123 "maker.y"
                        {array_name+='['+nr+']';}
-#line 1478 "maker.tab.c"
+#line 1477 "maker.tab.c"
     break;
 
   case 27: /* size: e  */
-#line 126 "maker.y"
+#line 125 "maker.y"
       {array_size.push_back((yyvsp[0].ListOfNodes)->evaluatei());
         nr=to_string((yyvsp[0].ListOfNodes)->evaluatei());
      }
-#line 1486 "maker.tab.c"
+#line 1485 "maker.tab.c"
     break;
 
   case 30: /* fundamentals_interior: TYPE ID  */
-#line 135 "maker.y"
+#line 134 "maker.y"
                                 {current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "var" , errorCount , yylineno , array_size);}
-#line 1492 "maker.tab.c"
+#line 1491 "maker.tab.c"
     break;
 
   case 31: /* arr_interior: TYPE ID arr_list  */
-#line 138 "maker.y"
-                                 {cout<<"Urmeaza checkul"<<endl;current->check_existance_for_declaration((yyvsp[-2].string), (yyvsp[-1].string) , "array" , errorCount , yylineno , array_size);
+#line 137 "maker.y"
+                                 {current->check_existance_for_declaration((yyvsp[-2].string), (yyvsp[-1].string) , "array" , errorCount , yylineno , array_size);
                                    array_size.clear();
                                    for(int i=0 ; i<array_size.size();++i){
                                         cout<<array_size[i]<<endl;
                                    };
                                    }
-#line 1503 "maker.tab.c"
+#line 1502 "maker.tab.c"
     break;
 
   case 32: /* list_main: statement_main ';'  */
-#line 146 "maker.y"
+#line 145 "maker.y"
                                 {(yyval.ListOfNodes)=new ASTNode("final_sequence" , (yyvsp[-1].ListOfNodes) , &errorCount , yylineno, current);}
-#line 1509 "maker.tab.c"
+#line 1508 "maker.tab.c"
     break;
 
   case 33: /* list_main: statement_main ';' list_main  */
-#line 147 "maker.y"
+#line 146 "maker.y"
                                           {(yyval.ListOfNodes)=new ASTNode("sequence" , (yyvsp[-2].ListOfNodes) ,(yyvsp[0].ListOfNodes) , &errorCount , current);}
-#line 1515 "maker.tab.c"
+#line 1514 "maker.tab.c"
     break;
 
   case 34: /* list_else: list  */
-#line 149 "maker.y"
+#line 148 "maker.y"
                {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1521 "maker.tab.c"
+#line 1520 "maker.tab.c"
     break;
 
   case 35: /* list_else: %empty  */
-#line 150 "maker.y"
+#line 149 "maker.y"
                        {(yyval.ListOfNodes)=new ASTNode();}
-#line 1527 "maker.tab.c"
+#line 1526 "maker.tab.c"
     break;
 
   case 36: /* list: statement ';'  */
-#line 152 "maker.y"
+#line 151 "maker.y"
                       {(yyval.ListOfNodes)=new ASTNode("final_sequence" , (yyvsp[-1].ListOfNodes) , &errorCount , yylineno, current);}
-#line 1533 "maker.tab.c"
+#line 1532 "maker.tab.c"
     break;
 
   case 37: /* list: statement ';' list  */
-#line 153 "maker.y"
+#line 152 "maker.y"
                            {(yyval.ListOfNodes)=new ASTNode("sequence" , (yyvsp[-2].ListOfNodes) ,(yyvsp[0].ListOfNodes) , &errorCount , current);}
-#line 1539 "maker.tab.c"
+#line 1538 "maker.tab.c"
     break;
 
   case 38: /* statement: assign_node  */
-#line 155 "maker.y"
+#line 154 "maker.y"
                        {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1545 "maker.tab.c"
+#line 1544 "maker.tab.c"
     break;
 
   case 39: /* statement: function_call_node  */
-#line 156 "maker.y"
+#line 155 "maker.y"
                             {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1551 "maker.tab.c"
+#line 1550 "maker.tab.c"
     break;
 
   case 40: /* statement: while_node  */
-#line 157 "maker.y"
+#line 156 "maker.y"
                     {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1557 "maker.tab.c"
+#line 1556 "maker.tab.c"
     break;
 
   case 41: /* statement: if_node  */
-#line 158 "maker.y"
+#line 157 "maker.y"
                  {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1563 "maker.tab.c"
+#line 1562 "maker.tab.c"
     break;
 
   case 42: /* statement: for_node  */
-#line 159 "maker.y"
+#line 158 "maker.y"
                   {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1569 "maker.tab.c"
+#line 1568 "maker.tab.c"
     break;
 
   case 43: /* statement: declarations_interior  */
-#line 160 "maker.y"
+#line 159 "maker.y"
                                 {(yyval.ListOfNodes)=new ASTNode();}
-#line 1575 "maker.tab.c"
+#line 1574 "maker.tab.c"
     break;
 
   case 44: /* statement: print_node  */
-#line 161 "maker.y"
+#line 160 "maker.y"
                      {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1581 "maker.tab.c"
+#line 1580 "maker.tab.c"
     break;
 
   case 45: /* statement: type_fucntion_node  */
-#line 162 "maker.y"
+#line 161 "maker.y"
                              {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1587 "maker.tab.c"
+#line 1586 "maker.tab.c"
     break;
 
   case 46: /* statement_main: assign_node  */
-#line 164 "maker.y"
+#line 163 "maker.y"
                             {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1593 "maker.tab.c"
+#line 1592 "maker.tab.c"
     break;
 
   case 47: /* statement_main: function_call_node  */
-#line 165 "maker.y"
+#line 164 "maker.y"
                             {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1599 "maker.tab.c"
+#line 1598 "maker.tab.c"
     break;
 
   case 48: /* statement_main: while_node  */
-#line 166 "maker.y"
+#line 165 "maker.y"
                     {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1605 "maker.tab.c"
+#line 1604 "maker.tab.c"
     break;
 
   case 49: /* statement_main: if_node  */
-#line 167 "maker.y"
+#line 166 "maker.y"
                  {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1611 "maker.tab.c"
+#line 1610 "maker.tab.c"
     break;
 
   case 50: /* statement_main: for_node  */
-#line 168 "maker.y"
+#line 167 "maker.y"
                   {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1617 "maker.tab.c"
+#line 1616 "maker.tab.c"
     break;
 
   case 51: /* statement_main: declarations_interior  */
-#line 169 "maker.y"
+#line 168 "maker.y"
                                 {(yyval.ListOfNodes)=new ASTNode();}
-#line 1623 "maker.tab.c"
+#line 1622 "maker.tab.c"
     break;
 
   case 52: /* statement_main: print_node  */
-#line 170 "maker.y"
+#line 169 "maker.y"
                      {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1629 "maker.tab.c"
+#line 1628 "maker.tab.c"
     break;
 
   case 53: /* statement_main: type_fucntion_node  */
-#line 171 "maker.y"
+#line 170 "maker.y"
                              {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);(yyval.ListOfNodes)->run();}
-#line 1635 "maker.tab.c"
+#line 1634 "maker.tab.c"
     break;
 
   case 54: /* assign_node: ID ASSIGN e  */
-#line 173 "maker.y"
+#line 172 "maker.y"
                         {
                          (yyval.ListOfNodes)=new ASTNode((yyvsp[-2].string) , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);
                          }
-#line 1643 "maker.tab.c"
+#line 1642 "maker.tab.c"
     break;
 
   case 55: /* assign_node: ID ASSIGN boolean_expression  */
-#line 176 "maker.y"
+#line 175 "maker.y"
                                          {
                          (yyval.ListOfNodes)=new ASTNode((yyvsp[-2].string) , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);
                          }
-#line 1651 "maker.tab.c"
+#line 1650 "maker.tab.c"
     break;
 
   case 56: /* assign_node: ID '.' ID ASSIGN e  */
-#line 179 "maker.y"
+#line 178 "maker.y"
                              {
                          string buff1=(yyvsp[-4].string);
                          string buff3=(yyvsp[-2].string);
                          string class_mem=buff1+'.'+buff3;
                          (yyval.ListOfNodes)=new ASTNode(class_mem , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);
                          }
-#line 1662 "maker.tab.c"
+#line 1661 "maker.tab.c"
     break;
 
   case 57: /* assign_node: ID '.' ID ASSIGN boolean_expression  */
-#line 185 "maker.y"
+#line 184 "maker.y"
                                               {
                          string buff1=(yyvsp[-4].string);
                          string buff3=(yyvsp[-2].string);
                          string class_mem=buff1+'.'+buff3;
                          (yyval.ListOfNodes)=new ASTNode(class_mem , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);
                          }
-#line 1673 "maker.tab.c"
+#line 1672 "maker.tab.c"
     break;
 
   case 58: /* assign_node: ID_Array ASSIGN e  */
-#line 191 "maker.y"
+#line 190 "maker.y"
                               {string copie=array_name;(yyval.ListOfNodes)=new ASTNode(copie , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);array_name.clear();}
-#line 1679 "maker.tab.c"
+#line 1678 "maker.tab.c"
     break;
 
   case 59: /* assign_node: ID_Array ASSIGN boolean_expression  */
-#line 192 "maker.y"
+#line 191 "maker.y"
                                                {(yyval.ListOfNodes)=new ASTNode(array_name , "<-" , (yyvsp[0].ListOfNodes) ,current, &errorCount, yylineno);array_name.clear();}
-#line 1685 "maker.tab.c"
+#line 1684 "maker.tab.c"
     break;
 
   case 60: /* $@7: %empty  */
-#line 194 "maker.y"
+#line 193 "maker.y"
            {array_name=(yyvsp[0].string);}
-#line 1691 "maker.tab.c"
+#line 1690 "maker.tab.c"
     break;
 
   case 62: /* $@8: %empty  */
-#line 197 "maker.y"
+#line 196 "maker.y"
                {
-                    // if(!Mega_Stack.empty()){
-                    //      Temp_stack=Mega_Stack.top();
-                    //      Mega_Stack.pop();
-                    // }
                     if(!param_checker.empty()){
+                         std::stack<IdInfo*> buff;
                          while(!param_checker.empty()){
                          Temp_stack.push(param_checker.top());
                          param_checker.pop();
@@ -1737,11 +1733,11 @@ yyreduce:
                     }
                
               }
-#line 1741 "maker.tab.c"
+#line 1737 "maker.tab.c"
     break;
 
   case 63: /* function_call_node: ID $@8 '(' call_list_epsilon ')'  */
-#line 242 "maker.y"
+#line 238 "maker.y"
                                          {
                                   if(!param_checker.empty()){
                                    errorCount++;
@@ -1757,14 +1753,13 @@ yyreduce:
                                         param_checker.push(Temp_stack.top());
                                         Temp_stack.pop();
                                    }
-                                   // Mega_Stack.push(Temp_stack);
                                   }
                                  }
-#line 1764 "maker.tab.c"
+#line 1759 "maker.tab.c"
     break;
 
   case 64: /* $@9: %empty  */
-#line 262 "maker.y"
+#line 257 "maker.y"
                {
                      if(!param_checker.empty()){
                          while(!param_checker.empty()){
@@ -1821,11 +1816,11 @@ yyreduce:
                        
                     }
               }
-#line 1825 "maker.tab.c"
+#line 1820 "maker.tab.c"
     break;
 
   case 65: /* function_call_node: ID '.' ID $@9 '(' call_list ')'  */
-#line 318 "maker.y"
+#line 313 "maker.y"
                                  {
                                  if(!param_checker.empty()){
                                    errorCount++;
@@ -1843,11 +1838,11 @@ yyreduce:
                                    }
                                   }
                                  }
-#line 1847 "maker.tab.c"
+#line 1842 "maker.tab.c"
     break;
 
   case 66: /* $@10: %empty  */
-#line 338 "maker.y"
+#line 333 "maker.y"
                {
                     SymTable* currentCTRL;     
                     currentCTRL = new SymTable((yyvsp[-4].string));
@@ -1856,29 +1851,29 @@ yyreduce:
                     current=currentCTRL;
                     Vector_Tabele.push_back(current);
                }
-#line 1860 "maker.tab.c"
+#line 1855 "maker.tab.c"
     break;
 
   case 67: /* $@11: %empty  */
-#line 346 "maker.y"
+#line 341 "maker.y"
                              {
                               
                               current->set_body((yyvsp[0].ListOfNodes));
                               }
-#line 1869 "maker.tab.c"
+#line 1864 "maker.tab.c"
     break;
 
   case 68: /* while_node: WHILE '(' boolean_expression ')' CBEGIN $@10 list $@11 CEND  */
-#line 351 "maker.y"
+#line 346 "maker.y"
                                    {
                                         (yyval.ListOfNodes)=new ASTNode("while" , (yyvsp[-6].ListOfNodes) , (yyvsp[-2].ListOfNodes) , &errorCount , yylineno);
                                         current=current->next_domain_scope();
                                    }
-#line 1878 "maker.tab.c"
+#line 1873 "maker.tab.c"
     break;
 
   case 69: /* $@12: %empty  */
-#line 357 "maker.y"
+#line 352 "maker.y"
                     {
                          SymTable* currentCTRL;     
                          currentCTRL = new SymTable((yyvsp[-4].string));
@@ -1887,27 +1882,27 @@ yyreduce:
                          current=currentCTRL;
                          Vector_Tabele.push_back(current);
                     }
-#line 1891 "maker.tab.c"
+#line 1886 "maker.tab.c"
     break;
 
   case 70: /* $@13: %empty  */
-#line 365 "maker.y"
+#line 360 "maker.y"
                              {
                               current->set_body((yyvsp[0].ListOfNodes));
                          }
-#line 1899 "maker.tab.c"
+#line 1894 "maker.tab.c"
     break;
 
   case 71: /* $@14: %empty  */
-#line 368 "maker.y"
+#line 363 "maker.y"
                                    {
                                         current=current->next_domain_scope();
                                    }
-#line 1907 "maker.tab.c"
+#line 1902 "maker.tab.c"
     break;
 
   case 72: /* $@15: %empty  */
-#line 372 "maker.y"
+#line 367 "maker.y"
                               {
                                    SymTable* currentCTRL;     
                                    currentCTRL = new SymTable((yyvsp[-11].string));
@@ -1916,30 +1911,30 @@ yyreduce:
                                    current=currentCTRL;
                                    Vector_Tabele.push_back(current);
                               }
-#line 1920 "maker.tab.c"
+#line 1915 "maker.tab.c"
     break;
 
   case 73: /* $@16: %empty  */
-#line 380 "maker.y"
+#line 375 "maker.y"
                                                            {
                                                        current->set_body((yyvsp[0].ListOfNodes));
                                                   }
-#line 1928 "maker.tab.c"
+#line 1923 "maker.tab.c"
     break;
 
   case 74: /* if_node: IF '(' boolean_expression ')' CBEGIN $@12 list $@13 CEND $@14 ELSE CBEGIN $@15 list_else $@16 CEND  */
-#line 383 "maker.y"
+#line 378 "maker.y"
                               {
                                    class ASTNode* combine;
                                    combine=new ASTNode((yyvsp[-9].ListOfNodes) , (yyvsp[-2].ListOfNodes) , &errorCount);
                                    (yyval.ListOfNodes)=new ASTNode("if" , (yyvsp[-13].ListOfNodes) , combine , &errorCount , yylineno);
                                    current=current->next_domain_scope();
                               }
-#line 1939 "maker.tab.c"
+#line 1934 "maker.tab.c"
     break;
 
   case 75: /* $@17: %empty  */
-#line 391 "maker.y"
+#line 386 "maker.y"
                {
                  SymTable* currentCTRL;     
                  currentCTRL = new SymTable((yyvsp[-9].string));
@@ -1948,17 +1943,17 @@ yyreduce:
                  current=currentCTRL;
                  Vector_Tabele.push_back(current);
                }
-#line 1952 "maker.tab.c"
+#line 1947 "maker.tab.c"
     break;
 
   case 76: /* $@18: %empty  */
-#line 399 "maker.y"
+#line 394 "maker.y"
                                                                                         {current->set_body((yyvsp[0].ListOfNodes));}
-#line 1958 "maker.tab.c"
+#line 1953 "maker.tab.c"
     break;
 
   case 77: /* for_node: FOR '(' assign_node ';' boolean_expression ';' expression_for ';' ')' CBEGIN $@17 list $@18 CEND  */
-#line 400 "maker.y"
+#line 395 "maker.y"
                {
                  class ASTNode* combination1;
                  combination1=new ASTNode((yyvsp[-11].ListOfNodes) , (yyvsp[-9].ListOfNodes) , &errorCount);
@@ -1967,59 +1962,59 @@ yyreduce:
                  (yyval.ListOfNodes)=new ASTNode("for", combination1 , combination2 , &errorCount , yylineno );
                  current=current->next_domain_scope();
                }
-#line 1971 "maker.tab.c"
+#line 1966 "maker.tab.c"
     break;
 
   case 78: /* print_node: PRINT '(' e ')'  */
-#line 409 "maker.y"
+#line 404 "maker.y"
                            {(yyval.ListOfNodes)=new ASTNode((yyvsp[-3].string) , (yyvsp[-1].ListOfNodes) , &errorCount , yylineno);}
-#line 1977 "maker.tab.c"
+#line 1972 "maker.tab.c"
     break;
 
   case 79: /* type_fucntion_node: TYPE_FUNCTION '(' e ')'  */
-#line 411 "maker.y"
+#line 406 "maker.y"
                                             {(yyval.ListOfNodes)=new ASTNode((yyvsp[-3].string) , (yyvsp[-1].ListOfNodes) , &errorCount , yylineno);}
-#line 1983 "maker.tab.c"
+#line 1978 "maker.tab.c"
     break;
 
   case 80: /* expression_for: assign_node  */
-#line 412 "maker.y"
+#line 407 "maker.y"
                           {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1989 "maker.tab.c"
+#line 1984 "maker.tab.c"
     break;
 
   case 81: /* expression_for: e  */
-#line 413 "maker.y"
+#line 408 "maker.y"
                  {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 1995 "maker.tab.c"
+#line 1990 "maker.tab.c"
     break;
 
   case 84: /* boolean_expression: '(' boolean_expression ')'  */
-#line 420 "maker.y"
+#line 415 "maker.y"
                                                {(yyval.ListOfNodes)=(yyvsp[-1].ListOfNodes);}
-#line 2001 "maker.tab.c"
+#line 1996 "maker.tab.c"
     break;
 
   case 85: /* boolean_expression: '(' boolean_expression ')' CONNECT '(' boolean_expression ')'  */
-#line 421 "maker.y"
+#line 416 "maker.y"
                                                                             {(yyval.ListOfNodes)=new ASTNode((yyvsp[-3].string) , (yyvsp[-5].ListOfNodes) , (yyvsp[-1].ListOfNodes) , &errorCount);}
-#line 2007 "maker.tab.c"
+#line 2002 "maker.tab.c"
     break;
 
   case 86: /* boolean_expression: y  */
-#line 422 "maker.y"
+#line 417 "maker.y"
                     {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 2013 "maker.tab.c"
+#line 2008 "maker.tab.c"
     break;
 
   case 87: /* y: e CMP e  */
-#line 424 "maker.y"
+#line 419 "maker.y"
             {(yyval.ListOfNodes)=new ASTNode((yyvsp[-1].string) , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes) , &errorCount);}
-#line 2019 "maker.tab.c"
+#line 2014 "maker.tab.c"
     break;
 
   case 90: /* $@19: %empty  */
-#line 431 "maker.y"
+#line 426 "maker.y"
           {
             current->check_existance_for_declaration((yyvsp[-3].string), (yyvsp[-2].string) , "class" , errorCount , yylineno , array_size);
             SymTable* class_scope;
@@ -2030,39 +2025,39 @@ yyreduce:
             current=class_scope;
             Vector_Tabele.push_back(current);
           }
-#line 2034 "maker.tab.c"
+#line 2029 "maker.tab.c"
     break;
 
   case 91: /* class: Class_Type Class_ID ':' CBEGIN $@19 global_classes_declaration CEND ';'  */
-#line 442 "maker.y"
+#line 437 "maker.y"
           {
             current=current->next_domain_scope();
           }
-#line 2042 "maker.tab.c"
+#line 2037 "maker.tab.c"
     break;
 
   case 97: /* $@20: %empty  */
-#line 459 "maker.y"
+#line 454 "maker.y"
                              {current->check_existance_for_class_instance((yyvsp[-1].string) , (yyvsp[0].string), errorCount , yylineno);}
-#line 2048 "maker.tab.c"
+#line 2043 "maker.tab.c"
     break;
 
   case 99: /* class_instance_interior: Class_ID ID  */
-#line 461 "maker.y"
+#line 456 "maker.y"
                                       {current->check_existance_for_class_instance((yyvsp[-1].string) , (yyvsp[0].string), errorCount , yylineno);}
-#line 2054 "maker.tab.c"
+#line 2049 "maker.tab.c"
     break;
 
   case 104: /* param: TYPE ID  */
-#line 472 "maker.y"
+#line 467 "maker.y"
                 {current->check_existance_for_declaration((yyvsp[-1].string), (yyvsp[0].string) , "param" , errorCount , yylineno , array_size);
                  current->add_function_params(current->get_that_variable((yyvsp[0].string)));
                 }
-#line 2062 "maker.tab.c"
+#line 2057 "maker.tab.c"
     break;
 
   case 107: /* call_list: e  */
-#line 480 "maker.y"
+#line 475 "maker.y"
                {
                     if(param_checker.empty()){
                          errorCount++;
@@ -2104,11 +2099,11 @@ yyreduce:
                          }
                     }
                }
-#line 2108 "maker.tab.c"
+#line 2103 "maker.tab.c"
     break;
 
   case 108: /* call_list: call_list ',' e  */
-#line 521 "maker.y"
+#line 516 "maker.y"
                            {
                if(param_checker.empty()){
                     errorCount++;
@@ -2150,41 +2145,41 @@ yyreduce:
                          }
                     }
                }
-#line 2154 "maker.tab.c"
+#line 2149 "maker.tab.c"
     break;
 
   case 109: /* e: e '+' e  */
-#line 564 "maker.y"
+#line 559 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("+" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes) , &errorCount);}
-#line 2160 "maker.tab.c"
+#line 2155 "maker.tab.c"
     break;
 
   case 110: /* e: e '*' e  */
-#line 565 "maker.y"
+#line 560 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("*" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes) , &errorCount);}
-#line 2166 "maker.tab.c"
+#line 2161 "maker.tab.c"
     break;
 
   case 111: /* e: e '-' e  */
-#line 566 "maker.y"
+#line 561 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("-" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes) , &errorCount);}
-#line 2172 "maker.tab.c"
+#line 2167 "maker.tab.c"
     break;
 
   case 112: /* e: e '/' e  */
-#line 567 "maker.y"
+#line 562 "maker.y"
               {(yyval.ListOfNodes)=new ASTNode("/" , (yyvsp[-2].ListOfNodes) , (yyvsp[0].ListOfNodes) , &errorCount);}
-#line 2178 "maker.tab.c"
+#line 2173 "maker.tab.c"
     break;
 
   case 113: /* e: '(' e ')'  */
-#line 568 "maker.y"
+#line 563 "maker.y"
               {(yyval.ListOfNodes)=(yyvsp[-1].ListOfNodes);}
-#line 2184 "maker.tab.c"
+#line 2179 "maker.tab.c"
     break;
 
   case 114: /* e: TRUTH_VALUE  */
-#line 569 "maker.y"
+#line 564 "maker.y"
                {    
                     if(strcmp((yyvsp[0].string) ,"TRUE")==0){
                          Value val(true);     
@@ -2195,25 +2190,25 @@ yyreduce:
                          (yyval.ListOfNodes)=new ASTNode(val , "bool", &errorCount);
                     }
                }
-#line 2199 "maker.tab.c"
+#line 2194 "maker.tab.c"
     break;
 
   case 115: /* e: NR  */
-#line 579 "maker.y"
+#line 574 "maker.y"
               {Value val(atoi(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "int" , &errorCount);}
-#line 2206 "maker.tab.c"
+#line 2201 "maker.tab.c"
     break;
 
   case 116: /* e: REAL  */
-#line 581 "maker.y"
+#line 576 "maker.y"
               {Value val((float)atof(yytext));
                (yyval.ListOfNodes)=new ASTNode(val , "float" , &errorCount);}
-#line 2213 "maker.tab.c"
+#line 2208 "maker.tab.c"
     break;
 
   case 117: /* e: ID  */
-#line 583 "maker.y"
+#line 578 "maker.y"
               {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use((yyvsp[0].string) , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
@@ -2223,11 +2218,11 @@ yyreduce:
                     (yyval.ListOfNodes)=new ASTNode();
                }
               }
-#line 2227 "maker.tab.c"
+#line 2222 "maker.tab.c"
     break;
 
   case 118: /* e: ID '.' ID  */
-#line 592 "maker.y"
+#line 587 "maker.y"
             {
                string buff1=(yyvsp[-2].string);
                string buff3=(yyvsp[0].string);
@@ -2240,11 +2235,11 @@ yyreduce:
                     (yyval.ListOfNodes)=new ASTNode();
                }
                }
-#line 2244 "maker.tab.c"
+#line 2239 "maker.tab.c"
     break;
 
   case 119: /* e: ID_Array  */
-#line 604 "maker.y"
+#line 599 "maker.y"
                {
                domeniul_caruia_ii_apartine_varabila=current->check_existance_for_use(array_name.c_str() , errorCount , yylineno);
                if(domeniul_caruia_ii_apartine_varabila!=nullptr){
@@ -2255,24 +2250,24 @@ yyreduce:
                }
                array_name.clear();
                }
-#line 2259 "maker.tab.c"
+#line 2254 "maker.tab.c"
     break;
 
   case 120: /* e: function_call_node  */
-#line 614 "maker.y"
+#line 609 "maker.y"
                      {(yyval.ListOfNodes)=(yyvsp[0].ListOfNodes);}
-#line 2265 "maker.tab.c"
+#line 2260 "maker.tab.c"
     break;
 
   case 121: /* e: STRING  */
-#line 615 "maker.y"
+#line 610 "maker.y"
                {Value val((yyvsp[0].string));     
                (yyval.ListOfNodes)=new ASTNode(val , "string" , &errorCount);}
-#line 2272 "maker.tab.c"
+#line 2267 "maker.tab.c"
     break;
 
 
-#line 2276 "maker.tab.c"
+#line 2271 "maker.tab.c"
 
       default: break;
     }
@@ -2465,7 +2460,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 619 "maker.y"
+#line 614 "maker.y"
 
 void yyerror(const char * s){
      cout << "error:" << s << " at line: " << yylineno << endl;

@@ -316,7 +316,6 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
                 {
                     constructor += "[" + to_string(indices[i]) + "]";
                 }
-                cout << constructor << endl;
                 this->addVar(a, constructor.c_str(), "var");
                 int dim = dimensions - 1;
                 while (dim >= 0)

@@ -1,7 +1,1 @@
-Vizibilitate: [global] name: [Mee] data_type: [class] ID_TYPE: [class]
-Vizibilitate: [global] name: [aoga] data_type: [bool] ID_TYPE: [func] Value:[false]
-Vizibilitate: [global] name: [foo] data_type: [int] ID_TYPE: [func] Value:[200]
-Vizibilitate: [global] name: [goo] data_type: [int] ID_TYPE: [func] Value:[100]
-Vizibilitate: [global] name: [max] data_type: [void] ID_TYPE: [func]
-Vizibilitate: [global] name: [nothing] data_type: [void] ID_TYPE: [func]
-Vizibilitate: [global] name: [soo] data_type: [int] ID_TYPE: [func] Value:[10]
+Vizibilitate: [global] name: [foo] data_type: [int] ID_TYPE: [func] Value:[0]

@@ -22,6 +22,11 @@ void max(int a , int b){
         Print(b);
     };
 };
+void max3(int a , int b , int c){
+    Print(a);
+    Print(b);
+    Print(c);
+};
 int soo(string ad){
     Print(ad);
     return 10;
@@ -79,6 +84,11 @@ arr[0][0]<-10;
 a<-arr[0][0];
 Print(123);
 Print(foo(arr[0][0]));
-max(20,foo(100));
+max3(20,foo(100) , 80);
 char adc;
+if((10==10)&&(20==20)){
+    Print(1000);
+}else{
+
+};
 end 

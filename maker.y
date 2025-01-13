@@ -18,7 +18,6 @@ std::vector<SymTable*> Vector_Tabele;
 int errorCount = 0;
 std::stack<IdInfo*> param_checker;
 std::stack<IdInfo*>Temp_stack;
-// std::stack<std::stack<IdInfo*>>Mega_Stack;
 std::vector<int>array_size;
 string array_name;
 string nr;
@@ -39,8 +38,8 @@ string nr;
 %left '+' '-' 
 %left '*' '/'
 %%
-progr :  classes global_classes_declaration class_initialize_initial main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
-      |  global_classes_declaration main {if (errorCount == 0) cout<< "The program is correct!" << endl;}
+progr :  classes global_classes_declaration class_initialize_initial main {}
+      |  global_classes_declaration main {}
       ;
 
 main : BGIN
@@ -135,7 +134,7 @@ variables_interior: fundamentals_interior
 fundamentals_interior : TYPE ID {current->check_existance_for_declaration($1, $2 , "var" , errorCount , yylineno , array_size);}
      ;
 
-arr_interior : TYPE ID arr_list  {cout<<"Urmeaza checkul"<<endl;current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno , array_size);
+arr_interior : TYPE ID arr_list  {current->check_existance_for_declaration($1, $2 , "array" , errorCount , yylineno , array_size);
                                    array_size.clear();
                                    for(int i=0 ; i<array_size.size();++i){
                                         cout<<array_size[i]<<endl;
@@ -195,11 +194,8 @@ ID_Array:ID{array_name=$1;} arr_list
         ;
 function_call_node:ID 
                {
-                    // if(!Mega_Stack.empty()){
-                    //      Temp_stack=Mega_Stack.top();
-                    //      Mega_Stack.pop();
-                    // }
                     if(!param_checker.empty()){
+                         std::stack<IdInfo*> buff;
                          while(!param_checker.empty()){
                          Temp_stack.push(param_checker.top());
                          param_checker.pop();
@@ -254,7 +250,6 @@ function_call_node:ID
                                         param_checker.push(Temp_stack.top());
                                         Temp_stack.pop();
                                    }
-                                   // Mega_Stack.push(Temp_stack);
                                   }
                                  }
                                  //Pentru call list m nodul din stanga trebuie sa VERIFICE faptul ca parametrii sunt buni si sa le dea noua valoare , nodul din dreapta tre sa execute corpul functiei

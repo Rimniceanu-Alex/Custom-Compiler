@@ -1,0 +1,33 @@
+int foo(int a){
+return a*10;
+};
+begin
+
+int a;
+a<-20;
+Print(foo(1-1));
+a<-a/foo(1-1);
+Print(a);
+
+bool maybe;
+maybe<-((100==100)||(12==10));
+Print(maybe);
+
+maybe<-((100==100)&&(12==10));
+Print(maybe);
+
+int arr[10];
+arr[0]<-120;
+while(arr[0]<130){
+    Print(130-arr[0]);
+    int b;
+    b<-arr[0];
+    arr[0]<-b+1;
+};
+a<-0;
+while(a<10){
+    Print("a");
+    Print(a);
+    a<-a+1;
+};
+end

@@ -180,32 +180,33 @@ public:
                     cout << "error: " << "Can only assing a int or a float to an int or a float at line: " << yylineno << endl;
                 }
             }
-            else{
+            else
+            {
                 errorCount++;
-                cout<<"error: "<<"This ID is not usable in an assign at line "<<yylineno<<endl;
+                cout << "error: " << "This ID is not usable in an assign at line " << yylineno << endl;
             }
         }
         else if (root == "Print")
         {
             if (left->get_type() == "int")
             {
-                int answer=left->evaluatei();
+                int answer = left->evaluatei();
                 cout << "Printed : " << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "float")
             {
-                float answer=left->evaluatef();
-                cout << "Printed : " << answer  << "  at line " << yylineno << endl;
+                float answer = left->evaluatef();
+                cout << "Printed : " << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "bool")
             {
-                bool answer=left->evaluateb();
+                bool answer = left->evaluateb();
                 cout << "Printed : " << std::boolalpha << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "string")
             {
-                string answer=left->evaluates();
-                cout << "Printed : " <<answer<< "  at line " << yylineno << endl;
+                string answer = left->evaluates();
+                cout << "Printed : " << answer << "  at line " << yylineno << endl;
             }
             else
             {
@@ -316,7 +317,7 @@ public:
             }
         }
         else if (root == "func_call")
-        {                             // type=tipul functiei , value=valoarea functiei DUPA assign , left=corpul functiei , right=nullptr
+        { // type=tipul functiei , value=valoarea functiei DUPA assign , left=corpul functiei , right=nullptr
             left->run();
             ++nr_apeluri_functie;
             type = right_side_var->type;
@@ -409,7 +410,19 @@ public:
             }
             else if (root == "/")
             {
-                return left->evaluatei() / right->evaluatei();
+                int b = right->evaluatei();
+                if (b != 0)
+                {
+                int a = left->evaluatei();
+                    return a / b;
+                }
+                else
+                {
+                    // errorCount++;
+                    // cout<<"errorCOunt "<<++(*errorCount);
+                    cout << "error: Division by Zero is forbidden" << endl;
+                    return numeric_limits<int>::min();
+                }
             }
             else
             {
