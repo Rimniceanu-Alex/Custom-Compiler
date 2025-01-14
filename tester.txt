@@ -6,11 +6,12 @@ class Mee:{
         return aoo;
     };
 };
+Mee auch;
 int goo(int ad){
     Print(ad);
     return ad;
 };
-int foo(int ad ){
+int roo(int ad ){
     Print(ad);
     return ad*2;
 };
@@ -73,18 +74,18 @@ for(ab<-10 ; ab<89 ; ab<-ab+1;){
 };
 max(10, 20);
 Mee test;
-a<-13+foo(10)+goo(100);
+a<-13+roo(10)+goo(100);
 a<-test.foo(1123);
 test.z<-101;
 a<-a+test.z;
-a<-test.foo(foo(10));
+a<-test.foo(roo(10));
 Print(a);
 int arr[10][2];
 arr[0][0]<-10;
 a<-arr[0][0];
 Print(123);
-Print(foo(arr[0][0]));
-max3(20,foo(100) , 80);
+Print(roo(arr[0][0]));
+max3(20,roo(100) , 80);
 char adc;
 if((10==10)&&(20==20)){
     Print(1000);

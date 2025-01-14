@@ -54,4 +54,5 @@ Print(ok+"YEAAA"+ok1);
 Print("Hell"+" Yea");
 goo(4);
 a<-goo(5)+goo(7);
+woow(12);
 end

@@ -39,8 +39,8 @@ string nr;
 %left '*' '/'
 %left '%'
 %%
-progr :  classes global_classes_declaration class_initialize_initial main {}
-      |  global_classes_declaration main {}
+progr :  classes class_initialize_initial global_classes_declaration main {if(errorCount==0)cout<<"The Program is Correct!"<<endl;}
+      |  global_classes_declaration main {if(errorCount==0)cout<<"The Program is Correct!"<<endl;}
       ;
 
 main : BGIN
@@ -57,12 +57,16 @@ main : BGIN
                      current=current->next_domain_scope();
                     }
      ;
-global_classes_declaration: variables_generator functions_generator
+global_classes_declaration: variables_generator assign_generator functions_generator 
+                          | variables_generator functions_generator
+                          | variables_generator assign_generator
                           | variables_generator
                           | functions_generator
+                          | assign_generator
                           | /*epsilon*/
                           ;
-
+assign_generator:assign_node';'{$1->run();}
+                |assign_node ';' assign_generator{$1->run();}
 functions_generator : functions_generator functions
                     | functions
                     ;
@@ -96,6 +100,11 @@ functions : TYPE ID
                   function_scope=new SymTable($2);
                   function_scope->assign_stack_above(current->return_stack_above());
                   function_scope->add_above(current);
+                  IdInfo* variabila;
+                  variabila=function_scope->get_function_core();
+                  variabila->name=$2;
+                  variabila->type=$1;
+                  variabila->idType="func";
                   current->add_bellow(function_scope);
                   current=function_scope;
                   Vector_Tabele.push_back(current);
@@ -214,6 +223,7 @@ function_call_node:ID
                     stack<SymTable*> copy=globol->return_stack_bellow();
                     while(!copy.empty()){
                          if(strcmp(copy.top()->get_dom_name(),$1)==0){
+                              
                          tmp=copy.top();
                          functia_apelata=tmp;
                          }
@@ -311,7 +321,7 @@ function_call_node:ID
                        
                     }
               } 
-                '(' call_list ')'{
+                '(' call_list_epsilon ')'{
                                  if(!param_checker.empty()){
                                    errorCount++;
                                    yyerror("Not enough parameters in function call");
@@ -418,6 +428,7 @@ boolean_expression: '(' boolean_expression ')' {$$=$2;}
                |  y {$$=$1;}
                ;
 y : e CMP e {$$=new ASTNode($2 , $1 , $3 , &errorCount);}  
+  | '('e')' CONNECT '('e')' {$$=new ASTNode($4 , $2 , $6 , &errorCount);}
   ;
 classes : class
         | classes class

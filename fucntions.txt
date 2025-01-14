@@ -1,3 +1,8 @@
 Vizibilitate: [global-foo] Name : [foo] Return type: [int] Value: [0]
 Params:
 a int 0
+Vizibilitate: [global-parity] Name : [parity]
+Params:
+i int 10
+Vizibilitate: [global-trial] Name : [trial]
+Params:

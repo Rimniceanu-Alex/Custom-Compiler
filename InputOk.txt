@@ -1,0 +1,130 @@
+class A:{  
+int x;
+int y;
+x<-100;
+y<-200;
+int g(int z){
+    Print(x); 
+    Print(y); 
+    if((x+2 > y+5) && (x+3 > 45*3 - 10)){
+        x <- x + y; 
+        Print(x);
+        while(x > 10) {
+                int x1; x1 <- 3000;
+        Print(x1);
+        };
+    }
+    else{
+
+    };
+   return z + y;
+};
+int f(int z){
+    if(x+2 > y+5){
+        x <- x +4;
+    }
+    else{
+
+    };
+   return x * z * y;
+};
+};
+A ob;
+A oba;
+
+int x;
+int ix;
+int iy;
+int iz; 
+bool b1;
+bool b2;
+float fx;
+string s;
+char  c;
+int v[10];
+x<-60;
+ix<-10;
+iy<-900;
+iz<-30;
+b1<-TRUE;
+b2<-FALSE;
+fx<-6.5;
+s<-"string";
+
+int f (int z){                    
+ int x2; 
+ int y; 
+ x2<-5; 
+ y<-10;
+ Print(x2*y*10);
+ if(x2 > 2) {                         
+      int x3;
+      x3<-100; 
+      Print(x3 * 6);
+      bool flag;
+      flag<-TRUE;
+      while( flag == TRUE) {
+	     int x4;
+            x4<-8;
+            Print(ix * 70);
+            Print(x4*100); 
+            flag<-FALSE;
+      };
+      y<-1000; 
+      Print(iy); 
+  }
+  else{
+
+  };	
+   Print(y);  
+   return z * 10;
+};
+
+int bfunc(bool b, string s1){
+    int a;
+    if( b == TRUE){
+        a<-10;
+    }
+    else{
+        a<-100;
+    };
+    return a;
+};
+begin
+fx <- fx + 10.0 * fx - 65.0;
+Print(fx);
+Print(s);
+s <-"otherstr";
+Print(s);
+Print("c");
+oba.x <- 100;
+v[9] <- 100;
+ix <- ix + (ix + f(ix*4))*2 + oba.x + v[5]   ; 
+Print(ix);
+bool maybe;
+Print(oba.x);
+Print(f(ix));
+maybe<-((f(ix) + 1000 > 100) && (oba.x + 2 > 100));
+bool tmp1;
+b1<-TRUE;
+tmp1<-(b1 == TRUE);
+Print("AICIIIIIIII");
+Print(tmp1);
+maybe<-((maybe)||(tmp1));
+Print(maybe);
+b1 <- b2;
+bfunc(b1, "s");
+bool maybe2;
+maybe2<-(ix+5 > iy+6);
+TypeOf(maybe2);
+bool maybe3;
+maybe3<-(ix+5 > iy+6);
+bool bufferbool;
+bufferbool<-(b1 == FALSE);
+bufferbool<-((bufferbool)&&(maybe3));
+bool tmp2;
+tmp2<-(f(ix) > 5);
+maybe3<-((bufferbool)||(tmp2));
+TypeOf(maybe3);
+f(10);
+end

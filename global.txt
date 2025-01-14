@@ -1,2 +1,3 @@
 Vizibilitate: [global] name: [foo] data_type: [int] ID_TYPE: [func] Value:[0]
 Vizibilitate: [global] name: [parity] data_type: [void] ID_TYPE: [func]
+Vizibilitate: [global] name: [trial] data_type: [void] ID_TYPE: [func]

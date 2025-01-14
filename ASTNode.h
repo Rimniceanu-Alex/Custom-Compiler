@@ -32,7 +32,10 @@ public:
         }
         else if (left_child && right_child)
         {
+            
+            cout<<"INN CIBSTRYYCTOOOR     "<<root<<endl;
             type = "missmatch";
+            //cand am multe || sa u && se fuTE si trebuie sa vad ce fac cu evaluarea
         }
         else
         {
@@ -117,6 +120,21 @@ public:
                             domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
                             func_core->value = val;
                         }
+                        else if (left->type == "bool")
+                        {
+                            bool temp;
+                            if (left->evaluateb() == true)
+                            {
+                                temp = true;
+                            }
+                            else
+                            {
+                                temp = false;
+                            }
+                            class Value val(temp);
+                            domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                            func_core->value = val;
+                        }
                         else
                         {
                             errorCount++;
@@ -174,6 +192,21 @@ public:
                         func_core->value = val;
                     }
                 }
+                else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(type.c_str()) == "bool")
+                {
+                    bool checker = left->evaluateb();
+                    if (std::isnan(checker))
+                    {
+                        errorCount++;
+                        cout << "error: " << "Arithmetic expression is inccorect at line: " << yylineno << endl;
+                    }
+                    else
+                    {
+                        class Value val(checker);
+                        domeniul_caruia_ii_apartine_varabila->set_value(type.c_str(), val);
+                        func_core->value = val;
+                    }
+                }
                 else
                 {
                     errorCount++;
@@ -226,6 +259,13 @@ public:
             else if (left->get_type() == "float")
             {
                 while ((int)left->evaluatef() == true)
+                {
+                    right->run();
+                }
+            }
+            else if (left->get_type() == "bool")
+            {
+                while ((int)left->evaluateb() == true)
                 {
                     right->run();
                 }
@@ -393,7 +433,7 @@ public:
                 return left->evaluatei() && right->evaluatei();
             }
             else if (root == "||")
-            {
+            {   
                 return left->evaluatei() || right->evaluatei();
             }
             else if (root == "+")
@@ -587,6 +627,14 @@ public:
         else if (root == "!=")
         {
             return left->evaluateb() != right->evaluateb();
+        }
+        else if (root == "||")
+        {
+            return left->evaluateb() || right->evaluateb();
+        }
+        else if (root == "&&")
+        {
+            return left->evaluateb() && right->evaluateb();
         }
         else
         {

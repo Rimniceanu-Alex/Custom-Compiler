@@ -14,6 +14,8 @@ Vizibilitate: [global-main] name: [arr[6]] data_type: [int] ID_TYPE: [var] Value
 Vizibilitate: [global-main] name: [arr[7]] data_type: [int] ID_TYPE: [var] Value:[100]
 Vizibilitate: [global-main] name: [arr[8]] data_type: [int] ID_TYPE: [var] Value:[100]
 Vizibilitate: [global-main] name: [arr[9]] data_type: [int] ID_TYPE: [var] Value:[100]
+Vizibilitate: [global-main] name: [av] data_type: [float] ID_TYPE: [var] Value:[123.5]
+Vizibilitate: [global-main] name: [bw] data_type: [float] ID_TYPE: [var] Value:[69.23]
 Vizibilitate: [global-main] name: [i] data_type: [int] ID_TYPE: [var] Value:[0]
 Vizibilitate: [global-main] name: [maybe] data_type: [bool] ID_TYPE: [var] Value:[false]
 Vizibilitate: [global-main-while] name: [b] data_type: [int] ID_TYPE: [var] Value:[129]

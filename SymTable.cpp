@@ -127,13 +127,17 @@ void SymTable::printFunct()
         {
             cout << "Vizibilitate: [" << get_dom_location() << "] Name : [" << get_dom_name() << "] Return type: [" << var->type << "] Value: [" << var->value.get_float() << "]" << endl;
         }
-        if (var->type == "bool")
+        else if (var->type == "bool")
         {
             cout << "Vizibilitate: [" << get_dom_location() << "] Name : [" << get_dom_name() << "] Return type: [" << var->type << "] Value: [" << var->value.get_bool() << "]" << endl;
         }
-        if (var->type == "string")
+        else if (var->type == "string")
         {
             cout << "Vizibilitate: [" << get_dom_location() << "] Name : [" << get_dom_name() << "] Return type: [" << var->type << "] Value: [" << var->value.get_string() << "]" << endl;
+        }
+        else if (var->type == "void")
+        {
+            cout << "Vizibilitate: [" << get_dom_location() << "] Name : [" << get_dom_name() << "]" << endl;
         }
         else
         {
@@ -273,33 +277,49 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
         {
             std::stack<SymTable *> Copy_table1;
             SymTable *tempor;
-            Copy_table1 = this->above;
-            while (!Copy_table1.empty())
+            if (strcmp(this->get_dom_name(), "global") != 0)
             {
-                if (strcmp(Copy_table1.top()->get_dom_name(), "global") == 0)
+                Copy_table1 = this->above;
+                while (!Copy_table1.empty())
                 {
-                    tempor = Copy_table1.top();
+                    if (strcmp(Copy_table1.top()->get_dom_name(), "global") == 0)
+                    {
+                        tempor = Copy_table1.top();
+                    }
+                    Copy_table1.pop();
                 }
-                Copy_table1.pop();
+            }else{
+                tempor=this;
             }
             std::stack<SymTable *> Copy_table2; // Verificam daca a fost declarata anterior intr-un Domeniu de vizibilitate local sau nu
             Copy_table2 = tempor->scopes_in_global;
-            if (Copy_table2.empty())
-            {
-                cout << "Scope is empty" << endl;
-            }
+            // if (Copy_table2.empty())
+            // {
+            //     cout << "Scope is empty" << endl;
+            // }
             while (!Copy_table2.empty())
             {
                 if (strcmp(Copy_table2.top()->get_dom_name(), a) == 0)
                 {
+                    //cout<<endl<<endl<<endl<<endl<<Copy_table2.top()->get_dom_name()<<"    "<<this->get_dom_name()<<endl<<endl<<endl<<endl;
                     map<string, IdInfo> variabile;
                     variabile = Copy_table2.top()->get_map();
+                    int i=0;
                     for (const pair<string, IdInfo> d : variabile)
                     {
+                        //cout<<"Ce avem aiciIii??"<<d.first<<" "<<i++<<"In Domeniul "<<this->get_dom_name()<<endl;
                         string buff = b;
+                       // cout<<"B este "<<b<<endl;
                         string name = buff + "." + d.first;
+                        //cout<<"                     "<<name<<"      "<<this->get_dom_name()<<endl;
+                        //cout<<"ce bagam noi in map numele ["<<name<<"] Type ["<<d.second.type<<"] IdType ["<<d.second.idType<<"]   "<<this->get_dom_name()<<endl;
                         this->addVar(d.second.type.c_str(), name.c_str(), d.second.idType.c_str());
+                        //this->set_value(name.c_str() , this->get_value(name.c_str()));
                     }
+                    while(!Copy_table2.empty()){
+                        Copy_table2.pop();
+                    }
+                    break;
                 }
                 Copy_table2.pop();
             }
@@ -417,6 +437,7 @@ void SymTable::check_existance_for_class_instance(const char *a, const char *b, 
     if (temp->existsId(a))
     {
         std::vector<int> array_size;
+        // cout<<a<<"   "<<b<<"    "<<endl;
         this->check_existance_for_declaration(a, b, "class_instance", errorCount, yylineno, array_size);
         return;
     }
