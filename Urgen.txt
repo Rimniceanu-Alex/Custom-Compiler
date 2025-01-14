@@ -16,4 +16,7 @@ Print(x);
 Print(ao.x);
 akk.grr();
 Print(akk.x);
+char c;
+c<-'a';
+Print(c);
 end

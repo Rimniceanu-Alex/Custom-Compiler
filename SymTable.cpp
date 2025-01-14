@@ -36,6 +36,17 @@ Value::Value(const char *x)
             StringValue = "";
         }
     }
+    else if (StringValue[0] == '\'')
+    {
+        if (StringValue.length() > 2)
+        {
+            StringValue = StringValue.substr(1, StringValue.length() - 2);
+        }
+        else
+        {
+            StringValue = ' ';
+        }
+    }
 }
 Value::Value()
 {
@@ -59,6 +70,11 @@ bool Value::get_bool() const
 string Value::get_string() const
 {
     return StringValue;
+}
+
+char Value::get_char() const
+{
+    return 0;
 }
 
 void SymTable::addVar(const char *type, const char *name, const char *id_type)
@@ -89,6 +105,10 @@ void SymTable::printVars()
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_bool() << "]" << endl;
         }
         else if (v.second.type == "string" && (v.second.idType == "var" || v.second.idType == "param"))
+        {
+            cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_string() << "]" << endl;
+        }
+        else if (v.second.type == "char" && (v.second.idType == "var" || v.second.idType == "param"))
         {
             cout << "Vizibilitate: [" << this->get_dom_location() << "] name: [" << v.first << "] data_type: [" << v.second.type << "] ID_TYPE: [" << v.second.idType << "] Value:[" << v.second.value.get_string() << "]" << endl;
         }
@@ -288,8 +308,10 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
                     }
                     Copy_table1.pop();
                 }
-            }else{
-                tempor=this;
+            }
+            else
+            {
+                tempor = this;
             }
             std::stack<SymTable *> Copy_table2; // Verificam daca a fost declarata anterior intr-un Domeniu de vizibilitate local sau nu
             Copy_table2 = tempor->scopes_in_global;
@@ -301,22 +323,23 @@ void SymTable::check_existance_for_declaration(const char *a, const char *b, con
             {
                 if (strcmp(Copy_table2.top()->get_dom_name(), a) == 0)
                 {
-                    //cout<<endl<<endl<<endl<<endl<<Copy_table2.top()->get_dom_name()<<"    "<<this->get_dom_name()<<endl<<endl<<endl<<endl;
+                    // cout<<endl<<endl<<endl<<endl<<Copy_table2.top()->get_dom_name()<<"    "<<this->get_dom_name()<<endl<<endl<<endl<<endl;
                     map<string, IdInfo> variabile;
                     variabile = Copy_table2.top()->get_map();
-                    int i=0;
+                    int i = 0;
                     for (const pair<string, IdInfo> d : variabile)
                     {
-                        //cout<<"Ce avem aiciIii??"<<d.first<<" "<<i++<<"In Domeniul "<<this->get_dom_name()<<endl;
+                        // cout<<"Ce avem aiciIii??"<<d.first<<" "<<i++<<"In Domeniul "<<this->get_dom_name()<<endl;
                         string buff = b;
-                       // cout<<"B este "<<b<<endl;
+                        // cout<<"B este "<<b<<endl;
                         string name = buff + "." + d.first;
-                        //cout<<"                     "<<name<<"      "<<this->get_dom_name()<<endl;
-                        //cout<<"ce bagam noi in map numele ["<<name<<"] Type ["<<d.second.type<<"] IdType ["<<d.second.idType<<"]   "<<this->get_dom_name()<<endl;
+                        // cout<<"                     "<<name<<"      "<<this->get_dom_name()<<endl;
+                        // cout<<"ce bagam noi in map numele ["<<name<<"] Type ["<<d.second.type<<"] IdType ["<<d.second.idType<<"]   "<<this->get_dom_name()<<endl;
                         this->addVar(d.second.type.c_str(), name.c_str(), d.second.idType.c_str());
-                        //this->set_value(name.c_str() , this->get_value(name.c_str()));
+                        // this->set_value(name.c_str() , this->get_value(name.c_str()));
                     }
-                    while(!Copy_table2.empty()){
+                    while (!Copy_table2.empty())
+                    {
                         Copy_table2.pop();
                     }
                     break;

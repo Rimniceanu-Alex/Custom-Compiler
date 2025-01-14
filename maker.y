@@ -32,7 +32,7 @@ string nr;
      %}
 
 %token  BGIN END CBEGIN CEND REAL
-%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING 
+%token<string> ID TYPE Class_ID Class_Type IF ELSE WHILE FOR CMP NR CONNECT VOID RETURN ASSIGN TRUTH_VALUE PRINT TYPE_FUNCTION STRING CHAR
 %type<ListOfNodes> e y boolean_expression assign_node list statement function_call_node while_node print_node list_main statement_main if_node for_node expression_for type_fucntion_node list_else
 %start progr
 %left '+' '-' 
@@ -622,6 +622,9 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
   |function_call_node{$$=$1;};
   |STRING      {Value val($1);     
                $$=new ASTNode(val , "string" , &errorCount);}
+  |CHAR {
+     Value val($1);     
+     $$=new ASTNode(val , "char" , &errorCount);}
   ;
         
 %%

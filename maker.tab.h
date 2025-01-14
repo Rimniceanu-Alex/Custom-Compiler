@@ -76,7 +76,8 @@ extern int yydebug;
     TRUTH_VALUE = 277,             /* TRUTH_VALUE  */
     PRINT = 278,                   /* PRINT  */
     TYPE_FUNCTION = 279,           /* TYPE_FUNCTION  */
-    STRING = 280                   /* STRING  */
+    STRING = 280,                  /* STRING  */
+    CHAR = 281                     /* CHAR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,7 +91,7 @@ union YYSTYPE
      char* string;
      class ASTNode* ListOfNodes;
 
-#line 94 "maker.tab.h"
+#line 95 "maker.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

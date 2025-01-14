@@ -207,6 +207,21 @@ public:
                         func_core->value = val;
                     }
                 }
+                else if (domeniul_caruia_ii_apartine_varabila->get_IdInfo_Type(get_type().c_str()) == "char")
+                {
+                    string checker = left->evaluates();
+                    if ("" == checker)
+                    {
+                        errorCount++;
+                        cout << "error: " << "Char expression is inccorect at line: " << yylineno << endl;
+                    }
+                    else
+                    {
+                        class Value val(checker);
+                        domeniul_caruia_ii_apartine_varabila->set_value(get_type().c_str(), val);
+                        func_core->value = val;
+                    }
+                }
                 else
                 {
                     errorCount++;
@@ -237,6 +252,11 @@ public:
                 cout << "Printed : " << std::boolalpha << answer << "  at line " << yylineno << endl;
             }
             else if (left->get_type() == "string")
+            {
+                string answer = left->evaluates();
+                cout << "Printed : " << answer << "  at line " << yylineno << endl;
+            }
+            else if (left->get_type() == "char")
             {
                 string answer = left->evaluates();
                 cout << "Printed : " << answer << "  at line " << yylineno << endl;
@@ -665,6 +685,9 @@ public:
             }
             if (type == "string")
             {
+                return value.get_string();
+            }
+            else if(type=="char"){
                 return value.get_string();
             }
             else

@@ -23,12 +23,14 @@ public:
     Value(float x);
     Value(bool x);
     Value(string type);
+    Value(char x);
     Value(const char * x);
     string tostring() const;
     int get_int() const;
     float get_float() const;
     bool get_bool() const;
     string get_string() const;
+    char get_char() const;
 };
 
 class IdInfo

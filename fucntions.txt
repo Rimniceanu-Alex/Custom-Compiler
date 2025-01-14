@@ -1,8 +1,13 @@
-Vizibilitate: [global-foo] Name : [foo] Return type: [int] Value: [0]
+Vizibilitate: [global-A-g] Name : [g] Return type: [int] Value: [0]
 Params:
-a int 0
-Vizibilitate: [global-parity] Name : [parity]
+z int 2089017248
+Vizibilitate: [global-A-f] Name : [f] Return type: [int] Value: [0]
 Params:
-i int 10
-Vizibilitate: [global-trial] Name : [trial]
+z int 2089039792
+Vizibilitate: [global-f] Name : [f] Return type: [int] Value: [100]
 Params:
+z int 10
+Vizibilitate: [global-bfunc] Name : [bfunc] Return type: [int] Value: [100]
+Params:
+b bool false
+s1 string s
