@@ -37,6 +37,7 @@ string nr;
 %start progr
 %left '+' '-' 
 %left '*' '/'
+%left '%'
 %%
 progr :  classes global_classes_declaration class_initialize_initial main {}
       |  global_classes_declaration main {}
@@ -560,6 +561,7 @@ e : e '+' e   {$$=new ASTNode("+" , $1 , $3 , &errorCount);}
   | e '*' e   {$$=new ASTNode("*" , $1 , $3 , &errorCount);}
   | e '-' e   {$$=new ASTNode("-" , $1 , $3 , &errorCount);}
   | e '/' e   {$$=new ASTNode("/" , $1 , $3 , &errorCount);}
+  | e '%' e   {$$=new ASTNode("%" , $1 , $3 , &errorCount);}
   |'(' e ')'  {$$=$2;}
   | TRUTH_VALUE{    
                     if(strcmp($1 ,"TRUE")==0){

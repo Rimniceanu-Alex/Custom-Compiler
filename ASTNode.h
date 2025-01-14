@@ -424,6 +424,9 @@ public:
                     return numeric_limits<int>::min();
                 }
             }
+            else if(root=="%"){
+                return left->evaluatei()%right->evaluatei();
+            }
             else
             {
                 errorCount++;
@@ -526,6 +529,11 @@ public:
             else if (root == "/")
             {
                 return left->evaluatef() / right->evaluatef();
+            }
+             else if(root=="%"){
+                errorCount++;
+                cout << "%/ Can not be used for floats" << endl;
+                return numeric_limits<float>::quiet_NaN();
             }
             else
             {

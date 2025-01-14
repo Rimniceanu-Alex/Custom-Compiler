@@ -1,5 +1,19 @@
 int foo(int a){
-return a*10;
+    Print("Functia foo");
+    return a*10;
+};
+void parity(int i){
+    while(i<10){
+    if(i%2==0){
+        Print("Even");
+        Print(i);
+    }
+    else{
+        Print("Odd");
+        Print(i);
+    };
+    i<-i+1;
+};
 };
 begin
 
@@ -30,4 +44,16 @@ while(a<10){
     Print(a);
     a<-a+1;
 };
+
+string ab;
+string ac;
+ab<-"suc";
+ac<-"apa";
+Print(ab);
+Print(ac);
+Print(ab+" "+ac);
+
+int i;
+i<-0;
+parity(i);
 end
