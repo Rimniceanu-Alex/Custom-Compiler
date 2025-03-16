@@ -1,1 +1,1 @@
-A Compiler for a custom Syntax
+A Compiler for a custom Programming Language 
