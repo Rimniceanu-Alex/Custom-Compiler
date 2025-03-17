@@ -109,3 +109,4 @@ bfunc(b1, “s”);
 TypeOf(ix+5 > iy+6);
 TypeOf(((ix+5 > iy+6) && (b1 == false)) || (f(ix) > 5));
 end
+ 
