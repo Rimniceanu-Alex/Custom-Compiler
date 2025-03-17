@@ -67,4 +67,4 @@ bw<-69.23;
 Print(av*bw);
 
 trial();
-end
+end 
